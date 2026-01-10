@@ -1,1 +1,71 @@
-/* Add styles here */
+body {
+    font-family: sans-serif;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 2rem;
+}
+
+.lotto-numbers {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.number {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #eee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    margin: 0 0.5rem;
+    font-weight: bold;
+}
+
+#generate-btn {
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 2rem;
+}
+
+.history h2 {
+    margin-bottom: 1rem;
+}
+
+#history-list {
+    list-style: none;
+    padding: 0;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+#history-list li {
+    padding: 0.5rem;
+    border-bottom: 1px solid #ddd;
+}
+
+#history-list li:last-child {
+    border-bottom: none;
+}
