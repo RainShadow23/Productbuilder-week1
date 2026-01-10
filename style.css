@@ -1,18 +1,54 @@
+:root {
+    --bg-color: #f0f0f0;
+    --container-bg: white;
+    --text-color: #333;
+    --border-color: #ddd;
+    --button-bg: #007bff;
+    --button-text: white;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+body.dark {
+    --bg-color: #333;
+    --container-bg: #444;
+    --text-color: #f0f0f0;
+    --border-color: #555;
+    --button-bg: #0056b3;
+    --button-text: white;
+    --shadow-color: rgba(255, 255, 255, 0.1);
+}
+
 body {
     font-family: sans-serif;
-    background-color: #f0f0f0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
     display: flex;
+    flex-direction: column; /* Allow button to be placed above */
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     margin: 0;
+    transition: background-color 0.3s, color 0.3s;
 }
 
+#theme-toggle {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+    background-color: var(--container-bg);
+    color: var(--text-color);
+    cursor: pointer;
+}
+
+
 .container {
-    background-color: white;
+    background-color: var(--container-bg);
     padding: 2rem;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px var(--shadow-color);
     text-align: center;
 }
 
@@ -31,6 +67,7 @@ h1 {
     height: 50px;
     border-radius: 50%;
     background-color: #eee;
+    color: #333; /* Explicit color for number balls */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -43,8 +80,8 @@ h1 {
     padding: 1rem 2rem;
     font-size: 1.2rem;
     border: none;
-    background-color: #007bff;
-    color: white;
+    background-color: var(--button-bg);
+    color: var(--button-text);
     border-radius: 5px;
     cursor: pointer;
     margin-bottom: 2rem;
@@ -63,7 +100,7 @@ h1 {
 
 #history-list li {
     padding: 0.5rem;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--border-color);
 }
 
 #history-list li:last-child {

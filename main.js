@@ -1,6 +1,24 @@
 const numberSpans = document.querySelectorAll('.number');
 const generateBtn = document.getElementById('generate-btn');
 const historyList = document.getElementById('history-list');
+const themeToggleBtn = document.getElementById('theme-toggle');
+
+// Theme switching logic
+const currentTheme = localStorage.getItem('theme');
+
+if (currentTheme === 'dark') {
+    document.body.classList.add('dark');
+}
+
+themeToggleBtn.addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+    let theme = 'light';
+    if (document.body.classList.contains('dark')) {
+        theme = 'dark';
+    }
+    localStorage.setItem('theme', theme);
+});
+
 
 const generateLottoNumbers = () => {
     const numbers = new Set();
