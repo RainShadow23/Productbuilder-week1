@@ -20,47 +20,82 @@ themeToggleBtn.addEventListener('click', () => {
 });
 
 
-const generateLottoNumbers = () => {
-    const numbers = new Set();
-    while (numbers.size < 6) {
-        numbers.add(Math.floor(Math.random() * 45) + 1);
-    }
-    return Array.from(numbers).sort((a, b) => a - b);
-};
+    // Upbit API integration for Water Down Calculator
+    async function fetchBitcoinPrice() {
+        const bitcoinPriceElement = document.getElementById('bitcoin-price');
+        if (!bitcoinPriceElement) return;
 
-const displayNumbers = (numbers) => {
-    numberSpans.forEach((span, index) => {
-        span.textContent = numbers[index];
-        const numberValue = numbers[index];
-        let backgroundColor;
-        if (numberValue <= 10) {
-            backgroundColor = '#f8c471'; // C
-        } else if (numberValue <= 20) {
-            backgroundColor = '#85c1e9'; // P
-        } else if (numberValue <= 30) {
-            backgroundColor = '#f39c12'; // O
-        } else if (numberValue <= 40) {
-            backgroundColor = '#a9dfbf'; // G
-        } else {
-            backgroundColor = '#f1948a'; // P
+        try {
+            const response = await fetch('https://proxy.cors.sh/https://api.upbit.com/v1/ticker?markets=KRW-BTC', {
+                headers: {
+                    'x-cors-api-key': 'temp_1a2b3c4d5e6f7g8h9i0j'
+                }
+            });
+            console.log('Response:', response);
+            if (!response.ok) {
+                console.error('Response not OK:', response.status, response.statusText);
+                const text = await response.text();
+                console.error('Response text:', text);
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            if (data && data.length > 0) {
+                const price = data[0].trade_price;
+                bitcoinPriceElement.textContent = price.toLocaleString();
+                console.log('Current Bitcoin Price (KRW-BTC):', price);
+            } else {
+                bitcoinPriceElement.textContent = 'N/A';
+                console.log('Could not fetch Bitcoin price. Data is empty.');
+                console.log('Received data:', data);
+            }
+        } catch (error) {
+            bitcoinPriceElement.textContent = 'Error';
+            console.error('Error fetching Bitcoin price:', error);
         }
-        span.style.backgroundColor = backgroundColor;
-    });
-};
+    }
 
-const addToHistory = (numbers) => {
-    const li = document.createElement('li');
-    li.textContent = numbers.join(', ');
-    historyList.prepend(li);
-};
+    // Check current page and call relevant functions
+    if (window.location.pathname.includes('water_down_calculator.html')) {
+        fetchBitcoinPrice();
+    } else if (window.location.pathname.includes('lottery.html')) {
+        // Lotto Number Generator specific logic (already present)
+        // Ensure elements exist before adding event listeners
+        if (generateBtn) {
+            generateBtn.addEventListener('click', generateLottoNumbers);
+        }
+    }
 
-const handleGenerateClick = () => {
-    const newNumbers = generateLottoNumbers();
-    displayNumbers(newNumbers);
-    addToHistory(newNumbers);
-};
+    function generateLottoNumbers() {
+        const numbers = [];
+        while (numbers.length < 6) {
+            const randomNumber = Math.floor(Math.random() * 45) + 1;
+            if (!numbers.includes(randomNumber)) {
+                numbers.push(randomNumber);
+            }
+        }
+        numbers.sort((a, b) => a - b);
+        displayNumbers(numbers);
+        addToHistory(numbers);
+    }
 
-generateBtn.addEventListener('click', handleGenerateClick);
+    function displayNumbers(numbers) {
+        if (!lottoNumbersContainer) return; // Defensive check
+        lottoNumbersContainer.innerHTML = '';
+        numbers.forEach(num => {
+            const span = document.createElement('span');
+            span.className = 'number';
+            span.textContent = num;
+            lottoNumbersContainer.appendChild(span);
+        });
+    }
 
-// Initial generation
-handleGenerateClick();
+    function addToHistory(numbers) {
+        if (!historyList) return; // Defensive check
+        const listItem = document.createElement('li');
+        listItem.textContent = numbers.join(', ');
+        historyList.prepend(listItem); // Add to the top
+    }
+
+    // Initial generation on page load (optional)
+    // generateLottoNumbers();
+});

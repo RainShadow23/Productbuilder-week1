@@ -106,3 +106,45 @@ h1 {
 #history-list li:last-child {
     border-bottom: none;
 }
+
+/* Form styles for contact.html */
+.form-group {
+    margin-bottom: 1rem;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group textarea {
+    width: calc(100% - 20px); /* Adjust for padding */
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    background-color: var(--container-bg);
+    color: var(--text-color);
+}
+
+.form-group textarea {
+    resize: vertical; /* Allow vertical resizing */
+}
+
+.contact-page .container {
+    max-width: 600px; /* Adjust container width for form */
+}
+
+.contact-page button[type="submit"] {
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    border: none;
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 1rem;
+}
