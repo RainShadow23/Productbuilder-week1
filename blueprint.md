@@ -174,10 +174,26 @@ This plan outlines the final implementation for the Bitcoin price feature, incor
     - Confirm that the price auto-refreshes every 5 seconds on the live site.
     - Confirm the countdown timer is displayed and works correctly. (Success)
 
-## Plan for Current Change: Propose Water Down Calculator UI
+## Plan for Current Change: Implement Full Calculator UI and Logic
 
-This plan outlines proposing a basic UI for the water down calculator to the user for approval before implementation.
+This plan outlines the implementation of the full user interface and calculation logic for the water down calculator, based on user feedback.
 
 ### TODO List:
-- [ ] **Step 1: Propose Calculator UI**
-    - Suggest a basic HTML structure with input fields for initial purchase, current holdings, target price, and output for average price.
+- [x] **Step 1: Build Calculator HTML Structure**
+    - In `water_down_calculator.html`, build the full UI including:
+        - A toggle switch for "Exchange" vs. "Wallet" modes.
+        - Inputs for initial holdings.
+        - A dynamic list for adding/removing multiple buy/sell transactions.
+        - An editable input for the current price.
+        - A results section.
+- [x] **Step 2: Style New UI Elements**
+    - In `style.css`, add styling for the new toggle switch, input groups, dynamic rows, and results section to ensure a clean layout.
+- [x] **Step 3: Implement Calculator JavaScript Logic**
+    - In `main.js`, add all client-side logic for the calculator:
+        - Event handling for the mode toggle.
+        - A function to dynamically add and remove transaction rows.
+        - A core `calculate` function that runs when the "Calculate" button is clicked.
+        - The `calculate` function contains separate logic for both "Exchange" and "Wallet" modes.
+        - Logic to read all inputs, perform the calculations, and display the results.
+- [in_progress] **Step 4: Final Feature Verification**
+    - Confirm all calculator features work as expected on the live site.

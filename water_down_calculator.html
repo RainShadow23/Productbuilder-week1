@@ -9,10 +9,92 @@
 <body>
     <div class="container">
         <h1>물타기 계산기</h1>
-        <p>이곳에 물타기 계산기가 만들어질 예정입니다.</p>
-        <p>비트코인 현재가: <span id="bitcoin-price">로딩중...</span></p>
-        <p><a href="index.html">홈으로 돌아가기</a></p>
+
+        <!-- Calculation Mode Toggle -->
+        <div class="mode-selector">
+            <label class="switch">
+                <input type="checkbox" id="calc-mode-toggle">
+                <span class="slider round"></span>
+            </label>
+            <span id="calc-mode-label">거래소 기준</span>
+        </div>
+
+        <!-- Current BTC Price -->
+        <div class="price-display">
+            <label for="current-price">비트코인 현재가 (KRW):</label>
+            <input type="text" id="current-price" placeholder="로딩중...">
+        </div>
+        
+        <hr>
+
+        <!-- Initial Holdings -->
+        <div class="input-group">
+            <h2>기본 정보 (선택 사항)</h2>
+            <div class="form-row">
+                <input type="number" id="initial-qty" placeholder="보유 수량">
+                <input type="number" id="initial-avg-price" placeholder="보유 평단가">
+            </div>
+        </div>
+
+        <!-- Dynamic Transactions List -->
+        <div class="input-group">
+            <h2>거래 내역</h2>
+            <div id="transaction-list">
+                <!-- Dynamic rows will be inserted here -->
+            </div>
+            <button id="add-transaction-btn">+ 거래 내역 추가</button>
+        </div>
+
+        <hr>
+
+        <!-- Action Button -->
+        <button id="calculate-btn" class="cta-button">계산하기</button>
+
+        <!-- Results Section -->
+        <div id="results-container" class="results-group" style="display: none;">
+            <h2>계산 결과</h2>
+            <div class="result-item">
+                <span>최종 보유 수량:</span>
+                <span id="result-total-qty"></span>
+            </div>
+            <div class="result-item">
+                <span>총 투자 금액:</span>
+                <span id="result-total-investment"></span>
+            </div>
+            <div class="result-item">
+                <span>최종 평단가:</span>
+                <span id="result-final-avg-price"></span>
+            </div>
+            <div class="result-item">
+                <span>총 평가 금액:</span>
+                <span id="result-total-evaluation"></span>
+            </div>
+            <div class="result-item">
+                <span>평가 손익:</span>
+                <span id="result-pnl"></span>
+            </div>
+            <div class="result-item">
+                <span>수익률:</span>
+                <span id="result-return-rate"></span>
+            </div>
+        </div>
+
+        <p><a href="index.html" class="home-link">홈으로 돌아가기</a></p>
     </div>
+
+    <!-- Template for new transaction rows -->
+    <template id="transaction-row-template">
+        <div class="form-row transaction-row">
+            <select class="transaction-type">
+                <option value="buy" selected>추가 매수</option>
+                <option value="sell">매도</option>
+            </select>
+            <input type="number" class="transaction-qty" placeholder="수량">
+            <input type="number" class="transaction-price" placeholder="가격">
+            <button class="remove-transaction-btn">X</button>
+        </div>
+    </template>
+
     <script src="main.js"></script>
 </body>
 </html>

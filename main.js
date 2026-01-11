@@ -19,6 +19,7 @@ window.addEventListener('load', () => {
     // --- Lotto Number Generator Logic ---
     const generateBtn = document.getElementById('generate-btn');
     if (generateBtn) {
+        // ... (lotto logic remains the same)
         const lottoNumbersContainer = document.querySelector('.lotto-numbers');
         const historyList = document.getElementById('history-list');
 
@@ -61,39 +62,130 @@ window.addEventListener('load', () => {
     }
 
     // --- Water Down Calculator Logic ---
-    const bitcoinPriceElement = document.getElementById('bitcoin-price');
-    if (bitcoinPriceElement) {
+    const calcContainer = document.querySelector('#calculate-btn'); // Use a reliable element to detect the page
+    if (calcContainer) {
+        // --- Element Hooks ---
+        const currentPriceInput = document.getElementById('current-price');
+        const calcModeToggle = document.getElementById('calc-mode-toggle');
+        const calcModeLabel = document.getElementById('calc-mode-label');
+        const initialQtyInput = document.getElementById('initial-qty');
+        const initialAvgPriceInput = document.getElementById('initial-avg-price');
+        const transactionList = document.getElementById('transaction-list');
+        const addTransactionBtn = document.getElementById('add-transaction-btn');
+        const calculateBtn = document.getElementById('calculate-btn');
+        const resultsContainer = document.getElementById('results-container');
+        
+        // Result Spans
+        const resultTotalQty = document.getElementById('result-total-qty');
+        const resultTotalInvestment = document.getElementById('result-total-investment');
+        const resultFinalAvgPrice = document.getElementById('result-final-avg-price');
+        const resultTotalEvaluation = document.getElementById('result-total-evaluation');
+        const resultPnl = document.getElementById('result-pnl');
+        const resultReturnRate = document.getElementById('result-return-rate');
+
+        // --- State ---
+        let calculationMode = 'exchange'; // 'exchange' or 'wallet'
+
+        // --- API Fetching ---
         async function fetchBitcoinPrice() {
-            bitcoinPriceElement.textContent = '업데이트 중...';
+            currentPriceInput.placeholder = '업데이트 중...';
             try {
                 const workerUrl = 'https://upbit-proxy.ooktone.workers.dev/v1/ticker?markets=KRW-BTC';
                 const response = await fetch(workerUrl);
-
-                if (!response.ok) {
-                    throw new Error(`API response not OK: ${response.statusText}`);
-                }
-
+                if (!response.ok) throw new Error('API response not OK');
                 const data = await response.json();
-
                 if (data && data.length > 0) {
                     const price = data[0].trade_price;
-                    bitcoinPriceElement.textContent = price.toLocaleString() + ' KRW';
+                    currentPriceInput.value = price;
                 } else {
                     throw new Error('API returned empty data.');
                 }
             } catch (error) {
                 console.error('Error fetching Bitcoin price:', error.message);
-                if(window.location.hostname === 'localhost' || window.location.protocol === 'file:') {
-                    bitcoinPriceElement.textContent = '미리보기에서는 실시간 가격을 표시할 수 없습니다.';
-                } else {
-                    bitcoinPriceElement.textContent = '가격 로드 실패';
-                }
+                currentPriceInput.placeholder = '가격 로드 실패';
             }
         }
-        // Initial fetch only
         fetchBitcoinPrice();
 
-        // Placeholder for calculator functionality
-        console.log('Calculator functionality will go here.');
+        // --- Event Listeners ---
+        calcModeToggle.addEventListener('change', () => {
+            if (calcModeToggle.checked) {
+                calculationMode = 'wallet';
+                calcModeLabel.textContent = '내 지갑 기준';
+            } else {
+                calculationMode = 'exchange';
+                calcModeLabel.textContent = '거래소 기준';
+            }
+        });
+
+        addTransactionBtn.addEventListener('click', () => {
+            const template = document.getElementById('transaction-row-template');
+            const newRow = template.content.cloneNode(true);
+            transactionList.appendChild(newRow);
+            // Add listener to the new remove button
+            transactionList.lastElementChild.querySelector('.remove-transaction-btn').addEventListener('click', (e) => {
+                e.target.closest('.transaction-row').remove();
+            });
+        });
+
+        calculateBtn.addEventListener('click', () => {
+            let totalQty = parseFloat(initialQtyInput.value) || 0;
+            let totalCost = totalQty * (parseFloat(initialAvgPriceInput.value) || 0);
+
+            const transactions = document.querySelectorAll('.transaction-row');
+
+            if (calculationMode === 'exchange') {
+                let buyQty = 0;
+                let buyCost = 0;
+                transactions.forEach(row => {
+                    const type = row.querySelector('.transaction-type').value;
+                    if (type === 'buy') {
+                        const qty = parseFloat(row.querySelector('.transaction-qty').value) || 0;
+                        const price = parseFloat(row.querySelector('.transaction-price').value) || 0;
+                        buyQty += qty;
+                        buyCost += qty * price;
+                    }
+                });
+                totalQty += buyQty;
+                totalCost += buyCost;
+
+            } else { // wallet mode
+                transactions.forEach(row => {
+                    const type = row.querySelector('.transaction-type').value;
+                    const qty = parseFloat(row.querySelector('.transaction-qty').value) || 0;
+                    const price = parseFloat(row.querySelector('.transaction-price').value) || 0;
+                    
+                    if (qty > 0 && price > 0) {
+                        if (type === 'buy') {
+                            totalCost += qty * price;
+                            totalQty += qty;
+                        } else { // sell
+                            if (totalQty > 0) {
+                                const avgPriceBeforeSell = totalCost / totalQty;
+                                const profit = (price - avgPriceBeforeSell) * Math.min(qty, totalQty);
+                                totalCost -= profit; // Subtract realized profit from total cost basis
+                                totalQty -= qty;
+                            }
+                        }
+                    }
+                });
+            }
+
+            const finalAvgPrice = (totalQty > 0) ? totalCost / totalQty : 0;
+            const currentPrice = parseFloat(currentPriceInput.value.replace(/,/g, '')) || 0;
+            const totalEvaluation = totalQty * currentPrice;
+            const pnl = totalEvaluation - totalCost;
+            const returnRate = (totalCost > 0) ? (pnl / totalCost) * 100 : 0;
+
+            // Display Results
+            resultTotalQty.textContent = totalQty.toLocaleString();
+            resultTotalInvestment.textContent = Math.round(totalCost).toLocaleString() + ' KRW';
+            resultFinalAvgPrice.textContent = Math.round(finalAvgPrice).toLocaleString() + ' KRW';
+            resultTotalEvaluation.textContent = Math.round(totalEvaluation).toLocaleString() + ' KRW';
+            resultPnl.textContent = Math.round(pnl).toLocaleString() + ' KRW';
+            resultReturnRate.textContent = returnRate.toFixed(2) + ' %';
+            
+            resultsContainer.style.display = 'block';
+        });
     }
 });

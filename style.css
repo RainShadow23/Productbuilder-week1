@@ -50,6 +50,8 @@ body {
     border-radius: 10px;
     box-shadow: 0 0 10px var(--shadow-color);
     text-align: center;
+    width: 90%;
+    max-width: 600px; /* Max width for larger screens */
 }
 
 h1 {
@@ -107,44 +109,199 @@ h1 {
     border-bottom: none;
 }
 
-/* Form styles for contact.html */
-.form-group {
-    margin-bottom: 1rem;
-    text-align: left;
+/* --- Calculator Styles --- */
+.mode-selector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
 }
 
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
+#calc-mode-label {
+    margin-left: 0.5rem;
     font-weight: bold;
 }
 
-.form-group input[type="text"],
-.form-group input[type="email"],
-.form-group textarea {
-    width: calc(100% - 20px); /* Adjust for padding */
-    padding: 10px;
+.price-display {
+    margin-bottom: 1rem;
+    font-size: 1.1em;
+}
+
+.price-display label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+#current-price {
+    padding: 8px;
     border: 1px solid var(--border-color);
     border-radius: 5px;
     background-color: var(--container-bg);
     color: var(--text-color);
+    text-align: center;
+    font-size: 1em;
+    width: 180px;
 }
 
-.form-group textarea {
-    resize: vertical; /* Allow vertical resizing */
+.input-group {
+    text-align: left;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border-color);
+    padding: 1rem;
+    border-radius: 8px;
 }
 
-.contact-page .container {
-    max-width: 600px; /* Adjust container width for form */
+.input-group h2 {
+    margin-top: 0;
+    font-size: 1.2em;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
 }
 
-.contact-page button[type="submit"] {
-    padding: 1rem 2rem;
+.form-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.form-row input, .form-row select {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    background-color: var(--container-bg);
+    color: var(--text-color);
+    min-width: 0; /* Prevents overflow on flex items */
+}
+
+#add-transaction-btn {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px dashed var(--border-color);
+    background: none;
+    color: var(--text-color);
+    cursor: pointer;
+    margin-top: 1rem;
+}
+
+.remove-transaction-btn {
+    flex: 0 0 auto;
+    padding: 8px 12px;
+    border: none;
+    background-color: #e74c3c;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cta-button {
+    width: 100%;
+    padding: 1rem;
     font-size: 1.2rem;
+    font-weight: bold;
     border: none;
     background-color: var(--button-bg);
     color: var(--button-text);
     border-radius: 5px;
     cursor: pointer;
-    margin-top: 1rem;
+    margin: 1rem 0;
+}
+
+.results-group {
+    text-align: left;
+    border: 1px solid var(--border-color);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1.5rem;
+}
+
+.results-group h2 {
+    margin-top: 0;
+    font-size: 1.2em;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.result-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+.result-item:last-child {
+    border-bottom: none;
+}
+.result-item span:last-child {
+    font-weight: bold;
+}
+
+.home-link {
+    display: inline-block;
+    margin-top: 2rem;
+}
+
+
+/* Toggle Switch CSS */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: var(--button-bg);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px var(--button-bg);
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
 }
