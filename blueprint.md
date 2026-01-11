@@ -154,5 +154,22 @@ This plan outlines adding a detailed, UI-based error logging system to the calcu
     - In `main.js`, create a new `logCalc` function.
     - Add detailed logging to every step of the `fetch` process, especially the `catch` block, to make the error visible on the UI.
     - Make page-specific logic more robust by checking for element existence (`if (document.getElementById('bitcoin-price'))`) instead of URL paths.
-- [in_progress] **Step 3: Final Live Site Verification**
-    - Instruct the user to check the live site and report the exact contents of the new debug log.
+- [x] **Step 3: Final Live Site Verification**
+    - Instruct the user to check the live site and report the exact contents of the new debug log. (Success, revealed 429 error)
+
+## Plan for Current Change: Implement Auto-Refreshing Price with UI Timer
+
+This plan outlines the final implementation for the Bitcoin price feature, incorporating user feedback to add an auto-refreshing timer that is visible to the user.
+
+### TODO List:
+- [x] **Step 1: Add Timer UI Element**
+    - In `water_down_calculator.html`, add a `span` with `id="update-timer"` to display the countdown.
+    - Remove the temporary debug `div`.
+- [x] **Step 2: Implement Timer Logic in `main.js`**
+    - Create a 5-second countdown timer using `setInterval`.
+    - When the timer reaches zero, trigger the `fetchBitcoinPrice` function.
+    - The timer resets after every fetch attempt (success or fail).
+    - The UI is updated every second to show the countdown to the user.
+- [in_progress] **Step 3: Final Project Verification**
+    - Confirm that the price auto-refreshes every 5 seconds on the live site.
+    - Confirm the countdown timer is displayed and works correctly.

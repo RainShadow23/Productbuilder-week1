@@ -1,19 +1,9 @@
 window.addEventListener('load', () => {
 
+    // --- Common Elements ---
     const themeToggleBtn = document.getElementById('theme-toggle');
-    const generateBtn = document.getElementById('generate-btn');
-    const calcDebugLog = document.getElementById('debug-log-calc');
 
-    function logCalc(message) {
-        if (calcDebugLog) {
-            // Sanitize the message to prevent HTML injection if the error message contains HTML
-            const sanitizedMessage = String(message).replace(/</g, "&lt;").replace(/>/g, "&gt;");
-            calcDebugLog.innerHTML += sanitizedMessage + '<br>';
-        }
-        console.log(message);
-    }
-
-    // Theme switching logic
+    // --- Theme switching logic ---
     if (themeToggleBtn) {
         const currentTheme = localStorage.getItem('theme');
         if (currentTheme === 'dark') {
@@ -27,6 +17,7 @@ window.addEventListener('load', () => {
     }
 
     // --- Lotto Number Generator Logic ---
+    const generateBtn = document.getElementById('generate-btn');
     if (generateBtn) {
         const lottoNumbersContainer = document.querySelector('.lotto-numbers');
         const historyList = document.getElementById('history-list');
@@ -70,45 +61,72 @@ window.addEventListener('load', () => {
     }
 
     // --- Water Down Calculator Logic ---
-    async function fetchBitcoinPrice() {
-        const bitcoinPriceElement = document.getElementById('bitcoin-price');
-        if (!bitcoinPriceElement) return;
-        
-        logCalc('Attempting to fetch Bitcoin price...');
-        try {
-            const workerUrl = 'https://upbit-proxy.ooktone.workers.dev/v1/ticker?markets=KRW-BTC';
-            logCalc('Worker URL: ' + workerUrl);
-            const response = await fetch(workerUrl);
-            logCalc('Fetch response received. Status: ' + response.status);
+    const bitcoinPriceElement = document.getElementById('bitcoin-price');
+    if (bitcoinPriceElement) {
+        const updateTimerElement = document.getElementById('update-timer');
+        const UPDATE_INTERVAL_SECONDS = 5;
+        let countdown = UPDATE_INTERVAL_SECONDS;
+        let updateInterval;
 
-            if (!response.ok) {
-                logCalc('Response not OK. Status: ' + response.statusText);
-                const errorText = await response.text();
-                logCalc('Error details: ' + errorText);
-                throw new Error(`API response not OK: ${response.statusText}`);
+        async function fetchBitcoinPrice() {
+            // Don't fetch if the countdown is not 0, to avoid spamming
+            if (countdown > 0 && countdown < UPDATE_INTERVAL_SECONDS) return;
+
+            bitcoinPriceElement.textContent = '업데이트 중...';
+            
+            try {
+                const workerUrl = 'https://upbit-proxy.ooktone.workers.dev/v1/ticker?markets=KRW-BTC';
+                const response = await fetch(workerUrl);
+
+                if (!response.ok) {
+                    throw new Error(`API response not OK: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+
+                if (data && data.length > 0) {
+                    const price = data[0].trade_price;
+                    bitcoinPriceElement.textContent = price.toLocaleString() + ' KRW';
+                } else {
+                    throw new Error('API returned empty data.');
+                }
+            } catch (error) {
+                console.error('Error fetching Bitcoin price:', error.message);
+                // Keep the last known price on screen, or show a failure message if it's the first load
+                if(bitcoinPriceElement.textContent.includes('...')) { // If it's still loading
+                    bitcoinPriceElement.textContent = '가격 로드 실패';
+                }
+            } finally {
+                // Always reset the timer after an attempt
+                resetAndUpdateTimer();
             }
-
-            const data = await response.json();
-            logCalc('Response JSON parsed.');
-
-            if (data && data.length > 0) {
-                const price = data[0].trade_price;
-                bitcoinPriceElement.textContent = price.toLocaleString() + ' KRW';
-                logCalc('Success! Price updated.');
-            } else {
-                bitcoinPriceElement.textContent = '데이터 없음';
-                logCalc('API returned empty data.');
-            }
-        } catch (error) {
-            logCalc('--- CATCH BLOCK ---');
-            logCalc('Error Name: ' + error.name);
-            logCalc('Error Message: ' + error.message);
-            logCalc('Error Stack: ' + error.stack);
-            bitcoinPriceElement.textContent = '가격 로드 실패 (오류 발생)';
         }
-    }
 
-    if (document.getElementById('bitcoin-price')) {
+        function updateTimerDisplay() {
+            if (countdown > 0) {
+                updateTimerElement.textContent = `(${countdown}초 후 업데이트)`;
+            } else {
+                updateTimerElement.textContent = `(지금 업데이트!)`;
+            }
+        }
+
+        function resetAndUpdateTimer() {
+            clearInterval(updateInterval); // Clear existing interval
+            countdown = UPDATE_INTERVAL_SECONDS; // Reset countdown
+            updateTimerDisplay();
+
+            updateInterval = setInterval(() => {
+                countdown--;
+                if (countdown <= 0) {
+                    clearInterval(updateInterval); // Stop this interval
+                    fetchBitcoinPrice(); // Fetch price, which will then restart the timer
+                } else {
+                    updateTimerDisplay();
+                }
+            }, 1000);
+        }
+
+        // Initial fetch and start the timer
         fetchBitcoinPrice();
     }
 });
