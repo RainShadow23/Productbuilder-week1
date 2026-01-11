@@ -19,39 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Upbit API integration for Water Down Calculator
-    async function fetchBitcoinPrice() {
-        const bitcoinPriceElement = document.getElementById('bitcoin-price');
-        if (!bitcoinPriceElement) return;
-
-        try {
-            const response = await fetch('https://proxy.cors.sh/https://api.upbit.com/v1/ticker?markets=KRW-BTC', {
-                headers: {
-                    'x-cors-api-key': 'temp_1a2b3c4d5e6f7g8h9i0j'
-                }
-            });
-            console.log('Response:', response);
-            if (!response.ok) {
-                console.error('Response not OK:', response.status, response.statusText);
-                const text = await response.text();
-                console.error('Response text:', text);
-                throw new Error('Network response was not ok');
-            }
-            const data = await response.json();
-            if (data && data.length > 0) {
-                const price = data[0].trade_price;
-                bitcoinPriceElement.textContent = price.toLocaleString();
-                console.log('Current Bitcoin Price (KRW-BTC):', price);
-            } else {
-                bitcoinPriceElement.textContent = 'N/A';
-                console.log('Could not fetch Bitcoin price. Data is empty.');
-                console.log('Received data:', data);
-            }
-        } catch (error) {
-            bitcoinPriceElement.textContent = 'Error';
-            console.error('Error fetching Bitcoin price:', error);
-        }
-    }
+    // The Bitcoin price is now hardcoded in water_down_calculator.html.
+    // The fetchBitcoinPrice function has been removed.
 
     // Lotto Number Generator specific logic
     if (window.location.pathname.includes('lottery.html')) {
@@ -93,10 +62,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (generateBtn) {
             generateBtn.addEventListener('click', generateLottoNumbers);
         }
+
+        // Initial generation on page load
+        generateLottoNumbers();
     }
 
     // Check current page and call relevant functions
-    if (window.location.pathname.includes('water_down_calculator.html')) {
-        fetchBitcoinPrice();
-    }
+    // The water_down_calculator.html page no longer requires a fetch call.
 });
