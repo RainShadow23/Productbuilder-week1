@@ -135,19 +135,28 @@ window.addEventListener('load', () => {
             const transactions = document.querySelectorAll('.transaction-row');
 
             if (calculationMode === 'exchange') {
-                let buyQty = 0;
-                let buyCost = 0;
+                let totalBuyQty = parseFloat(initialQtyInput.value) || 0;
+                let totalBuyCost = totalBuyQty * (parseFloat(initialAvgPriceInput.value) || 0);
+                let totalSellQty = 0;
+
                 transactions.forEach(row => {
                     const type = row.querySelector('.transaction-type').value;
-                    if (type === 'buy') {
-                        const qty = parseFloat(row.querySelector('.transaction-qty').value) || 0;
-                        const price = parseFloat(row.querySelector('.transaction-price').value) || 0;
-                        buyQty += qty;
-                        buyCost += qty * price;
+                    const qty = parseFloat(row.querySelector('.transaction-qty').value) || 0;
+                    const price = parseFloat(row.querySelector('.transaction-price').value) || 0;
+
+                    if (qty > 0 && price >= 0) { // price can be 0 for airdrops etc.
+                         if (type === 'buy') {
+                            totalBuyQty += qty;
+                            totalBuyCost += qty * price;
+                        } else { // sell
+                            totalSellQty += qty;
+                        }
                     }
                 });
-                totalQty += buyQty;
-                totalCost += buyCost;
+
+                const finalAvgBuyPrice = (totalBuyQty > 0) ? totalBuyCost / totalBuyQty : 0;
+                totalQty = totalBuyQty - totalSellQty;
+                totalCost = totalQty * finalAvgBuyPrice; // The cost basis of remaining assets
 
             } else { // wallet mode
                 transactions.forEach(row => {

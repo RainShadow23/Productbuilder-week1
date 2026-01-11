@@ -195,5 +195,15 @@ This plan outlines the implementation of the full user interface and calculation
         - A core `calculate` function that runs when the "Calculate" button is clicked.
         - The `calculate` function contains separate logic for both "Exchange" and "Wallet" modes.
         - Logic to read all inputs, perform the calculations, and display the results.
-- [in_progress] **Step 4: Final Feature Verification**
-    - Confirm all calculator features work as expected on the live site.
+- [x] **Step 4: Final Feature Verification**
+    - Confirm all calculator features work as expected on the live site. (Failed: Bug found in 'Exchange' mode logic)
+
+## Plan for Current Change: Fix Calculator Logic Bug
+
+This plan outlines fixing a bug in the "Exchange Standard" calculation mode.
+
+### TODO List:
+- [x] **Step 1: Correct 'Exchange' Mode Logic**
+    - In `main.js`, update the calculation to correctly subtract sold quantities from the total holdings while maintaining the average price based only on buys.
+- [in_progress] **Step 2: Final Bugfix Verification**
+    - Confirm the "Exchange Standard" mode now calculates correctly.
