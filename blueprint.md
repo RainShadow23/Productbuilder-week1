@@ -170,6 +170,14 @@ This plan outlines the final implementation for the Bitcoin price feature, incor
     - When the timer reaches zero, trigger the `fetchBitcoinPrice` function.
     - The timer resets after every fetch attempt (success or fail).
     - The UI is updated every second to show the countdown to the user.
-- [in_progress] **Step 3: Final Project Verification**
+- [x] **Step 3: Final Project Verification**
     - Confirm that the price auto-refreshes every 5 seconds on the live site.
-    - Confirm the countdown timer is displayed and works correctly.
+    - Confirm the countdown timer is displayed and works correctly. (Success)
+
+## Plan for Current Change: Propose Water Down Calculator UI
+
+This plan outlines proposing a basic UI for the water down calculator to the user for approval before implementation.
+
+### TODO List:
+- [ ] **Step 1: Propose Calculator UI**
+    - Suggest a basic HTML structure with input fields for initial purchase, current holdings, target price, and output for average price.

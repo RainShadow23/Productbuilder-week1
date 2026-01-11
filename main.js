@@ -63,17 +63,8 @@ window.addEventListener('load', () => {
     // --- Water Down Calculator Logic ---
     const bitcoinPriceElement = document.getElementById('bitcoin-price');
     if (bitcoinPriceElement) {
-        const updateTimerElement = document.getElementById('update-timer');
-        const UPDATE_INTERVAL_SECONDS = 5;
-        let countdown = UPDATE_INTERVAL_SECONDS;
-        let updateInterval;
-
         async function fetchBitcoinPrice() {
-            // Don't fetch if the countdown is not 0, to avoid spamming
-            if (countdown > 0 && countdown < UPDATE_INTERVAL_SECONDS) return;
-
             bitcoinPriceElement.textContent = '업데이트 중...';
-            
             try {
                 const workerUrl = 'https://upbit-proxy.ooktone.workers.dev/v1/ticker?markets=KRW-BTC';
                 const response = await fetch(workerUrl);
@@ -92,41 +83,17 @@ window.addEventListener('load', () => {
                 }
             } catch (error) {
                 console.error('Error fetching Bitcoin price:', error.message);
-                // Keep the last known price on screen, or show a failure message if it's the first load
-                if(bitcoinPriceElement.textContent.includes('...')) { // If it's still loading
+                if(window.location.hostname === 'localhost' || window.location.protocol === 'file:') {
+                    bitcoinPriceElement.textContent = '미리보기에서는 실시간 가격을 표시할 수 없습니다.';
+                } else {
                     bitcoinPriceElement.textContent = '가격 로드 실패';
                 }
-            } finally {
-                // Always reset the timer after an attempt
-                resetAndUpdateTimer();
             }
         }
-
-        function updateTimerDisplay() {
-            if (countdown > 0) {
-                updateTimerElement.textContent = `(${countdown}초 후 업데이트)`;
-            } else {
-                updateTimerElement.textContent = `(지금 업데이트!)`;
-            }
-        }
-
-        function resetAndUpdateTimer() {
-            clearInterval(updateInterval); // Clear existing interval
-            countdown = UPDATE_INTERVAL_SECONDS; // Reset countdown
-            updateTimerDisplay();
-
-            updateInterval = setInterval(() => {
-                countdown--;
-                if (countdown <= 0) {
-                    clearInterval(updateInterval); // Stop this interval
-                    fetchBitcoinPrice(); // Fetch price, which will then restart the timer
-                } else {
-                    updateTimerDisplay();
-                }
-            }, 1000);
-        }
-
-        // Initial fetch and start the timer
+        // Initial fetch only
         fetchBitcoinPrice();
+
+        // Placeholder for calculator functionality
+        console.log('Calculator functionality will go here.');
     }
 });
