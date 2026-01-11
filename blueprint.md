@@ -205,5 +205,22 @@ This plan outlines fixing a bug in the "Exchange Standard" calculation mode.
 ### TODO List:
 - [x] **Step 1: Correct 'Exchange' Mode Logic**
     - In `main.js`, update the calculation to correctly subtract sold quantities from the total holdings while maintaining the average price based only on buys.
-- [in_progress] **Step 2: Final Bugfix Verification**
-    - Confirm the "Exchange Standard" mode now calculates correctly.
+- [x] **Step 2: Final Bugfix Verification**
+    - Confirm the "Exchange Standard" mode now calculates correctly. (Success)
+
+## Plan for Current Change: Implement Data Persistence (LocalStorage & URL State)
+
+This plan outlines the implementation of data persistence using both localStorage for automatic saving and URL query strings for sharing and permanent saving.
+
+### TODO List:
+- [x] **Step 1: Implement `localStorage` Saving/Loading**
+    - Add `saveStateToLocalStorage` and `loadStateFromLocalStorage` functions.
+    - Implement auto-saving to `localStorage` on input changes.
+    - Load state from `localStorage` on page load.
+- [x] **Step 2: Implement URL State Saving/Loading**
+    - Add a `[상태 저장/공유 링크 복사]` button.
+    - Implement logic to serialize/encode the current state into a URL query parameter (`?data=...`).
+    - Implement logic to load state from the URL query parameter on page load (prioritizing URL over `localStorage`).
+- [in_progress] **Step 3: Final Persistence Verification**
+    - Confirm that `localStorage` auto-saves and loads correctly.
+    - Confirm that the URL state can be copied, shared, and loaded correctly.
