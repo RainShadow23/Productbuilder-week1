@@ -221,6 +221,22 @@ This plan outlines the implementation of data persistence using both localStorag
     - Add a `[상태 저장/공유 링크 복사]` button.
     - Implement logic to serialize/encode the current state into a URL query parameter (`?data=...`).
     - Implement logic to load state from the URL query parameter on page load (prioritizing URL over `localStorage`).
-- [in_progress] **Step 3: Final Persistence Verification**
+- [x] **Step 3: Final Persistence Verification**
     - Confirm that `localStorage` auto-saves and loads correctly.
     - Confirm that the URL state can be copied, shared, and loaded correctly.
+
+## Plan for Current Change: Final Bug Fixes and Feature Enhancements
+
+This plan outlines the final fixes and feature enhancements based on user feedback.
+
+### TODO List:
+- [x] **Step 1: Fix 'Add Transaction' Button**
+    - Restore the missing event listener for the 'Add Transaction' button in `main.js`.
+- [x] **Step 2: Add 'Calculation Price' Input**
+    - Add a new editable input field for `calculation-price` to `water_down_calculator.html` for use in "What-if" and "Target" calculations.
+- [x] **Step 3: Update Calculation Logic**
+    - Update the "What-if" and "Target" calculation functions in `main.js` to use the new `calculation-price` input.
+- [x] **Step 4: Implement All Final Logic**
+    - Write the complete, final `main.js` including all features: calculation modes, dynamic rows, persistence, and goal-oriented calculations.
+- [in_progress] **Step 5: Final Project Verification**
+    - Confirm all features work as expected on the live site.

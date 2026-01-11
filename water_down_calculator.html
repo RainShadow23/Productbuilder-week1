@@ -47,8 +47,12 @@
 
         <hr>
 
-        <!-- Action Button -->
-        <button id="calculate-btn" class="cta-button">계산하기</button>
+        <!-- Action Buttons -->
+        <div class="form-row">
+            <button id="calculate-btn" class="cta-button">계산하기</button>
+            <button id="share-btn" style="flex: 0.5;">공유 링크 복사</button>
+            <button id="reset-btn" style="flex: 0.5;">초기화</button>
+        </div>
 
         <!-- Results Section -->
         <div id="results-container" class="results-group" style="display: none;">
@@ -78,8 +82,14 @@
                 <span id="result-return-rate"></span>
             </div>
         </div>
-
+        
         <hr>
+
+        <!-- Shared Calculation Price -->
+        <div class="price-display">
+            <label for="calculation-price">계산 기준 가격 (KRW):</label>
+            <input type="text" id="calculation-price" placeholder="현재가 또는 직접 입력">
+        </div>
 
         <!-- What-if Calculation -->
         <div class="input-group">
