@@ -70,5 +70,17 @@ This plan outlines the steps to debug the CORS issue with the Upbit API.
     - In `main.js`, change the CORS proxy to `https://proxy.cors.sh/`.
 - [x] **Step 2: Add enhanced error logging**
     - In `main.js`, add more detailed logging to the `fetchBitcoinPrice` function to inspect the response.
-- [in_progress] **Step 3: Verify Changes**
-    - Confirm if the Bitcoin price is now fetched and displayed correctly.
+- [x] **Step 3: Verify Changes**
+    - Confirm if the Bitcoin price is now fetched and displayed correctly. (Failed due to syntax error)
+
+## Plan for Current Change: Fix JavaScript Syntax Error
+
+This plan outlines the steps to fix a major syntax error in `main.js` that was preventing the script from running.
+
+### TODO List:
+- [x] **Step 1: Correct JavaScript Structure**
+    - In `main.js`, wrap the entire script in a `DOMContentLoaded` event listener.
+    - Scope page-specific variables inside their respective conditional blocks to prevent errors.
+    - Remove a stray closing `});` that was causing the syntax error.
+- [in_progress] **Step 2: Verify Fix**
+    - Confirm that both the lottery generator and the Bitcoin price fetching now work correctly on the live site.

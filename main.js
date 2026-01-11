@@ -1,24 +1,23 @@
-const numberSpans = document.querySelectorAll('.number');
-const generateBtn = document.getElementById('generate-btn');
-const historyList = document.getElementById('history-list');
-const themeToggleBtn = document.getElementById('theme-toggle');
+document.addEventListener('DOMContentLoaded', () => {
 
-// Theme switching logic
-const currentTheme = localStorage.getItem('theme');
+    const themeToggleBtn = document.getElementById('theme-toggle');
 
-if (currentTheme === 'dark') {
-    document.body.classList.add('dark');
-}
+    // Theme switching logic
+    if (themeToggleBtn) {
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme === 'dark') {
+            document.body.classList.add('dark');
+        }
 
-themeToggleBtn.addEventListener('click', () => {
-    document.body.classList.toggle('dark');
-    let theme = 'light';
-    if (document.body.classList.contains('dark')) {
-        theme = 'dark';
+        themeToggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+            let theme = 'light';
+            if (document.body.classList.contains('dark')) {
+                theme = 'dark';
+            }
+            localStorage.setItem('theme', theme);
+        });
     }
-    localStorage.setItem('theme', theme);
-});
-
 
     // Upbit API integration for Water Down Calculator
     async function fetchBitcoinPrice() {
@@ -54,48 +53,50 @@ themeToggleBtn.addEventListener('click', () => {
         }
     }
 
-    // Check current page and call relevant functions
-    if (window.location.pathname.includes('water_down_calculator.html')) {
-        fetchBitcoinPrice();
-    } else if (window.location.pathname.includes('lottery.html')) {
-        // Lotto Number Generator specific logic (already present)
-        // Ensure elements exist before adding event listeners
+    // Lotto Number Generator specific logic
+    if (window.location.pathname.includes('lottery.html')) {
+        const lottoNumbersContainer = document.querySelector('.lotto-numbers');
+        const generateBtn = document.getElementById('generate-btn');
+        const historyList = document.getElementById('history-list');
+
+        function generateLottoNumbers() {
+            const numbers = [];
+            while (numbers.length < 6) {
+                const randomNumber = Math.floor(Math.random() * 45) + 1;
+                if (!numbers.includes(randomNumber)) {
+                    numbers.push(randomNumber);
+                }
+            }
+            numbers.sort((a, b) => a - b);
+            displayNumbers(numbers);
+            addToHistory(numbers);
+        }
+
+        function displayNumbers(numbers) {
+            if (!lottoNumbersContainer) return; // Defensive check
+            lottoNumbersContainer.innerHTML = '';
+            numbers.forEach(num => {
+                const span = document.createElement('span');
+                span.className = 'number';
+                span.textContent = num;
+                lottoNumbersContainer.appendChild(span);
+            });
+        }
+
+        function addToHistory(numbers) {
+            if (!historyList) return; // Defensive check
+            const listItem = document.createElement('li');
+            listItem.textContent = numbers.join(', ');
+            historyList.prepend(listItem); // Add to the top
+        }
+
         if (generateBtn) {
             generateBtn.addEventListener('click', generateLottoNumbers);
         }
     }
 
-    function generateLottoNumbers() {
-        const numbers = [];
-        while (numbers.length < 6) {
-            const randomNumber = Math.floor(Math.random() * 45) + 1;
-            if (!numbers.includes(randomNumber)) {
-                numbers.push(randomNumber);
-            }
-        }
-        numbers.sort((a, b) => a - b);
-        displayNumbers(numbers);
-        addToHistory(numbers);
+    // Check current page and call relevant functions
+    if (window.location.pathname.includes('water_down_calculator.html')) {
+        fetchBitcoinPrice();
     }
-
-    function displayNumbers(numbers) {
-        if (!lottoNumbersContainer) return; // Defensive check
-        lottoNumbersContainer.innerHTML = '';
-        numbers.forEach(num => {
-            const span = document.createElement('span');
-            span.className = 'number';
-            span.textContent = num;
-            lottoNumbersContainer.appendChild(span);
-        });
-    }
-
-    function addToHistory(numbers) {
-        if (!historyList) return; // Defensive check
-        const listItem = document.createElement('li');
-        listItem.textContent = numbers.join(', ');
-        historyList.prepend(listItem); // Add to the top
-    }
-
-    // Initial generation on page load (optional)
-    // generateLottoNumbers();
 });
