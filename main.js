@@ -274,6 +274,7 @@ window.addEventListener('load', () => {
         targetCalculateBtn.addEventListener('click', () => {
             const targetPrice = parseFloat(targetAvgPriceInput.value) || 0;
             const calcPrice = parseFloat(calculationPriceInput.value.replace(/,/g, '')) || 0;
+            
             if (targetPrice <= 0 || calcPrice <= 0) {
                 targetResultDisplay.textContent = '유효한 목표 평단가와 계산 기준 가격을 입력하세요.';
                 return;
@@ -282,20 +283,43 @@ window.addEventListener('load', () => {
             const { totalBuyQty, totalBuyCost } = getPreCalculationState();
             const currentAvgBuyPrice = (totalBuyQty > 0) ? totalBuyCost / totalBuyQty : 0;
 
-            if (currentAvgBuyPrice > 0 && targetPrice >= currentAvgBuyPrice) {
-                 targetResultDisplay.textContent = '목표는 현재 평단가보다 낮아야 합니다.';
+            // --- Pre-calculation Validation ---
+
+            // Case 1: No current holdings.
+            if (currentAvgBuyPrice === 0) {
+                targetResultDisplay.textContent = '보유 수량이 없어 평단가를 계산할 수 없습니다. 기본 정보를 먼저 입력하세요.';
+                return;
+            }
+
+            // Case 2: Impossible to "water down" (average down).
+            // This happens if the current average price is already at or below the price of a new purchase.
+            // You can't lower your average by buying at a higher price.
+            if (currentAvgBuyPrice <= calcPrice) {
+                targetResultDisplay.textContent = `현재 평단가(${Math.round(currentAvgBuyPrice).toLocaleString()}원)가 계산 기준 가격(${calcPrice.toLocaleString()}원)보다 낮거나 같아 평단가를 더 낮출 수 없습니다.`;
+                return;
+            }
+
+            // Case 3: Target price is not logically possible.
+            // It must be between the (lower) calculation price and the (higher) current average price.
+            if (targetPrice >= currentAvgBuyPrice) {
+                 targetResultDisplay.textContent = '목표 평단가는 현재 평단가보다 낮아야 합니다.';
                  return;
             }
             if (targetPrice <= calcPrice) {
-                targetResultDisplay.textContent = '목표는 계산 기준 가격보다 높아야 합니다.';
+                targetResultDisplay.textContent = '목표 평단가는 계산 기준 가격보다 높아야 합니다.';
                 return;
             }
             
+            // --- Calculation ---
+            // This formula is correct based on the logic of weighted averages.
             const requiredQty = (totalBuyQty * (currentAvgBuyPrice - targetPrice)) / (targetPrice - calcPrice);
+
             if (requiredQty <= 0 || !isFinite(requiredQty)) {
-                targetResultDisplay.textContent = '목표 달성이 불가능합니다.';
+                targetResultDisplay.textContent = '목표 달성이 불가능합니다. 입력 값을 확인해주세요.';
                 return;
             }
+
+            // --- Result Display ---
             const requiredAmount = requiredQty * calcPrice;
             targetResultDisplay.textContent = `약 ${requiredQty.toLocaleString(undefined, { maximumFractionDigits: 8 })} BTC (${Math.round(requiredAmount).toLocaleString()} KRW) 추가 매수 필요`;
         });
