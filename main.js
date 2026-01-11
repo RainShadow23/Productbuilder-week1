@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('load', () => {
 
     const themeToggleBtn = document.getElementById('theme-toggle');
     const generateBtn = document.getElementById('generate-btn');
@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(message);
     }
 
-    log('DOM fully loaded.');
+    log('Window fully loaded.');
 
     // Theme switching logic (applies to all pages with the button)
     if (themeToggleBtn) {

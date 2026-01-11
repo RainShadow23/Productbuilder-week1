@@ -111,5 +111,15 @@ This plan outlines the steps to make the JavaScript more resilient and add a UI-
     - In `main.js`, remove URL-based page detection.
     - Use the existence of the `generate-btn` element to trigger lottery-specific code.
     - Implement a `log` function to write messages to both the console and the new debug `div`.
-- [in_progress] **Step 3: Verify Debugging System**
-    - Confirm that log messages appear in the top-left corner of the live site's lottery page.
+- [x] **Step 3: Verify Debugging System**
+    - Confirm that log messages appear in the top-left corner of the live site's lottery page. (Success, but revealed underlying issue)
+
+## Plan for Current Change: Final Fix: Resolve Environment Race Condition
+
+This plan outlines the steps to resolve a race condition between the script execution and DOM rendering in the Firebase Studio preview environment.
+
+### TODO List:
+- [x] **Step 1: Use `window.load` Event**
+    - In `main.js`, change the main event listener from `DOMContentLoaded` to `window.addEventListener('load', ...)`. This ensures all page resources are loaded before the script runs, making it more robust.
+- [in_progress] **Step 2: Final Verification**
+    - Confirm that the lottery generator and all other features work correctly in **both** the Firebase Studio preview and the live production site.
