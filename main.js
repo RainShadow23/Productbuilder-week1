@@ -67,10 +67,44 @@ window.addEventListener('load', () => {
     }
 
     // --- Water Down Calculator Logic ---
-    // (Currently no JS needed as the price is hardcoded)
-    const bitcoinPriceElement = document.getElementById('bitcoin-price');
-    if (bitcoinPriceElement && bitcoinPriceElement.textContent === '로딩중...') {
-         // This is a fallback in case the hardcoded value is removed
-         bitcoinPriceElement.textContent = '업데이트 실패';
+    async function fetchBitcoinPrice() {
+        const bitcoinPriceElement = document.getElementById('bitcoin-price');
+        if (!bitcoinPriceElement) return;
+
+        try {
+            // Use the deployed Cloudflare Worker URL
+            const response = await fetch('https://upbit-proxy.ooktone.workers.dev/v1/ticker?markets=KRW-BTC');
+            
+            if (!response.ok) {
+                // If the response is not OK, log error and throw
+                console.error('API Response not OK:', response.status, response.statusText);
+                const errorText = await response.text();
+                console.error('API Error details:', errorText);
+                throw new Error(`Failed to fetch Bitcoin price: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            if (data && data.length > 0) {
+                const price = data[0].trade_price;
+                bitcoinPriceElement.textContent = price.toLocaleString() + ' KRW';
+                console.log('Current Bitcoin Price (KRW-BTC) via Worker:', price);
+            } else {
+                bitcoinPriceElement.textContent = '데이터 없음';
+                console.log('Could not fetch Bitcoin price. Data is empty.');
+            }
+        } catch (error) {
+            console.error('Error fetching Bitcoin price via Worker:', error);
+            // Graceful handling for preview environment or other failures
+            if (window.location.hostname === 'localhost' || window.location.protocol === 'file:') { // Assuming preview runs on localhost or file protocol
+                bitcoinPriceElement.textContent = '미리보기에서는 실시간 가격을 표시할 수 없습니다.';
+            } else {
+                bitcoinPriceElement.textContent = '가격 로드 실패';
+            }
+        }
+    }
+
+    // Call the function if we are on the water_down_calculator.html page
+    if (window.location.pathname.includes('water_down_calculator.html')) {
+        fetchBitcoinPrice();
     }
 });

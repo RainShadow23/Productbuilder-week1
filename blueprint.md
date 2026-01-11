@@ -124,11 +124,21 @@ This plan outlines the steps to resolve a race condition between the script exec
 - [x] **Step 2: Final Verification**
     - Confirm that the lottery generator and all other features work correctly in **both** the Firebase Studio preview and the live production site. (Success)
 
-## Plan for Current Change: Final Cleanup
+## Plan for Current Change: Implement Cloudflare Worker for Dynamic Price Fetching
 
-This plan outlines the final cleanup of the debugging code.
+This plan outlines the implementation of a Cloudflare Worker as a proxy for the Upbit API to fetch real-time cryptocurrency prices dynamically.
 
 ### TODO List:
-- [x] **Step 1: Remove Debug Code**
-    - Remove the debug `div` from `lottery.html`.
-    - Remove the logging function and all related calls from `main.js`.
+- [x] **Step 1: Create Cloudflare Worker Script**
+    - Create a `worker.js` file with the generic proxy code for the Upbit API.
+- [x] **Step 2: User Deploys Worker**
+    - Provide instructions for the user to deploy the `worker.js` script to Cloudflare Workers and provide the deployed Worker URL.
+- [x] **Step 3: Update `main.js` for Worker Integration**
+    - Re-introduce the `fetchBitcoinPrice` function in `main.js`.
+    - Modify the `fetchBitcoinPrice` function to use the deployed Cloudflare Worker URL.
+    - Implement a `try...catch` block with graceful error handling for the preview environment.
+- [x] **Step 4: Update `water_down_calculator.html`**
+    - Change the hardcoded Bitcoin price back to "로딩중..." to allow dynamic fetching.
+- [in_progress] **Step 5: Verify Dynamic Price Fetching**
+    - Confirm that the Bitcoin price is dynamically fetched and displayed correctly on the live site.
+    - Confirm that an appropriate message ("미리보기에서는 실시간 가격을 표시할 수 없습니다.") is displayed in the Firebase Studio preview.
