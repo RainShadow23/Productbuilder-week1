@@ -1,44 +1,46 @@
-// Use the older Service Worker syntax for max compatibility
+// 최종 수정: CORS 사전 요청(OPTIONS)을 처리하는 로직 추가
 addEventListener('fetch', event => {
-  event.respondWith(handleRequest(event.request, event)) // Pass event to handle waitUntil
+  event.respondWith(handleRequest(event.request, event));
 })
 
-async function handleRequest(request, event) { // event needed for waitUntil
+async function handleRequest(request, event) {
+  // CORS 사전 요청(preflight)을 먼저 처리
+  if (request.method === 'OPTIONS') {
+    return handleOptions(request);
+  }
+
+  // GET 요청에 대해서는 캐싱 로직 수행
   const CACHE_SECONDS = 20;
   const cache = caches.default;
+  const cacheKey = new Request(request.url, request); // Use the request as the cache key
 
-  // Generate a cache key from the request URL
-  const cacheKey = request.url;
-
-  // Try to find the response in the cache
   let response = await cache.match(cacheKey);
 
   if (!response) {
-    // If not in cache, fetch from Upbit
     const url = new URL(request.url);
     const targetUrl = `https://api.upbit.com${url.pathname}${url.search}`;
-    
     const originResponse = await fetch(targetUrl);
 
-    // Create a new response object to modify headers (CORS and Cache-Control)
     response = new Response(originResponse.body, originResponse);
 
-    // Add CORS headers so the client can read the response
+    // 실제 응답에 CORS 헤더와 캐시 제어 헤더를 추가
     response.headers.set('Access-Control-Allow-Origin', '*');
     response.headers.set('Access-Control-Allow-Methods', 'GET, HEAD, POST, OPTIONS');
-    
-    // Set Cache-Control to tell Cloudflare's cache how long to store it.
-    // s-maxage is for shared caches (like Cloudflare's edge), which is what we want.
     response.headers.set('Cache-Control', `s-maxage=${CACHE_SECONDS}`);
 
-    // Cache the response. event.waitUntil ensures the Worker doesn't exit before caching is done.
-    event.waitUntil(cache.put(cacheKey, response.clone())); // response.clone() needed for caching
-  } else {
-    // If response is from cache, we can optionally add a header to indicate it
-    const newHeaders = new Headers(response.headers);
-    newHeaders.set('X-Proxy-Cache', 'HIT');
-    response = new Response(response.body, { status: response.status, statusText: response.status, headers: newHeaders });
+    // 응답을 캐시에 저장
+    event.waitUntil(cache.put(cacheKey, response.clone()));
   }
 
   return response;
+}
+
+function handleOptions(request) {
+  // 사전 요청에 대한 응답. CORS 허용 헤더를 담아 보낸다.
+  const headers = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, HEAD, POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type", // 클라이언트가 보낼 수 있는 헤더
+  };
+  return new Response(null, { headers: headers });
 }

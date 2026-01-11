@@ -238,5 +238,21 @@ This plan outlines the final fixes and feature enhancements based on user feedba
     - Update the "What-if" and "Target" calculation functions in `main.js` to use the new `calculation-price` input.
 - [x] **Step 4: Implement All Final Logic**
     - Write the complete, final `main.js` including all features: calculation modes, dynamic rows, persistence, and goal-oriented calculations.
-- [in_progress] **Step 5: Final Project Verification**
-    - Confirm all features work as expected on the live site.
+- [x] **Step 5: Final Project Verification**
+    - Confirm all features work as expected on the live site. (Failed again)
+
+## Plan for Current Change: Final Code Correction
+
+This plan outlines the definitive correction of all identified bugs and consolidates all features into a final, stable version.
+
+### TODO List:
+- [x] **Step 1: Fix `worker.js`**
+    - Implement correct handling of CORS preflight (`OPTIONS`) requests to ensure stability in all live environments.
+- [x] **Step 2: Fix `main.js`**
+    - Correct a fatal syntax error that was halting all script execution.
+    - Correct the validation logic for the "Target Price" calculation.
+    - Correct the error handling feedback for the price fetching.
+    - Ensure all features (dynamic rows, persistence, calculations) from previous steps are correctly included and functional.
+    - Re-implement a stable auto-refresh for the current price.
+- [in_progress] **Step 3: Final Project Completion & Verification**
+    - Confirm all features, including price fetching, calculations, and persistence, work correctly on both the live site and the preview environment.

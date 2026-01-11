@@ -84,6 +84,7 @@ window.addEventListener('load', () => {
 
         // --- State ---
         let calculationMode = 'exchange';
+        let priceUpdateInterval;
 
         // --- Persistence ---
         function saveState() {
@@ -103,17 +104,19 @@ window.addEventListener('load', () => {
         function loadState(state) {
             if (!state) return;
             calcModeToggle.checked = state.calcMode;
-            updateMode(); // Update label and state variable
+            updateMode();
             initialQtyInput.value = state.initialQty;
             initialAvgPriceInput.value = state.initialAvgPrice;
             transactionList.innerHTML = '';
-            state.transactions.forEach(addTransactionRow);
+            if (state.transactions) {
+                state.transactions.forEach(addTransactionRow);
+            }
         }
 
         // --- UI Functions ---
         function addTransactionRow(tx) {
             const newRow = transactionRowTemplate.content.cloneNode(true);
-            if (tx) { // If loading from state
+            if (tx) {
                 newRow.querySelector('.transaction-type').value = tx.type;
                 newRow.querySelector('.transaction-qty').value = tx.qty;
                 newRow.querySelector('.transaction-price').value = tx.price;
@@ -142,28 +145,33 @@ window.addEventListener('load', () => {
 
         // --- API Fetching ---
         async function fetchBitcoinPrice() {
-            currentPriceInput.placeholder = '업데이트 중...';
             try {
                 const workerUrl = 'https://upbit-proxy.ooktone.workers.dev/v1/ticker?markets=KRW-BTC';
                 const response = await fetch(workerUrl);
-                if (!response.ok) throw new Error('API response not OK');
+                if (!response.ok) throw new Error(`API response not OK: ${response.status}`);
                 const data = await response.json();
                 if (data && data.length > 0) {
                     const price = data[0].trade_price;
-                    currentPriceInput.value = price;
-                    calculationPriceInput.value = price; // Also update the calculation price
+                    currentPriceInput.value = price.toLocaleString();
+                    // Only update calculation price if it's empty, allowing user override
+                    if (!calculationPriceInput.value) {
+                         calculationPriceInput.value = price;
+                    }
                 } else {
                     throw new Error('API returned empty data.');
                 }
             } catch (error) {
                 console.error('Error fetching Bitcoin price:', error.message);
-                currentPriceInput.placeholder = '가격 로드 실패';
+                // Set the value, not placeholder, to show the error
+                if (!currentPriceInput.value) {
+                    currentPriceInput.value = '가격 로드 실패';
+                }
             }
         }
         
         // --- Core Calculation ---
         function calculate() {
-            let initialQty = parseFloat(initialQtyInput.value) || 0;
+             let initialQty = parseFloat(initialQtyInput.value) || 0;
             let initialCost = initialQty * (parseFloat(initialAvgPriceInput.value) || 0);
 
             const transactions = Array.from(document.querySelectorAll('.transaction-row')).map(row => ({
@@ -234,48 +242,38 @@ window.addEventListener('load', () => {
         function getPreCalculationState() {
              let totalBuyQty = parseFloat(initialQtyInput.value) || 0;
              let totalBuyCost = totalBuyQty * (parseFloat(initialAvgPriceInput.value) || 0);
-             let totalSellQty = 0;
-
              document.querySelectorAll('.transaction-row').forEach(row => {
                  const type = row.querySelector('.transaction-type').value;
                  const qty = parseFloat(row.querySelector('.transaction-qty').value) || 0;
                  const price = parseFloat(row.querySelector('.transaction-price').value) || 0;
-                 if (qty > 0 && price >= 0) {
-                      if (type === 'buy') {
-                         totalBuyQty += qty;
-                         totalBuyCost += qty * price;
-                     } else {
-                         totalSellQty += qty;
-                     }
+                 if (qty > 0 && price >= 0 && type === 'buy') {
+                    totalBuyQty += qty;
+                    totalBuyCost += qty * price;
                  }
              });
-             return { totalBuyQty, totalBuyCost, totalSellQty };
+             return { totalBuyQty, totalBuyCost };
         }
 
         whatifCalculateBtn.addEventListener('click', () => {
             const amount = parseFloat(whatifAmountInput.value) || 0;
-            const calcPrice = parseFloat(calculationPriceInput.value.replace(/,/g, '')) || parseFloat(currentPriceInput.value.replace(/,/g, '')) || 0;
+            const calcPrice = parseFloat(calculationPriceInput.value.replace(/,/g, '')) || 0;
             if (amount <= 0 || calcPrice <= 0) {
                 whatifResultDisplay.textContent = '유효한 금액과 계산 기준 가격을 입력하세요.';
                 return;
             }
 
-            const { totalBuyQty, totalBuyCost, totalSellQty } = getPreCalculationState();
-            const currentAvgBuyPrice = (totalBuyQty > 0) ? totalBuyCost / totalBuyQty : 0;
-
+            const { totalBuyQty, totalBuyCost } = getPreCalculationState();
             const additionalQty = amount / calcPrice;
             const newTotalBuyQty = totalBuyQty + additionalQty;
             const newTotalBuyCost = totalBuyCost + amount;
-            
             const newAvgPrice = (newTotalBuyQty > 0) ? newTotalBuyCost / newTotalBuyQty : 0;
-            const newFinalQty = newTotalBuyQty - totalSellQty;
-            
-            whatifResultDisplay.textContent = `예상 평단가: ${Math.round(newAvgPrice).toLocaleString()} KRW, 총 보유량: ${newFinalQty.toLocaleString(undefined, { maximumFractionDigits: 8 })} BTC`;
+
+            whatifResultDisplay.textContent = `예상 평단가: ${Math.round(newAvgPrice).toLocaleString()} KRW`;
         });
 
         targetCalculateBtn.addEventListener('click', () => {
             const targetPrice = parseFloat(targetAvgPriceInput.value) || 0;
-            const calcPrice = parseFloat(calculationPriceInput.value.replace(/,/g, '')) || parseFloat(currentPriceInput.value.replace(/,/g, '')) || 0;
+            const calcPrice = parseFloat(calculationPriceInput.value.replace(/,/g, '')) || 0;
             if (targetPrice <= 0 || calcPrice <= 0) {
                 targetResultDisplay.textContent = '유효한 목표 평단가와 계산 기준 가격을 입력하세요.';
                 return;
@@ -284,7 +282,7 @@ window.addEventListener('load', () => {
             const { totalBuyQty, totalBuyCost } = getPreCalculationState();
             const currentAvgBuyPrice = (totalBuyQty > 0) ? totalBuyCost / totalBuyQty : 0;
 
-            if (targetPrice >= currentAvgBuyPrice) {
+            if (currentAvgBuyPrice > 0 && targetPrice >= currentAvgBuyPrice) {
                  targetResultDisplay.textContent = '목표는 현재 평단가보다 낮아야 합니다.';
                  return;
             }
@@ -292,10 +290,8 @@ window.addEventListener('load', () => {
                 targetResultDisplay.textContent = '목표는 계산 기준 가격보다 높아야 합니다.';
                 return;
             }
-
-            // Formula: X = Q_buy * (P_avg_buy - P_target) / (P_target - P_calc)
+            
             const requiredQty = (totalBuyQty * (currentAvgBuyPrice - targetPrice)) / (targetPrice - calcPrice);
-
             if (requiredQty <= 0 || !isFinite(requiredQty)) {
                 targetResultDisplay.textContent = '목표 달성이 불가능합니다.';
                 return;
@@ -308,15 +304,16 @@ window.addEventListener('load', () => {
         let saveTimer;
         const debouncedSaveState = () => { clearTimeout(saveTimer); saveTimer = setTimeout(saveState, 500); };
         
-        [initialQtyInput, initialAvgPriceInput, currentPriceInput].forEach(el => el.addEventListener('input', debouncedSaveState));
+        [initialQtyInput, initialAvgPriceInput, currentPriceInput, calculationPriceInput].forEach(el => el.addEventListener('input', debouncedSaveState));
         transactionList.addEventListener('input', debouncedSaveState);
         calcModeToggle.addEventListener('change', () => { updateMode(); saveState(); });
         addTransactionBtn.addEventListener('click', () => addTransactionRow());
         calculateBtn.addEventListener('click', calculate);
 
         shareBtn.addEventListener('click', () => {
-            const state = JSON.parse(localStorage.getItem('waterDownCalcState') || '{}');
-            const encodedState = btoa(encodeURIComponent(JSON.stringify(state)));
+            saveState(); // Ensure state is fresh before copying
+            const state = localStorage.getItem('waterDownCalcState') || '{}';
+            const encodedState = btoa(encodeURIComponent(state));
             const url = `${window.location.origin}${window.location.pathname}?data=${encodedState}`;
             navigator.clipboard.writeText(url).then(() => {
                 alert('공유 링크가 클립보드에 복사되었습니다!');
@@ -328,23 +325,31 @@ window.addEventListener('load', () => {
         resetBtn.addEventListener('click', () => {
             if(confirm('정말 모든 데이터를 초기화하시겠습니까?')) {
                 localStorage.removeItem('waterDownCalcState');
-                window.location.href = window.location.pathname; // Reload without query params
+                window.location.href = window.location.pathname;
             }
         });
 
         // --- Initial Load ---
-        const urlParams = new URLSearchParams(window.location.search);
-        const encodedData = urlParams.get('data');
-        if (encodedData) {
-            try {
-                const decodedState = JSON.parse(decodeURIComponent(atob(encodedData)));
-                loadState(decodedState);
-            } catch (e) {
-                console.error('Error loading state from URL, falling back to localStorage:', e);
-                loadState(JSON.parse(localStorage.getItem('waterDownCalcState')));
+        function initialize() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedData = urlParams.get('data');
+            let stateToLoad = null;
+            if (encodedData) {
+                try {
+                    stateToLoad = JSON.parse(decodeURIComponent(atob(encodedData)));
+                } catch (e) {
+                    console.error('Error loading state from URL, falling back to localStorage:', e);
+                    stateToLoad = JSON.parse(localStorage.getItem('waterDownCalcState'));
+                }
+            } else {
+                stateToLoad = JSON.parse(localStorage.getItem('waterDownCalcState'));
             }
-        } else {
-            loadState(JSON.parse(localStorage.getItem('waterDownCalcState')));
+            loadState(stateToLoad);
+            
+            fetchBitcoinPrice(); // Fetch price on initial load
+            priceUpdateInterval = setInterval(fetchBitcoinPrice, 30000); // Auto-refresh every 30 seconds
         }
+        
+        initialize();
     }
 });
