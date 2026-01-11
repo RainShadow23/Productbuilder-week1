@@ -139,6 +139,20 @@ This plan outlines the implementation of a Cloudflare Worker as a proxy for the 
     - Implement a `try...catch` block with graceful error handling for the preview environment.
 - [x] **Step 4: Update `water_down_calculator.html`**
     - Change the hardcoded Bitcoin price back to "로딩중..." to allow dynamic fetching.
-- [in_progress] **Step 5: Verify Dynamic Price Fetching**
-    - Confirm that the Bitcoin price is dynamically fetched and displayed correctly on the live site.
-    - Confirm that an appropriate message ("미리보기에서는 실시간 가격을 표시할 수 없습니다.") is displayed in the Firebase Studio preview.
+- [x] **Step 5: Verify Dynamic Price Fetching**
+    - Confirm that the Bitcoin price is dynamically fetched and displayed correctly on the live site. (Failed)
+    - Confirm that an appropriate message is displayed in the Firebase Studio preview. (Worked, but showed real data unexpectedly)
+
+## Plan for Current Change: Final Debugging of Live Site
+
+This plan outlines adding a detailed, UI-based error logging system to the calculator page to diagnose the final issue on the live production site.
+
+### TODO List:
+- [x] **Step 1: Add Debug Element to Calculator**
+    - Add a `div` with `id="debug-log-calc"` to `water_down_calculator.html`.
+- [x] **Step 2: Add Granular Logging to `fetchBitcoinPrice`**
+    - In `main.js`, create a new `logCalc` function.
+    - Add detailed logging to every step of the `fetch` process, especially the `catch` block, to make the error visible on the UI.
+    - Make page-specific logic more robust by checking for element existence (`if (document.getElementById('bitcoin-price'))`) instead of URL paths.
+- [in_progress] **Step 3: Final Live Site Verification**
+    - Instruct the user to check the live site and report the exact contents of the new debug log.
