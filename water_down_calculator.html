@@ -5,6 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>물타기 계산기</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* --- Styles for UI Improvements --- */
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .input-wrapper input {
+            padding-right: 50px; /* Space for the unit */
+        }
+        .input-unit {
+            position: absolute;
+            right: 15px;
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        .realtime-result { /* Renamed for clarity, though not real-time anymore */
+            text-align: center; 
+            margin-top: 15px; 
+            font-size: 1.2em;
+            min-height: 40px;
+        }
+
+        .result-value {
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+
+        .dec-part {
+            font-size: 0.75em;
+            opacity: 0.8;
+        }
+
+        .pnl-rate {
+            font-weight: bold;
+            margin-left: 8px;
+        }
+        .pnl-rate.profit {
+            color: red;
+        }
+        .pnl-rate.loss {
+            color: blue;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -29,16 +74,19 @@
 
         <!-- Initial Holdings -->
         <div class="input-group">
-            <h2>기본 정보 (선택 사항)</h2>
+            <h2>기본 정보 (평단가 계산에 필요)</h2>
             <div class="form-row">
-                <input type="number" id="initial-qty" placeholder="보유 수량">
-                <input type="number" id="initial-avg-price" placeholder="보유 평단가">
+                <input type="text" id="initial-qty" class="comma-input" placeholder="보유 수량">
+                <div class="input-wrapper" style="flex:1;">
+                    <input type="text" id="initial-avg-price" class="comma-input" placeholder="보유 평단가" style="width:100%;">
+                    <span class="input-unit">KRW</span>
+                </div>
             </div>
         </div>
 
         <!-- Dynamic Transactions List -->
         <div class="input-group">
-            <h2>거래 내역</h2>
+            <h2>거래 내역 (전체 계산기용)</h2>
             <div id="transaction-list">
                 <!-- Dynamic rows will be inserted here -->
             </div>
@@ -49,7 +97,7 @@
 
         <!-- Action Buttons -->
         <div class="form-row">
-            <button id="calculate-btn" class="cta-button">계산하기</button>
+            <button id="calculate-btn" class="cta-button">전체 결과 계산하기</button>
             <button id="share-btn" style="flex: 0.5;">공유 링크 복사</button>
             <button id="reset-btn" style="flex: 0.5;">초기화</button>
         </div>
@@ -57,58 +105,49 @@
         <!-- Results Section -->
         <div id="results-container" class="results-group" style="display: none;">
             <h2>계산 결과</h2>
-            <div class="result-item">
-                <span>최종 보유 수량:</span>
-                <span id="result-total-qty"></span>
-            </div>
-            <div class="result-item">
-                <span>총 투자 금액:</span>
-                <span id="result-total-investment"></span>
-            </div>
-            <div class="result-item">
-                <span>최종 평단가:</span>
-                <span id="result-final-avg-price"></span>
-            </div>
-            <div class="result-item">
-                <span>총 평가 금액:</span>
-                <span id="result-total-evaluation"></span>
-            </div>
-            <div class="result-item">
-                <span>평가 손익:</span>
-                <span id="result-pnl"></span>
-            </div>
-            <div class="result-item">
-                <span>수익률:</span>
-                <span id="result-return-rate"></span>
-            </div>
+            <div class="result-item"><span>최종 보유 수량:</span><span id="result-total-qty"></span></div>
+            <div class="result-item"><span>총 투자 금액:</span><span id="result-total-investment"></span></div>
+            <div class="result-item"><span>최종 평단가:</span><span id="result-final-avg-price"></span></div>
+            <div class="result-item"><span>총 평가 금액:</span><span id="result-total-evaluation"></span></div>
+            <div class="result-item"><span>평가 손익:</span><span id="result-pnl"></span></div>
+            <div class="result-item"><span>수익률:</span><span id="result-return-rate"></span></div>
         </div>
         
         <hr>
 
         <!-- Shared Calculation Price -->
         <div class="price-display">
-            <label for="calculation-price">계산 기준 가격 (KRW):</label>
-            <input type="text" id="calculation-price" placeholder="현재가 또는 직접 입력">
+            <label for="calculation-price">얼마에 더 살까요? (추가 매수 희망가)</label>
+            <div class="input-wrapper" style="justify-content: center;">
+                <input type="text" id="calculation-price" class="comma-input" placeholder="현재가 또는 직접 입력" style="text-align:center; width: 220px;">
+                 <span class="input-unit">KRW</span>
+            </div>
         </div>
 
         <!-- What-if Calculation -->
         <div class="input-group">
-            <h2>추가 매수 시 평단가 계산</h2>
+            <h2>이렇게 물을 타면 내 평단가는?</h2>
             <div class="form-row">
-                <input type="number" id="whatif-amount" placeholder="추가 매수 금액 (KRW)">
+                <div class="input-wrapper" style="width:100%;">
+                    <input type="text" id="whatif-amount" class="comma-input" placeholder="추가 매수 금액" style="width:100%;">
+                    <span class="input-unit">KRW</span>
+                </div>
                 <button id="whatif-calculate-btn">결과 미리보기</button>
             </div>
-            <p id="whatif-result" style="text-align: center; margin-top: 10px; font-weight: bold;"></p>
+            <p id="whatif-result" class="realtime-result"></p>
         </div>
 
         <!-- Target Average Price Calculation -->
         <div class="input-group">
-            <h2>목표 평단가로 필요 금액 계산</h2>
+            <h2>구조대(목표 평단)가 오려면?</h2>
             <div class="form-row">
-                <input type="number" id="target-avg-price" placeholder="목표 평단가 (KRW)">
+                <div class="input-wrapper" style="width:100%;">
+                    <input type="text" id="target-avg-price" class="comma-input" placeholder="목표 평단가" style="width:100%;">
+                    <span class="input-unit">KRW</span>
+                </div>
                 <button id="target-calculate-btn">필요 금액 계산</button>
             </div>
-            <p id="target-result" style="text-align: center; margin-top: 10px; font-weight: bold;"></p>
+            <p id="target-result" class="realtime-result"></p>
         </div>
 
         <p><a href="index.html" class="home-link">홈으로 돌아가기</a></p>
@@ -121,8 +160,8 @@
                 <option value="buy" selected>추가 매수</option>
                 <option value="sell">매도</option>
             </select>
-            <input type="number" class="transaction-qty" placeholder="수량">
-            <input type="number" class="transaction-price" placeholder="가격">
+            <input type="text" class="transaction-qty comma-input" placeholder="수량">
+            <input type="text" class="transaction-price comma-input" placeholder="가격">
             <button class="remove-transaction-btn">X</button>
         </div>
     </template>

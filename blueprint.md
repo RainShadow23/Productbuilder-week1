@@ -25,55 +25,60 @@ The project consists of the following pages:
 
 This is the project's core feature, designed to help users calculate the impact of additional cryptocurrency purchases on their portfolio's average price.
 
+**Key Features (Main Calculator):**
+
+- **Real-time Price Fetching**: Fetches the current KRW-BTC price from the Upbit API, auto-refreshing every 30 seconds.
+- **Dual Calculation Modes**: "Exchange Mode" and "Wallet Mode" for different average cost calculations.
+- **Complex Transaction Handling**: Supports a dynamic list of buy/sell transactions.
+- **Data Persistence & Sharing**: Uses `localStorage` to save state and allows sharing exact calculations via a URL parameter.
+
+---
+
+### 4.2. Helper Calculators (Real-time UX Overhaul)
+
+The two "what-if" calculators at the bottom of the page have been completely refactored for a modern, real-time user experience.
+
 **Key Features:**
 
-- **Real-time Price Fetching**:
-    - Fetches the current KRW-BTC price from the Upbit API via a Cloudflare Worker proxy.
-    - The price automatically refreshes every 30 seconds, with robust error handling.
+- **Real-time, Button-Free Calculation**:
+  - All results are updated **instantly** as the user types in any of the relevant input fields.
+  - The dedicated "Calculate" buttons have been removed for a seamless, interactive experience.
 
-- **Calculation Modes**:
-    - **거래소 기준 (Exchange Mode)**: Calculates the average buy price based only on buy transactions. The final quantity is the total bought minus the total sold. This simulates how exchanges often calculate average cost.
-    - **내 지갑 기준 (Wallet Mode)**: Calculates profit/loss on each sale based on the average price at the time of the sale, providing a more detailed "wallet-aware" calculation.
+- **"이렇게 물을 타면 내 평단가는?" (What-if Average Price)**:
+  - **Profit/Loss Rate (%) Display**: When calculating the new average price, the UI now also displays the profit/loss percentage relative to the "additional purchase price".
+  - **Dynamic Color-Coding**: The P/L rate is colored **red** for profit (`+`) and **blue** for loss (`-`), adhering to Korean financial app standards.
+    - Example: `예상 평단가: 30,000 KRW (-5.2%)`
+  - **Calculation**: `pnlRate = ((purchasePrice / newAvgPrice) - 1) * 100`
 
-- **Core Calculation Results**:
-    - Displays final holdings, total investment, final average price, total evaluation value, profit and loss (PnL), and return on investment (ROI).
+- **"구조대(목표 평단)가 오려면?" (Required Amount for Target Price)**:
+  - Instantly calculates the total investment required to reach a desired average price.
 
-- **"What-if" Calculation (`추가 매수 시 평단가 계산`)**:
-    - Allows the user to input an additional purchase amount (in KRW) to see the resulting average price without affecting their main calculation.
+- **Enhanced Readability and Input Formatting**:
+  - **Decimal Styling**: All numeric results are formatted to improve readability. The integer part is large and bold, while the decimal part is smaller and lighter (`.dec-part` style).
+  - **Automatic Thousand Separators**: All numeric inputs automatically format with commas (`,`) as the user types, improving usability for large numbers.
+  - **Clear Units**: Units like "KRW" are now fixed text placed outside the input fields, preventing user input errors.
 
-- **Target Average Price Calculation (`목표 평단가로 필요 금액 계산`)**:
-    - Calculates the amount of cryptocurrency (and the required KRW investment) needed to reach a specific target average price.
-    - **Formula**: `requiredQty = (totalBuyQty * (currentAvgBuyPrice - targetPrice)) / (targetPrice - calcPrice)`
-    - **Crucial Validation Logic**: The calculation is only possible if the logical condition `calcPrice < targetPrice < currentAvgBuyPrice` can be met. The UI enforces this with clear error messages:
-        1.  **Must have holdings**: The calculation cannot run if `currentAvgBuyPrice` is zero.
-        2.  **Cannot "average down" if in profit**: If the user's `currentAvgBuyPrice` is already less than or equal to the `calcPrice` (the price of a new purchase), it's mathematically impossible to lower the average. The UI explicitly states this, showing the current and calculation prices for clarity.
-        3.  **Target must be logical**: The `targetPrice` must be lower than the `currentAvgBuyPrice` and higher than the `calcPrice`. The UI guides the user with specific messages if they fail to meet these conditions.
+---
 
-- **Data Persistence**:
-    - **LocalStorage**: The entire state of the calculator (inputs, transactions) is automatically saved to `localStorage` on any change.
-    - **URL Sharing**: A "Share Link" button encodes the entire state into a Base64 string in the URL (`?data=...`), allowing users to save, bookmark, and share their exact calculations. The app prioritizes loading from the URL over `localStorage`.
-
-### 4.2. Lotto Number Generator (`lottery.html`)
+### 4.3. Lotto Number Generator (`lottery.html`)
 
 A simple tool for generating and tracking lottery numbers.
 
-- **Features**:
-    - Generates 6 unique random numbers between 1 and 45.
-    - Maintains a history of all generated number sets for the session.
+- **Features**: Generates 6 unique random numbers between 1 and 45 and maintains a session history.
 
-### 4.3. General Style & Structure
+### 4.4. General Style & Structure
 
 - **Theme**: A dark/light mode theme toggle is available and its state is persisted in `localStorage`.
-- **Code Structure**: Page-specific logic is scoped and initialized using a `window.addEventListener('load', ...)` event to ensure all DOM elements are available, preventing race conditions in the development environment.
+- **Code Structure**: Logic is separated to ensure new features don't break existing ones. The new real-time calculator logic runs in a separate `<script>` tag and safely observes changes from the main `main.js` script (like the fetched BTC price) without direct interference.
 
 ## 5. Most Recent Change (Summary)
 
-Replaced multiple "Plan for change" sections with this consolidated summary.
-
-- **Task**: Fix a persistent logic bug in the "Target Average Price Calculation" feature of the Water Down Calculator.
-- **Problem**: Users reported that the calculation was always failing with confusing error messages, even when they had existing holdings.
+- **Task**: Overhaul the UI and functionality of the helper calculators in `water_down_calculator.html`.
+- **Problem**: The calculators were static, required button clicks, and lacked key usability features requested by the user.
 - **Resolution**:
-    - The core issue was identified: users were trying to "average down" (물타기) while their portfolio was already in a profitable state (i.e., their `currentAvgBuyPrice` was lower than the `calcPrice`). In this scenario, it is mathematically impossible to lower the average price by buying more.
-    - The JavaScript logic was updated to explicitly check for this condition (`currentAvgBuyPrice <= calcPrice`).
-    - If this condition is met, the UI now displays a clear, dynamic error message explaining why the calculation is impossible, e.g., "현재 평단가(50,000원)가 계산 기준 가격(52,000원)보다 낮거나 같아 평단가를 더 낮출 수 없습니다." (Cannot lower the average price because the current average price (50,000 KRW) is lower than or equal to the calculation price (52,000 KRW)).
-    - This fix resolves the user's confusion and provides actionable feedback.
+  - Replaced the static calculation logic with a new, real-time JavaScript module that updates results instantly on every keypress in the relevant inputs.
+  - Implemented the requested Profit/Loss percentage feature with dynamic red/blue color-coding.
+  - Added automatic thousand-separator formatting for all numeric inputs.
+  - Implemented CSS and JS logic to format result numbers with smaller decimals for better readability.
+  - Updated all section titles and input labels to be more intuitive as per the user's request.
+  - The changes were implemented in a way that is isolated from the main, more complex calculator to ensure stability.
