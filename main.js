@@ -169,83 +169,15 @@ window.addEventListener('load', () => {
             }
         }
         
-        const safeParseFloat = (str) => parseFloat(String(str).replace(/,/g, '')) || 0;
-
-        // --- UI Formatting Helper Functions ---
-        const parseFormattedNumber = (str) => parseFloat(String(str || '').replace(/,/g, '')) || 0;
-
-        const formatNumberWithCommas = (num) => {
-             if (typeof num !== 'number' && typeof num !== 'string') return '';
-            const parts = String(num).split('.');
-            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-            return parts.join('.');
-        };
-        
-        const formatCurrencyForDisplay = (num) => {
-            if (typeof num !== 'number' || !isFinite(num)) return '-';
-            const roundedNum = Math.round(num);
-            return `<span class="int-part">${formatNumberWithCommas(roundedNum)}</span>`;
-        };
-
-        const formatQuantityForDisplay = (num) => {
-            if (typeof num !== 'number' || !isFinite(num)) return '-';
-            const fixedNum = num.toFixed(8); // Handle potential floating point issues and set max precision
-            const [intPart, decPart] = fixedNum.split('.');
-            // Don't show .00000000 for integers
-            if (parseInt(decPart, 10) === 0) {
-                return `<span class="int-part">${formatNumberWithCommas(intPart)}</span>`;
-            }
-            const trimmedDecPart = decPart.replace(/0+$/, ''); // Trim trailing zeros
-            return `<span class="int-part">${formatNumberWithCommas(intPart)}</span><span class="dec-part">.${trimmedDecPart}</span>`;
-        };
-
-        // --- Input Formatting Logic ---
-        const handleCommaInput = (e) => {
-            const input = e.target;
-            if (input.value === '') { // Allow clearing the input
-                input.dataset.prevValue = '';
-                return;
-            }
-            const originalValue = input.value;
-            const numericValue = originalValue.replace(/,/g, '');
-            if (isNaN(numericValue) && numericValue !== '' && numericValue !== '.') {
-                input.value = input.dataset.prevValue || ''; // Restore previous valid value if input is invalid
-                return;
-            }
-            input.dataset.prevValue = numericValue; // Store the clean numeric value
-            const formattedValue = formatNumberWithCommas(numericValue);
-            if (input.value !== formattedValue) {
-                input.value = formattedValue;
-            }
-        };
-
-        // --- Event Listener for Comma Formatting ---
-        document.body.addEventListener('input', (e) => {
-            if (e.target.classList.contains('comma-input')) {
-                handleCommaInput(e);
-            }
-        });
-
-        // --- Auto-fill Current Price Logic ---
-        calculationPriceInput.addEventListener('input', () => {
-            if (calculationPriceInput.value === '') {
-                // If input is cleared, try to auto-fill with current price
-                const currentPrice = safeParseFloat(currentPriceInput.value);
-                if (currentPrice > 0) {
-                    calculationPriceInput.value = formatNumberWithCommas(currentPrice);
-                }
-            }
-        });
-
         // --- Core Calculation ---
         function calculate() {
-            let initialQty = safeParseFloat(initialQtyInput.value);
-            let initialCost = initialQty * safeParseFloat(initialAvgPriceInput.value);
+             let initialQty = parseFloat(initialQtyInput.value) || 0;
+            let initialCost = initialQty * (parseFloat(initialAvgPriceInput.value) || 0);
 
             const transactions = Array.from(document.querySelectorAll('.transaction-row')).map(row => ({
                 type: row.querySelector('.transaction-type').value,
-                qty: safeParseFloat(row.querySelector('.transaction-qty').value),
-                price: safeParseFloat(row.querySelector('.transaction-price').value),
+                qty: parseFloat(row.querySelector('.transaction-qty').value) || 0,
+                price: parseFloat(row.querySelector('.transaction-price').value) || 0,
             }));
 
             let finalQty = initialQty;
@@ -290,16 +222,16 @@ window.addEventListener('load', () => {
             
             finalQty = (finalQty < 0) ? 0 : finalQty;
             const finalAvgPrice = (finalQty > 0) ? finalCost / finalQty : 0;
-            const currentPrice = safeParseFloat(currentPriceInput.value);
+            const currentPrice = parseFloat(currentPriceInput.value.replace(/,/g, '')) || 0;
             const totalEvaluation = finalQty * currentPrice;
             const pnl = totalEvaluation - finalCost;
             const returnRate = (finalCost > 0) ? (pnl / finalCost) * 100 : 0;
             
-            resultSpans.totalQty.innerHTML = formatQuantityForDisplay(finalQty);
-            resultSpans.totalInvestment.innerHTML = `${formatCurrencyForDisplay(finalCost)} KRW`;
-            resultSpans.finalAvgPrice.innerHTML = `${formatCurrencyForDisplay(finalAvgPrice)} KRW`;
-            resultSpans.totalEvaluation.innerHTML = `${formatCurrencyForDisplay(totalEvaluation)} KRW`;
-            resultSpans.pnl.innerHTML = `${formatCurrencyForDisplay(pnl)} KRW`;
+            resultSpans.totalQty.textContent = finalQty.toLocaleString(undefined, { maximumFractionDigits: 8 });
+            resultSpans.totalInvestment.textContent = Math.round(finalCost).toLocaleString() + ' KRW';
+            resultSpans.finalAvgPrice.textContent = Math.round(finalAvgPrice).toLocaleString() + ' KRW';
+            resultSpans.totalEvaluation.textContent = Math.round(totalEvaluation).toLocaleString() + ' KRW';
+            resultSpans.pnl.textContent = Math.round(pnl).toLocaleString() + ' KRW';
             resultSpans.returnRate.textContent = returnRate.toFixed(2) + ' %';
             
             resultsContainer.style.display = 'block';
@@ -308,12 +240,12 @@ window.addEventListener('load', () => {
         
         // --- Helper Calculations ---
         function getPreCalculationState() {
-             let totalBuyQty = safeParseFloat(initialQtyInput.value);
-             let totalBuyCost = totalBuyQty * safeParseFloat(initialAvgPriceInput.value);
+             let totalBuyQty = parseFloat(initialQtyInput.value) || 0;
+             let totalBuyCost = totalBuyQty * (parseFloat(initialAvgPriceInput.value) || 0);
              document.querySelectorAll('.transaction-row').forEach(row => {
                  const type = row.querySelector('.transaction-type').value;
-                 const qty = safeParseFloat(row.querySelector('.transaction-qty').value);
-                 const price = safeParseFloat(row.querySelector('.transaction-price').value);
+                 const qty = parseFloat(row.querySelector('.transaction-qty').value) || 0;
+                 const price = parseFloat(row.querySelector('.transaction-price').value) || 0;
                  if (qty > 0 && price >= 0 && type === 'buy') {
                     totalBuyQty += qty;
                     totalBuyCost += qty * price;
@@ -322,179 +254,75 @@ window.addEventListener('load', () => {
              return { totalBuyQty, totalBuyCost };
         }
 
-                        if (whatifCalculateBtn) {
-
-                            whatifCalculateBtn.addEventListener('click', () => {
-
-                                const amount = safeParseFloat(whatifAmountInput.value);
-
-                                const calcPrice = safeParseFloat(calculationPriceInput.value);
-
-                                if (amount <= 0 || calcPrice <= 0) {
-
-                                    whatifResultDisplay.textContent = '유효한 금액과 계산 기준 가격을 입력하세요.';
-
-                                    return;
-
-                                }
-
-                
-
-                                const { totalBuyQty, totalBuyCost } = getPreCalculationState();
-
-                                const currentAvgBuyPrice = (totalBuyQty > 0) ? totalBuyCost / totalBuyQty : 0;
-
-                                
-
-                                if (currentAvgBuyPrice === 0) {
-
-                                    whatifResultDisplay.textContent = '먼저 보유 수량과 평단가를 입력해야 비교할 수 있습니다.';
-
-                                    return;
-
-                                }
-
-                
-
-                                const additionalQty = amount / calcPrice;
-
-                                const newTotalBuyQty = totalBuyQty + additionalQty;
-
-                                const newTotalBuyCost = totalBuyCost + amount;
-
-                                const newAvgPrice = (newTotalBuyQty > 0) ? newTotalBuyCost / newTotalBuyQty : 0;
-
-                                
-
-                                const avgPriceChangeRate = ((newAvgPrice / currentAvgBuyPrice) - 1) * 100;
-
-                                
-
-                                const rateClass = avgPriceChangeRate < 0 ? 'loss' : (avgPriceChangeRate > 0 ? 'profit' : '');
-
-                                const rateSign = avgPriceChangeRate > 0 ? '+' : '';
-
-                
-
-                                whatifResultDisplay.innerHTML = `
-
-                                    예상 평단가: <span class="result-value">${formatCurrencyForDisplay(newAvgPrice)} KRW</span>
-
-                                    <span class="pnl-rate ${rateClass}">(${rateSign}${avgPriceChangeRate.toFixed(2)}%)</span>
-
-                                `;
-
-                            });
-
-                        }
-
-        
-
-                if (targetCalculateBtn) {
-
-                    targetCalculateBtn.addEventListener('click', () => {
-
-                        const targetPrice = safeParseFloat(targetAvgPriceInput.value);
-
-                        const calcPrice = safeParseFloat(calculationPriceInput.value);
-
-                        if (targetPrice <= 0 || calcPrice <= 0) {
-
-                            targetResultDisplay.textContent = '유효한 목표 평단가와 계산 기준 가격을 입력하세요.';
-
-                            return;
-
-                        }
-
-        
-
-                        const { totalBuyQty, totalBuyCost } = getPreCalculationState();
-
-                        const currentAvgBuyPrice = (totalBuyQty > 0) ? totalBuyCost / totalBuyQty : 0;
-
-        
-
-                        // --- Pre-calculation Validation ---
-
-        
-
-                        // Case 1: No current holdings.
-
-                        if (currentAvgBuyPrice === 0) {
-
-                            targetResultDisplay.textContent = '보유 수량이 없어 평단가를 계산할 수 없습니다. 기본 정보를 먼저 입력하세요.';
-
-                            return;
-
-                        }
-
-        
-
-                        // Case 2: Impossible to "water down" (average down).
-
-                        // This happens if the current average price is already at or below the price of a new purchase.
-
-                        // You can't lower your average by buying at a higher price.
-
-                        if (currentAvgBuyPrice <= calcPrice) {
-
-                            targetResultDisplay.textContent = `현재 평단가(${Math.round(currentAvgBuyPrice).toLocaleString()}원)가 계산 기준 가격(${calcPrice.toLocaleString()}원)보다 낮거나 같아 평단가를 더 낮출 수 없습니다.`;
-
-                            return;
-
-                        }
-
-        
-
-                        // Case 3: Target price is not logically possible.
-
-                        // It must be between the (lower) calculation price and the (higher) current average price.
-
-                        if (targetPrice >= currentAvgBuyPrice) {
-
-                            targetResultDisplay.textContent = '목표 평단가는 현재 평단가보다 낮아야 합니다.';
-
-                            return;
-
-                        }
-
-                        if (targetPrice <= calcPrice) {
-
-                            targetResultDisplay.textContent = '목표 평단가는 계산 기준 가격보다 높아야 합니다.';
-
-                            return;
-
-                        }
-
-        
-
-                        // --- Calculation ---
-
-                        // This formula is correct based on the logic of weighted averages.
-
-                        const requiredQty = (totalBuyQty * (currentAvgBuyPrice - targetPrice)) / (targetPrice - calcPrice);
-
-        
-
-                        if (requiredQty <= 0 || !isFinite(requiredQty)) {
-
-                            targetResultDisplay.textContent = '목표 달성이 불가능합니다. 입력 값을 확인해주세요.';
-
-                            return;
-
-                        }
-
-        
-
-                        // --- Result Display ---
-
-                                    const requiredAmount = requiredQty * calcPrice;
-
-                                    targetResultDisplay.innerHTML = `약 <span class="result-value">${formatCurrencyForDisplay(requiredAmount)} KRW</span> (<span class="result-value">${formatQuantityForDisplay(requiredQty)}</span> BTC) 추가 매수 필요`;
-
-                    });
-
-                }
+        whatifCalculateBtn.addEventListener('click', () => {
+            const amount = parseFloat(whatifAmountInput.value) || 0;
+            const calcPrice = parseFloat(calculationPriceInput.value.replace(/,/g, '')) || 0;
+            if (amount <= 0 || calcPrice <= 0) {
+                whatifResultDisplay.textContent = '유효한 금액과 계산 기준 가격을 입력하세요.';
+                return;
+            }
+
+            const { totalBuyQty, totalBuyCost } = getPreCalculationState();
+            const additionalQty = amount / calcPrice;
+            const newTotalBuyQty = totalBuyQty + additionalQty;
+            const newTotalBuyCost = totalBuyCost + amount;
+            const newAvgPrice = (newTotalBuyQty > 0) ? newTotalBuyCost / newTotalBuyQty : 0;
+
+            whatifResultDisplay.textContent = `예상 평단가: ${Math.round(newAvgPrice).toLocaleString()} KRW`;
+        });
+
+        targetCalculateBtn.addEventListener('click', () => {
+            const targetPrice = parseFloat(targetAvgPriceInput.value) || 0;
+            const calcPrice = parseFloat(calculationPriceInput.value.replace(/,/g, '')) || 0;
+            
+            if (targetPrice <= 0 || calcPrice <= 0) {
+                targetResultDisplay.textContent = '유효한 목표 평단가와 계산 기준 가격을 입력하세요.';
+                return;
+            }
+
+            const { totalBuyQty, totalBuyCost } = getPreCalculationState();
+            const currentAvgBuyPrice = (totalBuyQty > 0) ? totalBuyCost / totalBuyQty : 0;
+
+            // --- Pre-calculation Validation ---
+
+            // Case 1: No current holdings.
+            if (currentAvgBuyPrice === 0) {
+                targetResultDisplay.textContent = '보유 수량이 없어 평단가를 계산할 수 없습니다. 기본 정보를 먼저 입력하세요.';
+                return;
+            }
+
+            // Case 2: Impossible to "water down" (average down).
+            // This happens if the current average price is already at or below the price of a new purchase.
+            // You can't lower your average by buying at a higher price.
+            if (currentAvgBuyPrice <= calcPrice) {
+                targetResultDisplay.textContent = `현재 평단가(${Math.round(currentAvgBuyPrice).toLocaleString()}원)가 계산 기준 가격(${calcPrice.toLocaleString()}원)보다 낮거나 같아 평단가를 더 낮출 수 없습니다.`;
+                return;
+            }
+
+            // Case 3: Target price is not logically possible.
+            // It must be between the (lower) calculation price and the (higher) current average price.
+            if (targetPrice >= currentAvgBuyPrice) {
+                 targetResultDisplay.textContent = '목표 평단가는 현재 평단가보다 낮아야 합니다.';
+                 return;
+            }
+            if (targetPrice <= calcPrice) {
+                targetResultDisplay.textContent = '목표 평단가는 계산 기준 가격보다 높아야 합니다.';
+                return;
+            }
+            
+            // --- Calculation ---
+            // This formula is correct based on the logic of weighted averages.
+            const requiredQty = (totalBuyQty * (currentAvgBuyPrice - targetPrice)) / (targetPrice - calcPrice);
+
+            if (requiredQty <= 0 || !isFinite(requiredQty)) {
+                targetResultDisplay.textContent = '목표 달성이 불가능합니다. 입력 값을 확인해주세요.';
+                return;
+            }
+
+            // --- Result Display ---
+            const requiredAmount = requiredQty * calcPrice;
+            targetResultDisplay.textContent = `약 ${requiredQty.toLocaleString(undefined, { maximumFractionDigits: 8 })} BTC (${Math.round(requiredAmount).toLocaleString()} KRW) 추가 매수 필요`;
+        });
 
         // --- Event Listeners ---
         let saveTimer;
