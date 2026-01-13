@@ -98,12 +98,11 @@ A simple tool for generating and tracking lottery numbers.
      - 계산 기준 가격 (얼마에 더 살까요)
      - What-if 추가 매수 금액
      - 목표 평단가 입력값
-  6. **스마트 기본값 설정**:
-     - 저장된 값이 있으면 복원
-     - 저장된 값이 없으면 계산 기준 가격은 현재가로 자동 설정
-     - 코인별로 독립적인 계산 입력값 관리
+  6. **UI 개선**:
+  - **물타기 시뮬레이션 시각화**: 예상 평단가와 현재 평단가를 비교하는 막대 그래프 추가.
+  - **확대(Zoomed) 모드**: 미세한 변화(1~2%)도 직관적으로 인식할 수 있도록 최소/초대 가격 범위를 동적으로 조절하는 그래프 로직 적용.
 
-- **Developer Context**: 사용자가 물타기 계산 시 입력한 값들을 코인별로 저장하여, 코인을 전환했다가 돌아와도 이전 계산 상태를 그대로 유지할 수 있습니다. 목표 평단가 계산도 자동으로 이루어져 What-if 계산과 일관된 UX를 제공합니다.
+- **Developer Context**: 사용자가 물타기 계산 시 입력한 값들을 코인별로 저장하여, 코인을 전환했다가 돌아와도 이전 계산 상태를 그대로 유지할 수 있습니다. 목표 평단가 계산도 자동으로 이루어져 What-if 계산과 일관된 UX를 제공합니다. 또한 유닛 테스트를 통해 리팩토링의 안전성을 확보했습니다.
 
 ---
 
@@ -138,4 +137,31 @@ A simple tool for generating and tracking lottery numbers.
 - 데이터 버전 관리 (v1) 및 다중 코인 구조 (Portfolios)
 - 하위 호환성 지원 (자동 마이그레이션)
 - 백업/복원 UI 및 기능 (Blob API, FileReader API)
+- 하위 호환성 지원 (자동 마이그레이션)
+- 백업/복원 UI 및 기능 (Blob API, FileReader API)
 - 별도 브라우저 환경에서 모든 기능 정상 작동 확인
+
+## 6. Phase 2: Stock Calculator (Completed)
+
+**Objective**: successfully implemented a specialized "Water Down Calculator" for the Korean Stock Market (KOSPI/KOSDAQ) as a separate page (`stock.html`).
+
+**Implementation Strategy (Executed)**:
+
+1. **Hybrid UX**: Implemented a flow where users search stocks internally but verify prices via a direct link to Naver Finance, ensuring reliability without external API dependencies.
+2. **Embedded Data**: Integrated `stock-data.js` with top Korean stocks for instant search and auto-complete functionality.
+3. **Visual Distinction**: Applied `stock-theme` (Red/Blue colors relevant to Korean market: Red=Profit) and distinct UI elements.
+4. **Isolated State**: Created a separate persistence layer (`stockCalcState`) to prevent data conflicts with the Coin Calculator.
+
+**Key Deliverables**:
+
+- **Stock Calculator Page (`stock.html`)**: Fully functional calculator tailored for stocks.
+- **Stock Search Engine**: Instant keyboard-navigable search dropdown powered by local data.
+- **Auto-Calculations**: Same robust logic as the coin calculator, but with manual price inputs.
+- **Keyboard Optimization**: Both calculators now support arrow key navigation in the search dropdown for better UX.
+- **Smart Logic**: `main.js` intelligently detects "Stock Mode" to disable crypto price fetching and switch storage keys.
+
+## 7. Future Roadmap
+
+- **Tax & Fee Calculation**: Add options to include standard transaction fees (0.05% ~ 0.23%) in the PnL calculation.
+- **Expanded Stock List**: Import a more comprehensive list of KOSPI/KOSDAQ stocks.
+- **PWA Features**: Add manifest and service worker for offline installation capability.

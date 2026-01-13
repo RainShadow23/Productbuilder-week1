@@ -351,6 +351,67 @@
     // ============================================================
 
     /**
+     * 키보드 네비게이션
+     */
+    let highlightedIndex = -1;
+
+    coinSearchInput.addEventListener('keydown', (e) => {
+        const sections = coinDropdown.querySelectorAll('.coin-dropdown-section');
+        // Only consider items in currently visible sections
+        let visibleItems = [];
+        sections.forEach(section => {
+            if (section.style.display !== 'none') {
+                // The second div in section contains the items
+                // Check coin-selector.js render logic: 
+                // renderCustomCoins: customContainer = customSection.querySelectorAll('div')[1]
+                // This structure seems to rely on generic divs. Safer to querySelectorAll('.coin-item') within visible sections.
+                const items = section.querySelectorAll('.coin-item');
+                visibleItems = visibleItems.concat(Array.from(items));
+            }
+        });
+
+        // Add "Add Custom Coin" option if visible
+        if (customCoinOption.style.display !== 'none' && coinSearchInput.value.length >= 2) {
+            visibleItems.push(customCoinOption);
+        }
+
+        if (visibleItems.length === 0 || coinDropdown.style.display === 'none') {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // Prevent form submission if any
+            }
+            return;
+        }
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            highlightedIndex++;
+            if (highlightedIndex >= visibleItems.length) highlightedIndex = 0;
+            updateHighlight(visibleItems);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            highlightedIndex--;
+            if (highlightedIndex < 0) highlightedIndex = visibleItems.length - 1;
+            updateHighlight(visibleItems);
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (highlightedIndex >= 0 && highlightedIndex < visibleItems.length) {
+                visibleItems[highlightedIndex].click();
+            }
+        }
+    });
+
+    function updateHighlight(items) {
+        items.forEach((item, index) => {
+            if (index === highlightedIndex) {
+                item.classList.add('highlighted');
+                item.scrollIntoView({ block: 'nearest' });
+            } else {
+                item.classList.remove('highlighted');
+            }
+        });
+    }
+
+    /**
      * 검색 입력 이벤트
      */
     coinSearchInput.addEventListener('focus', () => {
@@ -361,6 +422,7 @@
     });
 
     coinSearchInput.addEventListener('input', (e) => {
+        highlightedIndex = -1; // Reset highlight
         const query = e.target.value.trim();
         renderSearchResults(query);
         coinDropdown.style.display = 'block';

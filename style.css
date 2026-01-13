@@ -661,3 +661,9 @@ body.dark .visual-comparison-container {
 body.dark .visual-track {
     background-color: rgba(255, 255, 255, 0.1);
 }
+
+/* Highlight style for keyboard navigation in dropdowns */
+.coin-item.highlighted {
+    background-color: rgba(0, 123, 255, 0.2) !important;
+    border-left: 3px solid var(--button-bg);
+}

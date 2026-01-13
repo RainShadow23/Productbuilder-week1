@@ -119,9 +119,14 @@ if (document.getElementById('calculate-btn')) {
     let calculationMode = 'exchange';
     let priceUpdateInterval;
 
+    // Detect Mode
+    const isStockMode = document.body.classList.contains('stock-theme');
+    const STORAGE_KEY = isStockMode ? 'stockCalcState' : 'waterDownCalcState';
+
     // 전역 변수로 노출 (coin-selector.js에서 접근 가능)
-    window.currentCoin = 'BTC'; // 현재 선택된 코인
-    let currentCoin = window.currentCoin; // 로컬 참조
+    // 주식 모드일 경우 삼성전자(005930), 코인 모드일 경우 BTC 기본값
+    window.currentCoin = isStockMode ? '005930' : 'BTC';
+    let currentCoin = window.currentCoin;
 
     let allCoins = []; // Upbit API에서 가져온 전체 코인 목록
     let customCoins = JSON.parse(localStorage.getItem('customCoins')) || []; // 사용자 추가 코인
@@ -134,7 +139,7 @@ if (document.getElementById('calculate-btn')) {
      */
     function saveState() {
         // 기존에 저장된 전체 상태 로드
-        let fullState = JSON.parse(localStorage.getItem('waterDownCalcState')) || {
+        let fullState = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
             version: CURRENT_DATA_VERSION,
             portfolios: {}
         };
@@ -159,7 +164,7 @@ if (document.getElementById('calculate-btn')) {
             targetAvgPrice: targetAvgPriceInput.value
         };
 
-        localStorage.setItem('waterDownCalcState', JSON.stringify(fullState));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(fullState));
     }
 
     /**
@@ -174,20 +179,27 @@ if (document.getElementById('calculate-btn')) {
         if (!stateToLoad.version) {
             console.log('구버전 데이터를 감지했습니다. 마이그레이션을 시작합니다...');
             const oldData = stateToLoad;
+            // 주식 모드는 구버전이 없으므로 BTC 로직만 유지
+            const defaultCoin = isStockMode ? '005930' : 'BTC';
+
             stateToLoad = {
                 version: CURRENT_DATA_VERSION,
-                activeCoin: 'BTC',
-                portfolios: {
-                    'BTC': {
-                        calcMode: oldData.calcMode || false,
-                        initialQty: oldData.initialQty || '',
-                        initialAvgPrice: oldData.initialAvgPrice || '',
-                        transactions: oldData.transactions || []
-                    }
-                }
+                activeCoin: defaultCoin,
+                portfolios: {}
             };
+
+            // 코인 모드일 때만 구버전 데이터 마이그레이션
+            if (!isStockMode) {
+                stateToLoad.portfolios['BTC'] = {
+                    calcMode: oldData.calcMode || false,
+                    initialQty: oldData.initialQty || '',
+                    initialAvgPrice: oldData.initialAvgPrice || '',
+                    transactions: oldData.transactions || []
+                };
+            }
+
             // 변환된 데이터 즉시 저장
-            localStorage.setItem('waterDownCalcState', JSON.stringify(stateToLoad));
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(stateToLoad));
         }
 
         // 활성 코인 설정
@@ -199,6 +211,7 @@ if (document.getElementById('calculate-btn')) {
         const portfolio = stateToLoad.portfolios && stateToLoad.portfolios[window.currentCoin];
 
         if (!portfolio) return;
+
 
         calcModeToggle.checked = portfolio.calcMode;
         updateMode();
@@ -213,9 +226,12 @@ if (document.getElementById('calculate-btn')) {
     /**
      * 특정 코인의 저장된 데이터를 불러옵니다.
      */
+    /**
+     * 특정 코인의 저장된 데이터를 불러옵니다.
+     */
     function loadCoinData(coinSymbol) {
         // localStorage에서 전체 상태 가져오기
-        const fullState = JSON.parse(localStorage.getItem('waterDownCalcState')) || {
+        const fullState = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
             version: CURRENT_DATA_VERSION,
             portfolios: {}
         };
@@ -271,8 +287,8 @@ if (document.getElementById('calculate-btn')) {
         if (!portfolio) {
             whatifAmountInput.value = '';
             targetAvgPriceInput.value = '';
-            // 계산 기준 가격은 현재가로 설정
-            if (!calculationPriceInput.value) {
+            // 계산 기준 가격은 현재가로 설정 (코인 모드일 경우에만)
+            if (!isStockMode && !calculationPriceInput.value) {
                 const currentPrice = safeParseFloat(currentPriceInput.value);
                 if (currentPrice > 0) {
                     calculationPriceInput.value = formatNumberWithCommas(currentPrice);
@@ -280,6 +296,7 @@ if (document.getElementById('calculate-btn')) {
             }
         }
     }
+
 
     // 전역 함수로 노출 (coin-selector.js에서 사용)
     window.saveState = saveState;
@@ -317,7 +334,8 @@ if (document.getElementById('calculate-btn')) {
 
     // --- API Fetching ---
     async function fetchCurrentCoinPrice() {
-        // 커스텀 코인인 경우 자동 가격 가져오기 안함
+        // 주식 모드이거나 커스텀 코인인 경우 자동 가격 가져오기 안함
+        if (isStockMode) return;
         if (window.coinSelector && window.coinSelector.getCurrentCoin()?.isCustom) {
             return;
         }
@@ -638,7 +656,7 @@ if (document.getElementById('calculate-btn')) {
     // ============================================================
 
     function exportData() {
-        const data = localStorage.getItem('waterDownCalcState');
+        const data = localStorage.getItem(STORAGE_KEY);
         if (!data) {
             alert('저장된 데이터가 없습니다.');
             return;
@@ -647,8 +665,9 @@ if (document.getElementById('calculate-btn')) {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         const date = new Date().toISOString().split('T')[0];
+        const typeName = isStockMode ? 'stock' : 'coin';
         a.href = url;
-        a.download = `water-down-backup-${date}.json`;
+        a.download = `water-down-${typeName}-backup-${date}.json`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -665,7 +684,7 @@ if (document.getElementById('calculate-btn')) {
                     throw new Error('유효한 데이터 형식이 아닙니다.');
                 }
                 if (confirm('현재 모든 데이터가 백업 파일의 데이터로 대체됩니다. 진행하시겠습니까?')) {
-                    localStorage.setItem('waterDownCalcState', content);
+                    localStorage.setItem(STORAGE_KEY, content);
                     alert('데이터가 성공적으로 복원되었습니다.');
                     location.reload();
                 }
@@ -694,7 +713,7 @@ if (document.getElementById('calculate-btn')) {
 
     shareBtn.addEventListener('click', () => {
         saveState();
-        const state = localStorage.getItem('waterDownCalcState') || '{}';
+        const state = localStorage.getItem(STORAGE_KEY) || '{}';
         const encodedState = btoa(encodeURIComponent(state));
         let origin = window.location.origin;
         if (origin === 'null' || !origin) {
@@ -713,7 +732,7 @@ if (document.getElementById('calculate-btn')) {
 
     resetBtn.addEventListener('click', () => {
         if (confirm('정말 모든 데이터를 초기화하시겠습니까?')) {
-            localStorage.removeItem('waterDownCalcState');
+            localStorage.removeItem(STORAGE_KEY);
             window.location.href = window.location.pathname;
         }
     });
@@ -728,10 +747,10 @@ if (document.getElementById('calculate-btn')) {
                 stateToLoad = JSON.parse(decodeURIComponent(atob(encodedData)));
             } catch (e) {
                 console.error('Error loading state from URL, falling back to localStorage:', e);
-                stateToLoad = JSON.parse(localStorage.getItem('waterDownCalcState'));
+                stateToLoad = JSON.parse(localStorage.getItem(STORAGE_KEY));
             }
         } else {
-            stateToLoad = JSON.parse(localStorage.getItem('waterDownCalcState'));
+            stateToLoad = JSON.parse(localStorage.getItem(STORAGE_KEY));
         }
         loadState(stateToLoad);
 
