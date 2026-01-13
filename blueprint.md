@@ -16,6 +16,9 @@ The project consists of the following pages:
 ## 3. Core Technologies
 
 - **Frontend**: HTML5, CSS3, Modern JavaScript (ES6+).
+- **Frontend**: HTML5, CSS3, Modern JavaScript (ES6+ Modules).
+- **Testing**: Jest (Unit Testing for calculation logic).
+- **Package Management**: npm.
 - **API Proxy**: A Cloudflare Worker (`worker.js`) is used to bypass CORS issues when fetching data from the public Upbit API.
 - **Development Environment**: Firebase Studio.
 
@@ -74,16 +77,28 @@ A simple tool for generating and tracking lottery numbers.
 ## 5. Most Recent Change (Summary)
 
 - **Task**: 목표 평단가 자동 계산 및 계산 입력값 저장 기능 추가
+- **Task**: 코드 리팩토링 및 유닛 테스트 도입 (Jest)
 - **Changes Applied**:
-  1. **목표 평단가 자동 계산**:
+  1. **로직 분리 (Refactoring)**:
+     - 복잡한 계산 로직을 `main.js`에서 분리하여 순수 함수 형태의 `calculation-logic.js` 모듈로 이전했습니다.
+     - `main.js`는 이제 UI 이벤트 처리와 DOM 조작에만 집중합니다.
+     - 모든 스크립트 태그를 `type="module"`로 변경하여 최신 모듈 시스템을 적용했습니다.
+  2. **유닛 테스트 구축 (Unit Testing)**:
+     - `Generic JavaScript Testing Framework`인 **Jest**를 도입했습니다.
+     - `calculation-logic.test.js` 파일을 생성하여 핵심 계산 로직(물타기, 목표 평단가 등)에 대한 자동화 테스트 케이스 7개를 작성했습니다.
+     - 터미널에서 `npm test` 명령어로 언제든지 계산 정확성을 검증할 수 있습니다.
+  3. **프로젝트 현대화**:
+     - `package.json` 도입으로 의존성 관리 시작.
+     - ES Modules 구조로 전환.
+  4. **목표 평단가 자동 계산**:
      - What-if 계산과 동일한 UX 패턴 적용 (디바운싱 500ms)
      - 입력 시 자동 계산, 버튼 클릭 시 즉시 계산
      - 일관된 사용자 경험 제공
-  2. **계산 관련 입력값 저장**:
+  5. **계산 관련 입력값 저장**:
      - 계산 기준 가격 (얼마에 더 살까요)
      - What-if 추가 매수 금액
      - 목표 평단가 입력값
-  3. **스마트 기본값 설정**:
+  6. **스마트 기본값 설정**:
      - 저장된 값이 있으면 복원
      - 저장된 값이 없으면 계산 기준 가격은 현재가로 자동 설정
      - 코인별로 독립적인 계산 입력값 관리

@@ -226,6 +226,8 @@
         if (currentSelectedCoin && typeof window.saveState === 'function') {
             window.saveState();
             console.log(`${currentSelectedCoin.symbol} 코인의 데이터를 저장했습니다.`);
+        } else if (currentSelectedCoin) {
+            console.warn('saveState function not available yet.');
         }
 
         currentSelectedCoin = coin;
@@ -288,6 +290,13 @@
         if (typeof window.loadCoinData === 'function') {
             window.loadCoinData(coin.symbol);
             console.log(`${coin.symbol} 코인의 데이터를 불러왔습니다.`);
+        } else {
+            console.warn('loadCoinData function not available yet. Retrying in 500ms...');
+            setTimeout(() => {
+                if (typeof window.loadCoinData === 'function' && window.currentCoin === coin.symbol) {
+                    window.loadCoinData(coin.symbol);
+                }
+            }, 500);
         }
 
         // 상태 저장 (main.js의 saveState 호출)

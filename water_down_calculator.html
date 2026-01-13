@@ -199,6 +199,31 @@
                 <button id="whatif-calculate-btn">결과 미리보기</button>
             </div>
             <p id="whatif-result" class="realtime-result"></p>
+
+            <!-- Visual Comparison Bars -->
+            <div id="whatif-visual-container" class="visual-comparison-container">
+                <!-- Current Average Bar -->
+                <div class="visual-bar-group">
+                    <div class="visual-label">
+                        <span>현재 평단가</span>
+                        <span id="visual-current-price">0</span>
+                    </div>
+                    <div class="visual-track">
+                        <div id="bar-current" class="visual-bar bar-current"></div>
+                    </div>
+                </div>
+
+                <!-- New Average Bar -->
+                <div class="visual-bar-group">
+                    <div class="visual-label">
+                        <span>예상 평단가</span>
+                        <span id="visual-new-price">0</span>
+                    </div>
+                    <div class="visual-track">
+                        <div id="bar-new" class="visual-bar bar-new"></div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Target Average Price Calculation -->
@@ -232,7 +257,7 @@
     </template>
 
     <script src="coin-selector.js"></script>
-    <script src="main.js"></script>
+    <script type="module" src="main.js"></script>
 </body>
 
 </html>
