@@ -79,6 +79,7 @@ window.currentCoin = isStockMode ? '005930' : 'BTC';
 let allCoins = [];
 let customCoins = JSON.parse(localStorage.getItem('customCoins')) || [];
 const CURRENT_DATA_VERSION = 1;
+let isDataLoaded = false; // Guard against saving partial initialization state
 
 
 // ============================================================
@@ -162,6 +163,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize Data
     initialize();
+
+    // Signal that Calculator is ready for Selectors
+    window.dispatchEvent(new Event('CalculatorReady'));
+    window.isCalculatorReady = true;
 });
 
 // ============================================================
@@ -185,6 +190,11 @@ function initialize() {
         stateToLoad = JSON.parse(localStorage.getItem(STORAGE_KEY));
     }
 
+    // Restore last active coin if available
+    if (stateToLoad && stateToLoad.activeCoin) {
+        window.currentCoin = stateToLoad.activeCoin;
+    }
+
     loadState(stateToLoad);
     fetchCurrentCoinPrice();
     priceUpdateInterval = setInterval(fetchCurrentCoinPrice, APP_CONFIG.PRICE_UPDATE_INTERVAL);
@@ -192,6 +202,14 @@ function initialize() {
 
 window.loadCoinData = function (coinSymbol) {
     if (!coinSymbol) return;
+
+    // Check if we were already loaded (switching coins)
+    // If so, we might want to ensure the PREVIOUS coin was saved? 
+    // (Handled by selector usually, but good to note)
+
+    // Set guard to false while loading new data
+    isDataLoaded = false;
+
     window.currentCoin = coinSymbol;
 
     // Update badge if needed (coin mode)
@@ -213,6 +231,10 @@ window.loadCoinData = function (coinSymbol) {
 
         if (initialQtyInput) initialQtyInput.value = portfolio.initialQty || '';
         if (initialAvgPriceInput) initialAvgPriceInput.value = portfolio.initialAvgPrice || '';
+        if (calculationPriceInput && portfolio.calculationPrice) calculationPriceInput.value = portfolio.calculationPrice;
+        if (whatifAmountInput && portfolio.whatifAmount) whatifAmountInput.value = portfolio.whatifAmount;
+        if (initialAvgPriceInput) initialAvgPriceInput.value = portfolio.initialAvgPrice || '';
+        if (currentPriceInput && portfolio.currentPrice) currentPriceInput.value = portfolio.currentPrice; // Restore Current Price
         if (calculationPriceInput && portfolio.calculationPrice) calculationPriceInput.value = portfolio.calculationPrice;
         if (whatifAmountInput && portfolio.whatifAmount) whatifAmountInput.value = portfolio.whatifAmount;
         if (targetAvgPriceInput && portfolio.targetAvgPrice) targetAvgPriceInput.value = portfolio.targetAvgPrice;
@@ -247,11 +269,18 @@ window.loadCoinData = function (coinSymbol) {
     fetchCurrentCoinPrice();
     if (priceUpdateInterval) clearInterval(priceUpdateInterval);
     priceUpdateInterval = setInterval(fetchCurrentCoinPrice, APP_CONFIG.PRICE_UPDATE_INTERVAL);
+
+    // Data is fully loaded into inputs, it is now safe to save
+    isDataLoaded = true;
 };
 
 window.saveState = saveState;
 
 function saveState() {
+    // Critical Safety: Do not save if data hasn't been fully loaded yet.
+    // This prevents overwriting persistent storage with empty initialization values.
+    if (!isDataLoaded) return;
+
     let fullState = JSON.parse(localStorage.getItem(STORAGE_KEY)) || { version: CURRENT_DATA_VERSION, portfolios: {} };
     fullState.version = CURRENT_DATA_VERSION;
     fullState.lastUpdated = new Date().toISOString();
@@ -261,6 +290,11 @@ function saveState() {
         calcMode: calcModeCheckbox ? calcModeCheckbox.checked : false,
         initialQty: initialQtyInput ? initialQtyInput.value : '',
         initialAvgPrice: initialAvgPriceInput ? initialAvgPriceInput.value : '',
+        transactions: [],
+        calculationPrice: calculationPriceInput ? calculationPriceInput.value : '',
+        whatifAmount: whatifAmountInput ? whatifAmountInput.value : '',
+        initialAvgPrice: initialAvgPriceInput ? initialAvgPriceInput.value : '',
+        currentPrice: currentPriceInput ? currentPriceInput.value : '', // Save Current Price
         transactions: [],
         calculationPrice: calculationPriceInput ? calculationPriceInput.value : '',
         whatifAmount: whatifAmountInput ? whatifAmountInput.value : '',
@@ -448,7 +482,21 @@ function getPreCalculationState() {
 // Utils
 const formatNumberWithCommas = (num) => String(num).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 const formatCurrencyForDisplay = (num) => formatNumberWithCommas(Math.round(num));
-const formatQuantityForDisplay = (num) => num.toFixed(8).replace(/\.?0+$/, '');
+const formatQuantityForDisplay = (num) => {
+    // 1.5000 0000 format
+    if (!num) return '0';
+    let str = num.toFixed(8).replace(/\.?0+$/, ''); // Remove trailing zeros
+
+    const parts = str.split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Integer part commas
+
+    if (parts.length > 1) {
+        // Decimal part: space every 4 digits
+        parts[1] = parts[1].replace(/(.{4})/g, '$1 ').trim();
+    }
+
+    return parts.join('.');
+};
 const debounce = (func, delay) => {
     let timer;
     return (...args) => { clearTimeout(timer); timer = setTimeout(() => func(...args), delay); };
@@ -456,15 +504,112 @@ const debounce = (func, delay) => {
 let saveTimer;
 const debouncedSaveState = () => { clearTimeout(saveTimer); saveTimer = setTimeout(saveState, APP_CONFIG.DEBOUNCE_DELAY); };
 const handleCommaInput = (e) => {
-    const val = e.target.value.replace(/,/g, '');
-    if (!isNaN(val)) e.target.value = formatNumberWithCommas(val);
+    // Save cursor position
+    const input = e.target;
+    const cursorPosition = input.selectionStart;
+    const originalLength = input.value.length;
+
+    let val = input.value.replace(/,/g, '');
+
+    // Check if it's a decimal number
+    if (val.includes('.')) {
+        const parts = val.split('.');
+        // Ensure only one dot
+        if (parts.length > 2) {
+            val = parts[0] + '.' + parts.slice(1).join('');
+        }
+
+        // Format integer part
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+        // Decimal part: NO commas, allow spaces if user types them? 
+        // For input fields, standard behavior is usually just numbers. 
+        // The 4-digit spacing is primarily for DISPLAY (results). 
+        // For Input, let's keep it simple: no commas in decimal part.
+
+        input.value = parts[0] + '.' + parts[1];
+    } else {
+        if (!isNaN(val) && val !== '') {
+            input.value = formatNumberWithCommas(val);
+        }
+    }
+
+    // Restore cursor (approximate)
+    const newLength = input.value.length;
+    let newCursorPosition = cursorPosition + (newLength - originalLength);
+    if (newCursorPosition < 0) newCursorPosition = 0;
+    input.setSelectionRange(newCursorPosition, newCursorPosition);
 };
 
 // Logic placeholders for handlers not implemented in this cleanup
-function handleShare() { saveState(); alert('공유 기능 준비중'); }
-function handleReset() { if (confirm('초기화하시겠습니까?')) { localStorage.removeItem(STORAGE_KEY); location.reload(); } }
-function exportData() { /* ... */ }
-function importData(file) { /* ... */ }
+// Logic placeholders for handlers not implemented in this cleanup
+function handleShare() {
+    saveState();
+    const state = {
+        coin: window.currentCoin,
+        qty: initialQtyInput?.value,
+        avg: initialAvgPriceInput?.value,
+        curr: currentPriceInput?.value
+    };
+    const params = new URLSearchParams(state).toString();
+    const url = `${window.location.origin}${window.location.pathname}?${params}`;
+
+    // Copy to clipboard
+    navigator.clipboard.writeText(url).then(() => {
+        alert('현재 상태가 담긴 링크가 복사되었습니다!');
+    }).catch(err => {
+        console.error('클립보드 복사 실패:', err);
+        prompt('이 링크를 복사하세요:', url);
+    });
+}
+
+function handleReset() {
+    if (confirm('현재 코인의 입력 데이터를 초기화하시겠습니까?')) {
+        // Only reset current coin's data
+        let fullState = JSON.parse(localStorage.getItem(STORAGE_KEY)) || { portfolios: {} };
+        if (fullState.portfolios && fullState.portfolios[window.currentCoin]) {
+            delete fullState.portfolios[window.currentCoin];
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(fullState));
+        }
+        location.reload();
+    }
+}
+
+function exportData() {
+    saveState();
+    const dataStr = localStorage.getItem(STORAGE_KEY);
+    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+
+    const exportFileDefaultName = `waterdown_backup_${new Date().toISOString().slice(0, 10)}.json`;
+
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+}
+
+function importData(file) {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        try {
+            const obj = JSON.parse(event.target.result);
+            if (obj && obj.portfolios) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
+                alert('데이터가 성공적으로 복원되었습니다.');
+                location.reload();
+            } else {
+                alert('올바르지 않은 백업 파일입니다.');
+            }
+        } catch (e) {
+            alert('파일을 읽는 중 오류가 발생했습니다.');
+        }
+    };
+    reader.readAsText(file);
+}
 
 // Window cleanup
-window.addEventListener('beforeunload', () => { if (priceUpdateInterval) clearInterval(priceUpdateInterval); });
+// Window cleanup
+window.addEventListener('beforeunload', () => {
+    if (typeof saveState === 'function') saveState(); // Ensure save on exit
+    if (priceUpdateInterval) clearInterval(priceUpdateInterval);
+});

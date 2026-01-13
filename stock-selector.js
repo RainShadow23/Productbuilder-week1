@@ -22,7 +22,20 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedStock = stocks.find(s => s.name === '삼성전자') || stocks[0] || { name: '삼성전자', code: '005930' }; // Default
 
     // --- Initialization ---
-    updateSelectedStockUI(selectedStock);
+    // --- Initialization ---
+    function initStockSelector() {
+        const startCode = window.currentCoin || '005930';
+        const startStock = stocks.find(s => s.code === startCode) || selectedStock; // Fallback to safe default
+        if (startStock) {
+            selectStock(startStock);
+        }
+    }
+
+    if (window.isCalculatorReady) {
+        initStockSelector();
+    } else {
+        window.addEventListener('CalculatorReady', initStockSelector);
+    }
 
     // --- Event Listeners ---
     let highlightedIndex = -1; // -1 means nothing highlighted
@@ -114,6 +127,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function selectStock(stock) {
+        if (selectedStock && selectedStock.code !== stock.code && typeof window.saveState === 'function') {
+            window.saveState();
+        }
         selectedStock = stock;
         updateSelectedStockUI(stock);
         coinDropdown.style.display = 'none';
@@ -134,15 +150,11 @@ document.addEventListener('DOMContentLoaded', () => {
         window.currentCoin = stock.code;
 
         // Trigger load state if using shared main.js logic (will try to load '005930' from localstorage)
-        if (typeof window.loadCoinData === 'function') {
+        // Trigger load state if using shared main.js logic (will try to load '005930' from localstorage)
+        if (window.isCalculatorReady && typeof window.loadCoinData === 'function') {
             window.loadCoinData(stock.code);
         } else {
-            console.warn('loadCoinData function not available yet. Retrying in 500ms...');
-            setTimeout(() => {
-                if (typeof window.loadCoinData === 'function') {
-                    window.loadCoinData(stock.code);
-                }
-            }, 500);
+            console.log('Stock Selector waiting for CalculatorReady...');
         }
     }
 });

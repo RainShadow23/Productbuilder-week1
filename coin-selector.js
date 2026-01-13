@@ -247,19 +247,43 @@
      * 코인을 선택하고 UI를 업데이트합니다
      */
     async function selectCoin(coin) {
-        // 현재 코인의 데이터를 저장 (다른 코인으로 전환하기 전)
-        if (currentSelectedCoin && typeof window.saveState === 'function') {
+        // Prevent saving if we are just initializing the same coin (or switching to itself)
+        // Also skip if currentSelectedCoin is null (initial load)
+        if (currentSelectedCoin && currentSelectedCoin.symbol !== coin.symbol && typeof window.saveState === 'function') {
             window.saveState();
             console.log(`${currentSelectedCoin.symbol} 코인의 데이터를 저장했습니다.`);
         } else if (currentSelectedCoin) {
-            console.warn('saveState function not available yet.');
+            // Same coin or saveState not ready (though we check function existence)
         }
 
         currentSelectedCoin = coin;
 
         // UI 업데이트
-        selectedCoinDisplay.querySelector('.coin-symbol').textContent = coin.symbol;
-        selectedCoinDisplay.querySelector('.coin-name').textContent = coin.koreanName;
+        // UI 업데이트
+        // selectedCoinDisplay.querySelector('.coin-symbol').textContent = coin.symbol;
+        // selectedCoinDisplay.querySelector('.coin-name').textContent = coin.koreanName;
+
+        // Re-render the display to match Stock UI style (Big Block)
+        const symbolSpan = selectedCoinDisplay.querySelector('.coin-symbol');
+        const nameSpan = selectedCoinDisplay.querySelector('.coin-name');
+
+        symbolSpan.textContent = coin.symbol;
+        symbolSpan.style.display = 'block';
+        symbolSpan.style.fontSize = '1.2em';
+        symbolSpan.style.fontWeight = 'bold';
+
+        nameSpan.textContent = coin.koreanName;
+        nameSpan.style.fontSize = '0.9em';
+        nameSpan.style.color = '#888';
+
+        selectedCoinDisplay.style.display = 'flex';
+        selectedCoinDisplay.style.flexDirection = 'column';
+        selectedCoinDisplay.style.alignItems = 'center';
+        selectedCoinDisplay.style.padding = '10px';
+        selectedCoinDisplay.style.backgroundColor = 'var(--input-bg)';
+        selectedCoinDisplay.style.borderRadius = '8px';
+        selectedCoinDisplay.style.marginTop = '10px';
+
         currentPriceLabel.textContent = coin.koreanName;
 
         // 드롭다운 닫기
@@ -312,16 +336,14 @@
         }
 
         // 새로운 코인의 저장된 데이터 불러오기
-        if (typeof window.loadCoinData === 'function') {
+        if (window.isCalculatorReady && typeof window.loadCoinData === 'function') {
             window.loadCoinData(coin.symbol);
             console.log(`${coin.symbol} 코인의 데이터를 불러왔습니다.`);
         } else {
-            console.warn('loadCoinData function not available yet. Retrying in 500ms...');
-            setTimeout(() => {
-                if (typeof window.loadCoinData === 'function' && window.currentCoin === coin.symbol) {
-                    window.loadCoinData(coin.symbol);
-                }
-            }, 500);
+            console.log('Calculator request pending...');
+            // Event listener is already set up in init to handle re-trigger if needed, 
+            // but here we primarily rely on main.js being ready because we wait for IT to init us.
+            // If we are clicked, main.js SHOULD be ready given the new flow.
         }
 
         // 상태 저장 (main.js의 saveState 호출)
@@ -489,21 +511,34 @@
         // 커스텀 코인 렌더링
         renderCustomCoins();
 
-        // 기본 코인 선택 (BTC)
-        const defaultCoin = allCoins.find(c => c.symbol === 'BTC');
-        if (defaultCoin) {
-            currentSelectedCoin = defaultCoin;
+        // 기본 코인 선택 (window.currentCoin 우선, 없으면 BTC)
+        const startSymbol = window.currentCoin || 'BTC';
+        const startCoin = allCoins.find(c => c.symbol === startSymbol) || allCoins.find(c => c.symbol === 'BTC');
+
+        if (startCoin) {
+            // Note: We do NOT set currentSelectedCoin here manually.
+            // We let selectCoin handle the initialization logic.
+            // Since currentSelectedCoin is null initially, selectCoin won't trigger a save.
+            selectCoin(startCoin);
         }
 
         console.log('코인 선택 기능 초기화 완료');
         console.log(`커스텀 코인: ${customCoins.length}개`);
     }
 
-    // 페이지 로드 시 초기화
+    // 페이지 로드 시 초기화 및 이벤트 리스너 설정
+    function startApp() {
+        if (window.isCalculatorReady) {
+            initCoinSelector();
+        } else {
+            window.addEventListener('CalculatorReady', initCoinSelector);
+        }
+    }
+
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initCoinSelector);
+        document.addEventListener('DOMContentLoaded', startApp);
     } else {
-        initCoinSelector();
+        startApp();
     }
 
     // 전역 함수 노출 (main.js에서 사용)

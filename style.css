@@ -1036,3 +1036,71 @@ input:checked+.slider:before {
     border: 1px solid var(--border-color);
     /* Corrected missing value */
 }
+
+/* --- Secondary Button Style --- */
+.cta-button.secondary {
+    background: transparent;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    box-shadow: none;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    margin: 0;
+    /* Remove default margin for inline use */
+    width: auto;
+    /* Allow auto width */
+    min-width: 100px;
+}
+
+.cta-button.secondary:hover {
+    background: var(--primary-glow);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px var(--primary-glow);
+}
+
+/* Ensure lottery button is visible */
+#generate-btn {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-family: var(--font-family);
+    border: none;
+    background: var(--primary-color);
+    color: var(--button-text);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    margin: 1.5rem 0;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 16px var(--primary-glow);
+}
+
+#generate-btn:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px var(--primary-glow);
+}
+
+/* Fix for Lotto Numbers Display */
+.lotto-numbers {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 2rem 0;
+    flex-wrap: wrap;
+}
+
+.number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--card-bg);
+    border: 2px solid var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: var(--text-color);
+    font-size: 1.1rem;
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
