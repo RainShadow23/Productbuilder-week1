@@ -136,6 +136,10 @@ window.addEventListener('load', () => {
                     qty: row.querySelector('.transaction-qty').value,
                     price: row.querySelector('.transaction-price').value,
                 })),
+                // 계산 관련 입력값 저장
+                calculationPrice: calculationPriceInput.value,
+                whatifAmount: whatifAmountInput.value,
+                targetAvgPrice: targetAvgPriceInput.value
             };
 
             localStorage.setItem('waterDownCalcState', JSON.stringify(fullState));
@@ -217,6 +221,11 @@ window.addEventListener('load', () => {
                 if (portfolio.transactions && portfolio.transactions.length > 0) {
                     portfolio.transactions.forEach(addTransactionRow);
                 }
+
+                // 계산 관련 입력값 복원
+                calculationPriceInput.value = portfolio.calculationPrice || '';
+                whatifAmountInput.value = portfolio.whatifAmount || '';
+                targetAvgPriceInput.value = portfolio.targetAvgPrice || '';
             } else {
                 // 데이터가 없는 경우: 빈 상태로 초기화
                 console.log(`${coinSymbol} 코인의 저장된 데이터가 없습니다. 빈 상태로 시작합니다.`);
@@ -237,11 +246,18 @@ window.addEventListener('load', () => {
             if (targetResultDisplay) {
                 targetResultDisplay.textContent = '';
             }
-            if (whatifAmountInput) {
+
+            // 계산 관련 입력값 초기화 (데이터가 없는 경우에만)
+            if (!portfolio) {
                 whatifAmountInput.value = '';
-            }
-            if (targetAvgPriceInput) {
                 targetAvgPriceInput.value = '';
+                // 계산 기준 가격은 현재가로 설정 (빈 값이면 자동 입력됨)
+                if (!calculationPriceInput.value) {
+                    const currentPrice = safeParseFloat(currentPriceInput.value);
+                    if (currentPrice > 0) {
+                        calculationPriceInput.value = formatNumberWithCommas(currentPrice);
+                    }
+                }
             }
         }
 
@@ -593,110 +609,89 @@ window.addEventListener('load', () => {
         }
 
 
-        if (targetCalculateBtn) {
+        // ============================================================
+        // 목표 평단가 계산
+        // ============================================================
 
-            targetCalculateBtn.addEventListener('click', () => {
+        /**
+         * 목표 평단가 계산 함수
+         * 목표 평단가를 달성하기 위해 필요한 추가 매수 금액을 계산합니다.
+         */
+        function calculateTargetPrice() {
+            const targetPrice = safeParseFloat(targetAvgPriceInput.value);
+            const calcPrice = safeParseFloat(calculationPriceInput.value);
 
-                const targetPrice = safeParseFloat(targetAvgPriceInput.value);
+            if (targetPrice <= 0 || calcPrice <= 0) {
+                targetResultDisplay.textContent = '유효한 목표 평단가와 계산 기준 가격을 입력하세요.';
+                return;
+            }
 
-                const calcPrice = safeParseFloat(calculationPriceInput.value);
+            const { totalBuyQty, totalBuyCost } = getPreCalculationState();
+            const currentAvgBuyPrice = (totalBuyQty > 0) ? totalBuyCost / totalBuyQty : 0;
 
-                if (targetPrice <= 0 || calcPrice <= 0) {
+            // ============================================================
+            // 입력값 사전 검증
+            // ============================================================
 
-                    targetResultDisplay.textContent = '유효한 목표 평단가와 계산 기준 가격을 입력하세요.';
+            // [검증 1] 보유 수량이 없는 경우
+            if (currentAvgBuyPrice === 0) {
+                targetResultDisplay.textContent = '보유 수량이 없어 평단가를 계산할 수 없습니다. 기본 정보를 먼저 입력하세요.';
+                return;
+            }
 
-                    return;
+            // [검증 2] 물타기가 불가능한 경우
+            if (currentAvgBuyPrice <= calcPrice) {
+                targetResultDisplay.textContent = `현재 평단가(${Math.round(currentAvgBuyPrice).toLocaleString()}원)가 계산 기준 가격(${calcPrice.toLocaleString()}원)보다 낮거나 같아 평단가를 더 낮출 수 없습니다.`;
+                return;
+            }
 
-                }
+            // [검증 3] 목표 가격이 논리적으로 불가능한 경우
+            if (targetPrice >= currentAvgBuyPrice) {
+                targetResultDisplay.textContent = '목표 평단가는 현재 평단가보다 낮아야 합니다.';
+                return;
+            }
 
+            if (targetPrice <= calcPrice) {
+                targetResultDisplay.textContent = '목표 평단가는 계산 기준 가격보다 높아야 합니다.';
+                return;
+            }
 
+            // ============================================================
+            // 필요 수량 계산 (가중 평균 공식)
+            // ============================================================
+            const requiredQty = (totalBuyQty * (currentAvgBuyPrice - targetPrice)) / (targetPrice - calcPrice);
 
-                const { totalBuyQty, totalBuyCost } = getPreCalculationState();
+            if (requiredQty <= 0 || !isFinite(requiredQty)) {
+                targetResultDisplay.textContent = '목표 달성이 불가능합니다. 입력 값을 확인해주세요.';
+                return;
+            }
 
-                const currentAvgBuyPrice = (totalBuyQty > 0) ? totalBuyCost / totalBuyQty : 0;
+            // --- Result Display ---
+            const requiredAmount = requiredQty * calcPrice;
 
+            targetResultDisplay.innerHTML = `
+                🎯 목표 달성: <span class="result-value">${formatCurrencyForDisplay(requiredAmount)} KRW</span><br>
+                📊 <span class="result-value">${formatQuantityForDisplay(requiredQty)}</span> BTC 추가 매수 필요
+            `;
+        }
 
+        // 목표 평단가 자동 계산 (디바운싱)
+        if (targetCalculateBtn && targetAvgPriceInput) {
+            let targetTimer;
 
-                // ============================================================
-                // 입력값 사전 검증
-                // ============================================================
-
-                // [검증 1] 보유 수량이 없는 경우
-                if (currentAvgBuyPrice === 0) {
-
-                    targetResultDisplay.textContent = '보유 수량이 없어 평단가를 계산할 수 없습니다. 기본 정보를 먼저 입력하세요.';
-
-                    return;
-
-                }
-
-
-
-                // [검증 2] 물타기가 불가능한 경우
-                // 현재 평단가가 추가 매수가보다 낮거나 같으면 평단가를 더 낮출 수 없음
-                // (높은 가격에 매수하면 평단가는 오히려 상승)
-                if (currentAvgBuyPrice <= calcPrice) {
-
-                    targetResultDisplay.textContent = `현재 평단가(${Math.round(currentAvgBuyPrice).toLocaleString()}원)가 계산 기준 가격(${calcPrice.toLocaleString()}원)보다 낮거나 같아 평단가를 더 낮출 수 없습니다.`;
-
-                    return;
-
-                }
-
-
-
-                // [검증 3] 목표 가격이 논리적으로 불가능한 경우
-                // 목표 평단가는 (낮은)추가매수가 < 목표평단가 < (높은)현재평단가 사이에 있어야 함
-                if (targetPrice >= currentAvgBuyPrice) {
-
-                    targetResultDisplay.textContent = '목표 평단가는 현재 평단가보다 낮아야 합니다.';
-
-                    return;
-
-                }
-
-                if (targetPrice <= calcPrice) {
-
-                    targetResultDisplay.textContent = '목표 평단가는 계산 기준 가격보다 높아야 합니다.';
-
-                    return;
-
-                }
-
-
-
-                // ============================================================
-                // 필요 수량 계산 (가중 평균 공식)
-                // ============================================================
-                // 공식 유도:
-                // 새로운 평단가 = (기존 투자금 + 추가 투자금) / (기존 수량 + 추가 수량)
-                // targetPrice = (totalBuyCost + calcPrice × X) / (totalBuyQty + X)
-                // 정리하면: X = totalBuyQty × (currentAvgBuyPrice - targetPrice) / (targetPrice - calcPrice)
-                const requiredQty = (totalBuyQty * (currentAvgBuyPrice - targetPrice)) / (targetPrice - calcPrice);
-
-
-
-                if (requiredQty <= 0 || !isFinite(requiredQty)) {
-
-                    targetResultDisplay.textContent = '목표 달성이 불가능합니다. 입력 값을 확인해주세요.';
-
-                    return;
-
-                }
-
-
-
-                // --- Result Display ---
-
-                const requiredAmount = requiredQty * calcPrice;
-
-                targetResultDisplay.innerHTML = `
-                    🎯 목표 달성: <span class="result-value">${formatCurrencyForDisplay(requiredAmount)} KRW</span><br>
-                    📊 <span class="result-value">${formatQuantityForDisplay(requiredQty)}</span> BTC 추가 매수 필요
-                `;
-
+            // 입력 시 자동 계산 (500ms 지연)
+            targetAvgPriceInput.addEventListener('input', () => {
+                clearTimeout(targetTimer);
+                targetTimer = setTimeout(() => {
+                    calculateTargetPrice();
+                }, 500);
             });
 
+            // 버튼 클릭 시 즉시 계산
+            targetCalculateBtn.addEventListener('click', () => {
+                clearTimeout(targetTimer);
+                calculateTargetPrice();
+            });
         }
 
         // ============================================================
