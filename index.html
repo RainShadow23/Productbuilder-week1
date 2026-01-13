@@ -4,20 +4,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>애플리케이션</title>
-    <link rel="stylesheet" href="style.css">
+    <title>물타기 도우미 - 전략적 투자 계산기</title>
+    <link rel="stylesheet" href="style.css?v=2">
+    <style>
+        /* Home Specific Styles */
+        .ad-banner {
+            width: 100%;
+            height: 100px;
+            background-color: #f1f3f5;
+            border: 1px dashed #ccc;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #999;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+
+        body.dark .ad-banner {
+            background-color: #2c2e33;
+            border-color: #495057;
+        }
+
+        .main-card-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 2rem;
+        }
+
+        .main-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+            background-color: var(--bg-color);
+            border-radius: 16px;
+            text-decoration: none;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+
+        .main-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-color);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        /* Stock Theme Highlight */
+        .stock-card:hover .card-title {
+            color: #e74c3c;
+        }
+
+        /* Coin Theme Highlight */
+        .coin-card:hover .card-title {
+            color: #f39c12;
+        }
+
+        .sub-link {
+            display: block;
+            margin-top: 2rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-decoration: underline;
+            opacity: 0.7;
+        }
+
+        .sub-link:hover {
+            opacity: 1;
+            color: var(--text-color);
+        }
+
+        .footer {
+            margin-top: 3rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .footer a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            margin: 0 5px;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 500px) {
+            .main-card-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 
 <body>
+    <button id="theme-toggle">테마 변경</button>
     <div class="container">
-        <h1>애플리케이션에 오신 것을 환영합니다</h1>
-        <p>사용할 애플리케이션을 선택하세요:</p>
-        <ul>
-            <li><a href="lottery.html">🎱 로또 번호 생성기</a></li>
-            <li><a href="water_down_calculator.html">🪙 코인 물타기 계산기</a></li>
-            <li><a href="stock.html">📉 주식 물타기 계산기</a></li>
-        </ul>
-        <p><a href="contact.html">제휴 문의</a></p>
+        <!-- Text Header -->
+        <div style="margin-bottom: 1rem;">
+            <h1 style="margin-bottom: 0.5rem;">📊 물타기 도우미</h1>
+            <p style="color: var(--text-secondary);">전략적인 추가 매수로 위기를 기회로 바꾸세요.</p>
+        </div>
+
+        <!-- AdSense Placeholder -->
+        <div class="ad-banner">
+            <!-- 구글 애드센스 코드가 들어갈 영역입니다 -->
+            광고 영역 (Google AdSense)
+        </div>
+
+        <!-- Main Calculators -->
+        <div class="main-card-container">
+            <!-- Stock Calculator -->
+            <a href="stock.html" class="main-card stock-card">
+                <span class="card-icon">📉</span>
+                <span class="card-title">주식 물타기</span>
+                <span class="card-desc">네이버 증권 연동<br>국내 주식 맞춤형</span>
+            </a>
+
+            <!-- Coin Calculator -->
+            <a href="water_down_calculator.html" class="main-card coin-card">
+                <span class="card-icon">🪙</span>
+                <span class="card-title">코인 물타기</span>
+                <span class="card-desc">업비트 시세 자동 연동<br>실시간 계산</span>
+            </a>
+        </div>
+
+        <!-- Side Content -->
+        <div style="margin-top: 1rem; padding: 1rem; background-color: var(--bg-color); border-radius: 12px;">
+            <p style="margin: 0; font-size: 0.9rem; font-weight: 600;">잠깐! 머리 좀 식히고 가세요 ☕</p>
+            <a href="lottery.html"
+                style="display: inline-block; margin-top: 10px; padding: 8px 16px; background: white; border-radius: 20px; font-size: 0.9rem; border: 1px solid var(--border-color); color: var(--text-color);">
+                🎱 재미로 보는 로또 번호 생성기
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div>
+                <a href="manual.html">📖 사용 설명서</a> |
+                <a href="mailto:support@example.com">📧 문의/버그 제보</a>
+            </div>
+            <div style="margin-top: 5px; font-size: 0.8rem;">
+                © 2024 Water Down Helper. All rights reserved.
+            </div>
+        </div>
     </div>
     <script type="module" src="main.js"></script>
 </body>

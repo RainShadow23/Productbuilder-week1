@@ -81,22 +81,26 @@ if (document.getElementById('calculate-btn')) {
     // --- Element Hooks ---
     const currentPriceInput = document.getElementById('current-price');
     const calculationPriceInput = document.getElementById('calculation-price');
-    const calcModeToggle = document.getElementById('calc-mode-toggle');
-    const calcModeLabel = document.getElementById('calc-mode-label');
+    const calcModeCheckbox = document.getElementById('calc-mode-checkbox'); // Renamed ID
+    // const calcModeLabel = document.getElementById('calc-mode-label'); // Removed label
+
+    // New Segmented Control Elements
+    const segmentOptions = document.querySelectorAll('.segment-option');
+
     const initialQtyInput = document.getElementById('initial-qty');
     const initialAvgPriceInput = document.getElementById('initial-avg-price');
     const transactionList = document.getElementById('transaction-list');
     const addTransactionBtn = document.getElementById('add-transaction-btn');
-    const calculateBtn = document.getElementById('calculate-btn');
+    const calculateBtn = document.getElementById('calculate-btn'); // Note: Button removed in UI, but keep ref if needed or safe remove later
     const shareBtn = document.getElementById('share-btn');
     const resetBtn = document.getElementById('reset-btn');
     const resultsContainer = document.getElementById('results-container');
     const transactionRowTemplate = document.getElementById('transaction-row-template');
     const whatifAmountInput = document.getElementById('whatif-amount');
-    const whatifCalculateBtn = document.getElementById('whatif-calculate-btn');
+    // const whatifCalculateBtn = document.getElementById('whatif-calculate-btn'); // Removed
     const whatifResultDisplay = document.getElementById('whatif-result');
     const targetAvgPriceInput = document.getElementById('target-avg-price');
-    const targetCalculateBtn = document.getElementById('target-calculate-btn');
+    // const targetCalculateBtn = document.getElementById('target-calculate-btn'); // Removed
     const targetResultDisplay = document.getElementById('target-result');
 
     // Visual Comparison Elements
@@ -150,7 +154,7 @@ if (document.getElementById('calculate-btn')) {
         fullState.activeCoin = window.currentCoin;
 
         fullState.portfolios[window.currentCoin] = {
-            calcMode: calcModeToggle.checked,
+            calcMode: calcModeCheckbox.checked, // Use checkbox state
             initialQty: initialQtyInput.value,
             initialAvgPrice: initialAvgPriceInput.value,
             transactions: Array.from(document.querySelectorAll('.transaction-row')).map(row => ({
@@ -202,66 +206,56 @@ if (document.getElementById('calculate-btn')) {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(stateToLoad));
         }
 
-        // 활성 코인 설정
-        if (stateToLoad.activeCoin) {
-            window.currentCoin = stateToLoad.activeCoin;
-        }
-
-        // 현재 활성화된 코인의 데이터 추출
-        const portfolio = stateToLoad.portfolios && stateToLoad.portfolios[window.currentCoin];
-
-        if (!portfolio) return;
-
-
-        calcModeToggle.checked = portfolio.calcMode;
-        updateMode();
-        initialQtyInput.value = portfolio.initialQty;
-        initialAvgPriceInput.value = portfolio.initialAvgPrice;
-        transactionList.innerHTML = '';
-        if (portfolio.transactions) {
-            portfolio.transactions.forEach(addTransactionRow);
-        }
+        return stateToLoad;
     }
 
     /**
      * 특정 코인의 저장된 데이터를 불러옵니다.
      */
-    /**
-     * 특정 코인의 저장된 데이터를 불러옵니다.
-     */
-    function loadCoinData(coinSymbol) {
-        // localStorage에서 전체 상태 가져오기
-        const fullState = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
-            version: CURRENT_DATA_VERSION,
-            portfolios: {}
-        };
+    window.loadCoinData = function (coinSymbol) {
+        if (!coinSymbol) return;
+        window.currentCoin = coinSymbol; // Update global state
 
-        // 해당 코인의 포트폴리오 데이터 확인
-        const portfolio = fullState.portfolios && fullState.portfolios[coinSymbol];
+        // 커스텀 코인 가격표시 배지 업데이트 (코인 모드만)
+        if (!isStockMode && window.coinSelector) {
+            const coin = window.coinSelector.getCurrentCoin();
+            /* Badge update logic handled in coin-selector but trigger here if needed */
+        }
+
+        const savedData = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        const state = loadState(savedData); // Migration check
+
+        const portfolio = state?.portfolios?.[coinSymbol];
+
+        // Clear existing transactions
+        transactionList.innerHTML = '';
 
         if (portfolio) {
-            // 데이터가 있는 경우: 저장된 값 복원
-            console.log(`${coinSymbol} 코인의 저장된 데이터를 불러옵니다.`);
-            calcModeToggle.checked = portfolio.calcMode || false;
-            updateMode();
+            // Restore data
+            calcModeCheckbox.checked = portfolio.calcMode || false;
+            updateModeUI(); // Update Segmented Control UI
+
             initialQtyInput.value = portfolio.initialQty || '';
             initialAvgPriceInput.value = portfolio.initialAvgPrice || '';
 
-            // 거래 내역 복원
-            transactionList.innerHTML = '';
-            if (portfolio.transactions && portfolio.transactions.length > 0) {
-                portfolio.transactions.forEach(addTransactionRow);
-            }
+            // Restore calculation inputs
+            if (portfolio.calculationPrice) calculationPriceInput.value = portfolio.calculationPrice;
+            if (portfolio.whatifAmount) whatifAmountInput.value = portfolio.whatifAmount;
+            if (portfolio.targetAvgPrice) targetAvgPriceInput.value = portfolio.targetAvgPrice;
 
-            // 계산 관련 입력값 복원
-            calculationPriceInput.value = portfolio.calculationPrice || '';
-            whatifAmountInput.value = portfolio.whatifAmount || '';
-            targetAvgPriceInput.value = portfolio.targetAvgPrice || '';
+            // 주식모드: 평단가 계산에 사용할 가격이 비어있으면 수동입력 대기
+            // 코인모드: loadCoinData 이후 fetchPrice가 호출되면서 자동 채움 시도 (단, 이미 값이 있으면 덮어쓰지 않음)
+
+            if (portfolio.transactions && portfolio.transactions.length > 0) {
+                portfolio.transactions.forEach(tx => addTransactionRow(tx.type, tx.qty, tx.price));
+            } else {
+                addTransactionRow(); // Default row
+            }
         } else {
-            // 데이터가 없는 경우: 빈 상태로 초기화
-            console.log(`${coinSymbol} 코인의 저장된 데이터가 없습니다. 빈 상태로 시작합니다.`);
-            calcModeToggle.checked = false;
-            updateMode();
+            // New coin default state
+            calcModeCheckbox.checked = false; // Default: Exchange Mode
+            updateModeUI();
+
             initialQtyInput.value = '';
             initialAvgPriceInput.value = '';
             transactionList.innerHTML = '';

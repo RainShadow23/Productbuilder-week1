@@ -100,191 +100,195 @@
         <!-- Navigation Header -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h1>📉 주식 물타기 계산기</h1>
-            <div>
-                <a href="water_down_calculator.html" style="text-decoration: none; font-weight: bold; color: #888;">🪙
-                    코인 계산기 가기</a>
+            <!-- New Header -->
+            <div class="header-container">
+                <div class="header-title-group">
+                    <span class="header-icon">📉</span>
+                    <h1>주식 물타기 계산기</h1>
+                </div>
+                <a href="water_down_calculator.html" class="nav-button">
+                    🪙 코인 계산기 가기
+                </a>
             </div>
-        </div>
 
-        <!-- Calculation Mode Toggle -->
-        <div class="mode-selector">
-            <label class="switch">
-                <input type="checkbox" id="calc-mode-toggle" aria-label="계산 모드 전환">
-                <span class="slider round"></span>
-            </label>
-            <span id="calc-mode-label">거래소 기준</span>
-        </div>
+            <!-- Ad Banner -->
+            <div class="page-ad-banner">
+                광고 영역 (Google AdSense)
+            </div>
 
-        <!-- Stock Selector -->
-        <div class="coin-selector-container">
-            <label for="coin-search">종목 선택:</label>
-            <div class="coin-selector-wrapper">
-                <input type="text" id="coin-search" placeholder="🔍 종목명 또는 코드 검색 (예: 삼성전자)" autocomplete="off"
-                    aria-label="종목 검색">
-                <div id="coin-dropdown" class="coin-dropdown" style="display: none;">
-                    <div class="coin-dropdown-section">
-                        <div class="coin-dropdown-header">🔍 검색 결과</div>
+            <!-- New Mode Selector (Segmented Control) -->
+            <!-- Hidden checkbox for logic compatibility (will be synced via JS) -->
+            <input type="checkbox" id="calc-mode-checkbox" style="display:none;">
+
+            <div class="segmented-control">
+                <div class="segment-option" data-value="wallet">내 지갑 기준</div>
+                <div class="segment-option" data-value="exchange">거래소 기준</div>
+            </div>
+
+            <div class="coin-selector-container">
+                <label for="coin-search">종목 선택:</label>
+                <div class="coin-selector-wrapper">
+                    <input type="text" id="coin-search" placeholder="종목명 또는 코드 검색 (예: 삼성전자, 005930)" autocomplete="off">
+                    <div id="coin-dropdown" class="coin-dropdown" style="display: none;">
                         <div id="search-results"></div>
                     </div>
                 </div>
+                <div id="selected-coin-display" class="selected-coin-display">
+                    <span class="coin-symbol">005930</span>
+                    <span class="coin-name">삼성전자</span>
+                    <a href="#" id="naver-link-btn" target="_blank" class="price-source-badge manual"
+                        style="text-decoration:none; margin-left:10px; cursor:pointer;" rel="noopener">
+                        N 네이버 증권
+                    </a>
+                </div>
             </div>
-            <div id="selected-coin-display" class="selected-coin-display">
-                <span class="coin-symbol">005930</span>
-                <span class="coin-name">삼성전자</span>
-                <a href="https://finance.naver.com/item/main.naver?code=005930" target="_blank" id="naver-link-btn"
-                    class="naver-link-btn" style="display:none;">
-                    N 네이버 증권
-                </a>
-            </div>
-        </div>
 
-        <!-- Current Price -->
-        <div class="price-display">
-            <label for="current-price"><span id="current-price-label">삼성전자</span> 현재가 (KRW):</label>
-            <div class="input-wrapper">
-                <input type="text" id="current-price" class="comma-input" placeholder="직접 입력하세요" aria-label="현재 가격">
-                <span class="input-unit">KRW</span>
-            </div>
-            <span id="price-source-badge" class="price-source-badge" style="background-color: #999;">수동</span>
-        </div>
-
-        <hr>
-
-        <!-- Initial Holdings -->
-        <div class="input-group">
-            <h2>기본 정보 (평단가 계산에 필요)</h2>
-            <div class="form-row">
-                <input type="text" id="initial-qty" class="comma-input" placeholder="보유 수량" aria-label="보유 수량">
-                <div class="input-wrapper" style="flex:1;">
-                    <input type="text" id="initial-avg-price" class="comma-input" placeholder="보유 평단가"
-                        style="width:100%;" aria-label="보유 평단가">
+            <div class="price-display">
+                <label id="current-price-label">현재가 (KRW)</label>
+                <div class="input-wrapper">
+                    <input type="text" id="current-price" placeholder="현재가 입력">
                     <span class="input-unit">KRW</span>
                 </div>
             </div>
-        </div>
 
-        <!-- Dynamic Transactions List -->
-        <div class="input-group">
-            <h2>거래 내역 (전체 계산기용)</h2>
-            <div id="transaction-list">
-                <!-- Dynamic rows will be inserted here -->
+            <hr>
+
+            <!-- Initial Holdings -->
+            <div class="input-group">
+                <h2>기본 정보 (평단가 계산에 필요)</h2>
+                <div class="form-row">
+                    <input type="text" id="initial-qty" class="comma-input" placeholder="보유 수량" aria-label="보유 수량">
+                    <div class="input-wrapper" style="flex:1;">
+                        <input type="text" id="initial-avg-price" class="comma-input" placeholder="보유 평단가"
+                            style="width:100%;" aria-label="보유 평단가">
+                        <span class="input-unit">KRW</span>
+                    </div>
+                </div>
             </div>
-            <button id="add-transaction-btn">+ 거래 내역 추가</button>
-        </div>
 
-        <hr>
-
-        <!-- Action Buttons -->
-        <div class="form-row">
-            <button id="calculate-btn" class="cta-button">전체 결과 계산하기</button>
-        </div>
-        <div class="form-row buttons-grid">
-            <button id="share-btn">공유 링크</button>
-            <button id="backup-btn">백업(.json)</button>
-            <button id="restore-btn">파일 복원</button>
-            <button id="reset-btn">초기화</button>
-            <!-- Hidden File Input for Restore -->
-            <input type="file" id="file-input" style="display: none;" accept=".json" aria-label="백업 파일 선택">
-        </div>
-
-        <!-- Results Section -->
-        <div id="results-container" class="results-group" style="display: none;">
-            <h2>계산 결과</h2>
-            <div class="result-item"><span>최종 보유 수량:</span><span id="result-total-qty"></span></div>
-            <div class="result-item"><span>총 투자 금액:</span><span id="result-total-investment"></span></div>
-            <div class="result-item"><span>최종 평단가:</span><span id="result-final-avg-price"></span></div>
-            <div class="result-item"><span>총 평가 금액:</span><span id="result-total-evaluation"></span></div>
-            <div class="result-item"><span>평가 손익:</span><span id="result-pnl"></span></div>
-            <div class="result-item"><span>수익률:</span><span id="result-return-rate"></span></div>
-            <p style="font-size: 0.8em; color: #888; text-align: right; margin-top: 5px;">* 증권거래세 및 수수료 미포함 (추후 업데이트 예정)
-            </p>
-        </div>
-
-        <hr>
-
-        <!-- Shared Calculation Price -->
-        <div class="price-display">
-            <label for="calculation-price">얼마에 더 살까요? (추가 매수 희망가)</label>
-            <div class="input-wrapper" style="justify-content: center;">
-                <input type="text" id="calculation-price" class="comma-input" placeholder="현재가 또는 직접 입력"
-                    style="text-align:center; width: 220px;">
-                <span class="input-unit">KRW</span>
+            <!-- Dynamic Transactions List -->
+            <div class="input-group">
+                <h2>거래 내역 (전체 계산기용)</h2>
+                <div id="transaction-list">
+                    <!-- Dynamic rows will be inserted here -->
+                </div>
+                <button id="add-transaction-btn">+ 거래 내역 추가</button>
             </div>
-        </div>
 
-        <!-- What-if Calculation -->
-        <div class="input-group">
-            <h2>이렇게 물을 타면 내 평단가는?</h2>
+            <hr>
+
+            <!-- Action Buttons -->
             <div class="form-row">
-                <div class="input-wrapper" style="width:100%;">
-                    <input type="text" id="whatif-amount" class="comma-input" placeholder="추가 매수 금액" style="width:100%;"
-                        aria-label="추가 매수 금액">
+                <button id="calculate-btn" class="cta-button">전체 결과 계산하기</button>
+            </div>
+            <div class="form-row buttons-grid">
+                <button id="share-btn">공유 링크</button>
+                <button id="backup-btn">백업(.json)</button>
+                <button id="restore-btn">파일 복원</button>
+                <button id="reset-btn">초기화</button>
+                <!-- Hidden File Input for Restore -->
+                <input type="file" id="file-input" style="display: none;" accept=".json" aria-label="백업 파일 선택">
+            </div>
+
+            <!-- Results Section -->
+            <div id="results-container" class="results-group" style="display: none;">
+                <h2>계산 결과</h2>
+                <div class="result-item"><span>최종 보유 수량:</span><span id="result-total-qty"></span></div>
+                <div class="result-item"><span>총 투자 금액:</span><span id="result-total-investment"></span></div>
+                <div class="result-item"><span>최종 평단가:</span><span id="result-final-avg-price"></span></div>
+                <div class="result-item"><span>총 평가 금액:</span><span id="result-total-evaluation"></span></div>
+                <div class="result-item"><span>평가 손익:</span><span id="result-pnl"></span></div>
+                <div class="result-item"><span>수익률:</span><span id="result-return-rate"></span></div>
+                <p style="font-size: 0.8em; color: #888; text-align: right; margin-top: 5px;">* 증권거래세 및 수수료 미포함 (추후 업데이트
+                    예정)
+                </p>
+            </div>
+
+            <hr>
+
+            <!-- Shared Calculation Price -->
+            <div class="price-display">
+                <label for="calculation-price">얼마에 더 살까요? (추가 매수 희망가)</label>
+                <div class="input-wrapper" style="justify-content: center;">
+                    <input type="text" id="calculation-price" class="comma-input" placeholder="현재가 또는 직접 입력"
+                        style="text-align:center; width: 220px;">
                     <span class="input-unit">KRW</span>
                 </div>
-                <button id="whatif-calculate-btn">결과 미리보기</button>
             </div>
-            <p id="whatif-result" class="realtime-result"></p>
 
-            <!-- Visual Comparison Bars -->
-            <div id="whatif-visual-container" class="visual-comparison-container">
-                <!-- Current Average Bar -->
-                <div class="visual-bar-group">
-                    <div class="visual-label">
-                        <span>현재 평단가</span>
-                        <span id="visual-current-price">0</span>
+            <!-- What-if Calculation -->
+            <div class="input-group">
+                <h2>이렇게 물을 타면 내 평단가는?</h2>
+                <div class="form-row">
+                    <div class="input-wrapper" style="width:100%;">
+                        <input type="text" id="whatif-amount" class="comma-input" placeholder="추가 매수 금액"
+                            style="width:100%;" aria-label="추가 매수 금액">
+                        <span class="input-unit">KRW</span>
                     </div>
-                    <div class="visual-track">
-                        <div id="bar-current" class="visual-bar bar-current"></div>
+                    <button id="whatif-calculate-btn">결과 미리보기</button>
+                </div>
+                <p id="whatif-result" class="realtime-result"></p>
+
+                <!-- Visual Comparison Bars -->
+                <div id="whatif-visual-container" class="visual-comparison-container">
+                    <!-- Current Average Bar -->
+                    <div class="visual-bar-group">
+                        <div class="visual-label">
+                            <span>현재 평단가</span>
+                            <span id="visual-current-price">0</span>
+                        </div>
+                        <div class="visual-track">
+                            <div id="bar-current" class="visual-bar bar-current"></div>
+                        </div>
+                    </div>
+
+                    <!-- New Average Bar -->
+                    <div class="visual-bar-group">
+                        <div class="visual-label">
+                            <span>예상 평단가</span>
+                            <span id="visual-new-price">0</span>
+                        </div>
+                        <div class="visual-track">
+                            <div id="bar-new" class="visual-bar bar-new"></div>
+                        </div>
                     </div>
                 </div>
-
-                <!-- New Average Bar -->
-                <div class="visual-bar-group">
-                    <div class="visual-label">
-                        <span>예상 평단가</span>
-                        <span id="visual-new-price">0</span>
-                    </div>
-                    <div class="visual-track">
-                        <div id="bar-new" class="visual-bar bar-new"></div>
-                    </div>
-                </div>
             </div>
-        </div>
 
-        <!-- Target Average Price Calculation -->
-        <div class="input-group">
-            <h2>구조대(목표 평단)가 오려면?</h2>
-            <div class="form-row">
-                <div class="input-wrapper" style="width:100%;">
-                    <input type="text" id="target-avg-price" class="comma-input" placeholder="목표 평단가"
-                        style="width:100%;" aria-label="목표 평단가">
-                    <span class="input-unit">KRW</span>
+            <!-- Target Average Price Calculation -->
+            <div class="input-group">
+                <h2>구조대(목표 평단)가 오려면?</h2>
+                <div class="form-row">
+                    <div class="input-wrapper" style="width:100%;">
+                        <input type="text" id="target-avg-price" class="comma-input" placeholder="목표 평단가"
+                            style="width:100%;" aria-label="목표 평단가">
+                        <span class="input-unit">KRW</span>
+                    </div>
+                    <button id="target-calculate-btn">필요 금액 계산</button>
                 </div>
-                <button id="target-calculate-btn">필요 금액 계산</button>
+                <p id="target-result" class="realtime-result"></p>
             </div>
-            <p id="target-result" class="realtime-result"></p>
+
+            <p><a href="index.html" class="home-link">홈으로 돌아가기</a></p>
         </div>
 
-        <p><a href="index.html" class="home-link">홈으로 돌아가기</a></p>
-    </div>
+        <!-- Template for new transaction rows -->
+        <template id="transaction-row-template">
+            <div class="form-row transaction-row">
+                <select class="transaction-type" aria-label="거래 유형">
+                    <option value="buy" selected>추가 매수</option>
+                    <option value="sell">매도</option>
+                </select>
+                <input type="text" class="transaction-qty comma-input" placeholder="수량" aria-label="거래 수량">
+                <input type="text" class="transaction-price comma-input" placeholder="가격" aria-label="거래 가격">
+                <button class="remove-transaction-btn" aria-label="거래 내역 삭제">X</button>
+            </div>
+        </template>
 
-    <!-- Template for new transaction rows -->
-    <template id="transaction-row-template">
-        <div class="form-row transaction-row">
-            <select class="transaction-type" aria-label="거래 유형">
-                <option value="buy" selected>추가 매수</option>
-                <option value="sell">매도</option>
-            </select>
-            <input type="text" class="transaction-qty comma-input" placeholder="수량" aria-label="거래 수량">
-            <input type="text" class="transaction-price comma-input" placeholder="가격" aria-label="거래 가격">
-            <button class="remove-transaction-btn" aria-label="거래 내역 삭제">X</button>
-        </div>
-    </template>
-
-    <script src="stock-data.js"></script>
-    <script src="stock-selector.js"></script>
-    <!-- Note: stock-selector.js needs to be implemented. Using placeholder for now or minimal implementation inside layout -->
-    <script type="module" src="main.js"></script>
+        <script src="stock-data.js"></script>
+        <script src="stock-selector.js"></script>
+        <!-- Note: stock-selector.js needs to be implemented. Using placeholder for now or minimal implementation inside layout -->
+        <script type="module" src="main.js"></script>
 </body>
 
 </html>

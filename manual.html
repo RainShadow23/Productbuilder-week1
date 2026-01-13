@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사용 설명서 - 물타기 도우미</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .manual-section {
+            text-align: left;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background-color: var(--bg-color);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .manual-section h3 {
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+            margin-top: 0;
+            display: inline-block;
+        }
+
+        .highlight {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+
+<body>
+    <button id="theme-toggle">테마 변경</button>
+    <div class="container" style="max-width: 800px;">
+        <h1>📖 사용 설명서</h1>
+        <p>현명한 투자 전략을 위한 물타기 계산기 사용법입니다.</p>
+
+        <div class="manual-section">
+            <h3>📉 주식 물타기 계산기</h3>
+            <p>한국 주식(KOSPI, KOSDAQ) 투자자를 위한 도구입니다.</p>
+            <ul>
+                <li><strong>종목 검색:</strong> 종목명(예: 삼성전자)을 입력하면 목록이 나타납니다.</li>
+                <li><strong>가격 확인:</strong> 검색 후 나타나는 <strong>[N 네이버 증권]</strong> 버튼을 눌러 정확한 시세를 확인하세요.</li>
+                <li><strong>직접 입력:</strong> 주식은 실시간 변동이 크고 API 제한이 있어, 사용자가 직접 가격을 입력하는 방식이 가장 정확합니다.</li>
+            </ul>
+        </div>
+
+        <div class="manual-section">
+            <h3>🪙 코인 물타기 계산기</h3>
+            <p>비트코인 등 암호화폐 투자자를 위한 도구입니다.</p>
+            <ul>
+                <li><strong>자동 시세:</strong> 업비트(Upbit) 기준 시세를 30초마다 자동으로 불러옵니다.</li>
+                <li><strong>커스텀 코인:</strong> 업비트에 없는 코인은 이름을 직접 입력하고 가격을 수동으로 관리할 수 있습니다.</li>
+            </ul>
+        </div>
+
+        <div class="manual-section">
+            <h3>❓ 자주 묻는 질문</h3>
+            <p><strong>Q. '거래소 기준'과 '내 지갑 기준'은 무엇이 다른가요?</strong></p>
+            <p>A. 정확한 평단가를 위해 <span class="highlight">내 지갑 기준</span>을 추천합니다. 거래소마다 평균단가 계산 방식이 미세하게 다를 수 있으므로, 실제 보유한
+                평단가를 직접 입력하는 것이 가장 정확합니다.</p>
+
+            <p><strong>Q. 데이터는 어디에 저장되나요?</strong></p>
+            <p>A. 서버가 아닌 고객님의 <strong>인터넷 브라우저(로컬 스토리지)</strong>에 안전하게 저장됩니다. 인터넷 기록을 삭제하면 데이터도 함께 사라지니 주의하세요! 중요한 데이터는
+                <strong>[백업(.json)]</strong> 기능을 이용하세요.</p>
+        </div>
+
+        <p><a href="index.html" class="home-link">🏠 홈으로 돌아가기</a></p>
+    </div>
+    <script type="module" src="main.js"></script>
+</body>
+
+</html>
