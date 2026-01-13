@@ -222,6 +222,12 @@
      * 코인을 선택하고 UI를 업데이트합니다
      */
     async function selectCoin(coin) {
+        // 현재 코인의 데이터를 저장 (다른 코인으로 전환하기 전)
+        if (currentSelectedCoin && typeof window.saveState === 'function') {
+            window.saveState();
+            console.log(`${currentSelectedCoin.symbol} 코인의 데이터를 저장했습니다.`);
+        }
+
         currentSelectedCoin = coin;
 
         // UI 업데이트
@@ -278,9 +284,15 @@
             }
         }
 
+        // 새로운 코인의 저장된 데이터 불러오기
+        if (typeof window.loadCoinData === 'function') {
+            window.loadCoinData(coin.symbol);
+            console.log(`${coin.symbol} 코인의 데이터를 불러왔습니다.`);
+        }
+
         // 상태 저장 (main.js의 saveState 호출)
-        if (typeof saveState === 'function') {
-            saveState();
+        if (typeof window.saveState === 'function') {
+            window.saveState();
         }
     }
 

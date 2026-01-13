@@ -189,6 +189,66 @@ window.addEventListener('load', () => {
             }
         }
 
+        /**
+         * 특정 코인의 저장된 데이터를 불러옵니다.
+         * 데이터가 있으면 복원하고, 없으면 빈 상태로 초기화합니다.
+         * @param {string} coinSymbol - 불러올 코인 심볼 (예: 'BTC', 'ETH')
+         */
+        function loadCoinData(coinSymbol) {
+            // localStorage에서 전체 상태 가져오기
+            const fullState = JSON.parse(localStorage.getItem('waterDownCalcState')) || {
+                version: CURRENT_DATA_VERSION,
+                portfolios: {}
+            };
+
+            // 해당 코인의 포트폴리오 데이터 확인
+            const portfolio = fullState.portfolios && fullState.portfolios[coinSymbol];
+
+            if (portfolio) {
+                // 데이터가 있는 경우: 저장된 값 복원
+                console.log(`${coinSymbol} 코인의 저장된 데이터를 불러옵니다.`);
+                calcModeToggle.checked = portfolio.calcMode || false;
+                updateMode();
+                initialQtyInput.value = portfolio.initialQty || '';
+                initialAvgPriceInput.value = portfolio.initialAvgPrice || '';
+
+                // 거래 내역 복원
+                transactionList.innerHTML = '';
+                if (portfolio.transactions && portfolio.transactions.length > 0) {
+                    portfolio.transactions.forEach(addTransactionRow);
+                }
+            } else {
+                // 데이터가 없는 경우: 빈 상태로 초기화
+                console.log(`${coinSymbol} 코인의 저장된 데이터가 없습니다. 빈 상태로 시작합니다.`);
+                calcModeToggle.checked = false;
+                updateMode();
+                initialQtyInput.value = '';
+                initialAvgPriceInput.value = '';
+                transactionList.innerHTML = '';
+
+                // 결과 화면 숨기기
+                resultsContainer.style.display = 'none';
+            }
+
+            // What-if 및 목표 평단가 결과 초기화
+            if (whatifResultDisplay) {
+                whatifResultDisplay.textContent = '';
+            }
+            if (targetResultDisplay) {
+                targetResultDisplay.textContent = '';
+            }
+            if (whatifAmountInput) {
+                whatifAmountInput.value = '';
+            }
+            if (targetAvgPriceInput) {
+                targetAvgPriceInput.value = '';
+            }
+        }
+
+        // 전역 함수로 노출 (coin-selector.js에서 사용)
+        window.saveState = saveState;
+        window.loadCoinData = loadCoinData;
+
         // --- UI Functions ---
         function addTransactionRow(tx) {
             const newRow = transactionRowTemplate.content.cloneNode(true);
