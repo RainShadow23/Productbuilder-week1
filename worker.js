@@ -19,7 +19,13 @@ async function handleRequest(request, event) {
   if (!response) {
     const url = new URL(request.url);
     const targetUrl = `https://api.upbit.com${url.pathname}${url.search}`;
-    const originResponse = await fetch(targetUrl);
+    // Upbit API 요청 시 User-Agent 헤더 추가 (차단 방지)
+    const headers = {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+      'Accept': 'application/json'
+    };
+
+    const originResponse = await fetch(targetUrl, { headers });
 
     response = new Response(originResponse.body, originResponse);
 

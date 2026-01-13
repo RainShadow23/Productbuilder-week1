@@ -136,6 +136,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // Trigger load state if using shared main.js logic (will try to load '005930' from localstorage)
         if (typeof window.loadCoinData === 'function') {
             window.loadCoinData(stock.code);
+        } else {
+            console.warn('loadCoinData function not available yet. Retrying in 500ms...');
+            setTimeout(() => {
+                if (typeof window.loadCoinData === 'function') {
+                    window.loadCoinData(stock.code);
+                }
+            }, 500);
         }
     }
 });

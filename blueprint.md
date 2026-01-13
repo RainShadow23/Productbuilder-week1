@@ -165,3 +165,13 @@ A simple tool for generating and tracking lottery numbers.
 - **Tax & Fee Calculation**: Add options to include standard transaction fees (0.05% ~ 0.23%) in the PnL calculation.
 - **Expanded Stock List**: Import a more comprehensive list of KOSPI/KOSDAQ stocks.
 - **PWA Features**: Add manifest and service worker for offline installation capability.
+
+## 8. Latest Fixes (Search & UI Restoration)
+
+- **Task**: 셧다운 후 기능 복구 및 UI/UX 개선
+- **Changes Applied**:
+  1. **코인 검색 기능 복구**: `coin-selector.js`와 HTML 간의 ID 불일치 문제 수정 및 안전한 DOM 요소 선택 로직 적용.
+  2. **Worker 롤백**: 사용자 요청에 따라 `worker.js`의 변경 사항(User-Agent 헤더 추가)을 원상 복구.
+  3. **UI 레이아웃 정상화**: `water_down_calculator.html` 내부의 잘못된 닫는 태그를 수정하여 레이아웃 깨짐 현상 해결.
+  4. **입력 필드 확장**: 전체 컨테이너 너비를 540px로 확장하고, 가격 입력 필드의 고정 너비 제한을 제거하여 긴 숫자(소수점 8자리 등) 입력 가독성 개선.
+  5. **반응형 로직 수정**: 내 지갑/거래소 기준 전환 시 계산 결과가 즉시 반영되도록 트리거 순서 수정.

@@ -98,11 +98,11 @@
                         <div id="custom-coin-add-option" class="coin-item custom-add" style="display: none;">
                             <span>새 코인 추가: <span id="custom-coin-name"></span></span>
                         </div>
-                        <div></div> <!-- Container for custom coins -->
+                        <div id="custom-coins-container"></div> <!-- Container for custom coins -->
                     </div>
                     <div class="coin-dropdown-section">
                         <div class="coin-dropdown-header">🔥 인기 코인</div>
-                        <div class="popular-coins-grid"></div>
+                        <div id="popular-coins" class="popular-coins-grid"></div>
                     </div>
                     <div class="coin-dropdown-section hidden-dropdown">
                         <div class="coin-dropdown-header">🔍 검색 결과</div>
@@ -143,109 +143,109 @@
                     aria-label="보유 평단가">
             </div>
         </div>
-    </div>
+        <!-- Container continues -->
 
-    <!-- Dynamic Transactions List -->
-    <div class="input-group">
-        <h2>거래 내역 (전체 계산기용)</h2>
-        <div id="transaction-list">
-            <!-- Dynamic rows will be inserted here -->
+        <!-- Dynamic Transactions List -->
+        <div class="input-group">
+            <h2>거래 내역 (전체 계산기용)</h2>
+            <div id="transaction-list">
+                <!-- Dynamic rows will be inserted here -->
+            </div>
+            <button id="add-transaction-btn">+ 거래 내역 추가</button>
         </div>
-        <button id="add-transaction-btn">+ 거래 내역 추가</button>
-    </div>
 
-    <hr>
+        <hr>
 
-    <!-- Action Buttons -->
-    <div class="form-row">
-        <button id="calculate-btn" class="cta-button">전체 결과 계산하기</button>
-    </div>
-    <div class="form-row buttons-grid">
-        <button id="share-btn">공유 링크</button>
-        <button id="backup-btn">백업(.json)</button>
-        <button id="restore-btn">파일 복원</button>
-        <button id="reset-btn">초기화</button>
-        <!-- Hidden File Input for Restore -->
-        <input type="file" id="file-input" style="display: none;" accept=".json" aria-label="백업 파일 선택">
-    </div>
-
-    <!-- Results Section -->
-    <div id="results-container" class="results-group" style="display: none;">
-        <h2>계산 결과</h2>
-        <div class="result-item"><span>최종 보유 수량:</span><span id="result-total-qty"></span></div>
-        <div class="result-item"><span>총 투자 금액:</span><span id="result-total-investment"></span></div>
-        <div class="result-item"><span>최종 평단가:</span><span id="result-final-avg-price"></span></div>
-        <div class="result-item"><span>총 평가 금액:</span><span id="result-total-evaluation"></span></div>
-        <div class="result-item"><span>평가 손익:</span><span id="result-pnl"></span></div>
-        <div class="result-item"><span>수익률:</span><span id="result-return-rate"></span></div>
-    </div>
-
-    <hr>
-
-    <!-- Shared Calculation Price -->
-    <div class="price-display">
-        <label for="calculation-price">얼마에 더 살까요? (추가 매수 희망가)</label>
-        <div class="input-wrapper" style="justify-content: center;">
-            <input type="text" id="calculation-price" class="comma-input" placeholder="현재가 또는 직접 입력"
-                style="text-align:center; width: 220px;">
-            <span class="input-unit">KRW</span>
-        </div>
-    </div>
-
-    <!-- What-if Calculation -->
-    <div class="input-group">
-        <h2>이렇게 물을 타면 내 평단가는?</h2>
+        <!-- Action Buttons -->
         <div class="form-row">
-            <div class="input-wrapper" style="width:100%;">
-                <input type="text" id="whatif-amount" class="comma-input" placeholder="추가 매수 금액" style="width:100%;"
-                    aria-label="추가 매수 금액">
+            <button id="calculate-btn" class="cta-button">전체 결과 계산하기</button>
+        </div>
+        <div class="form-row buttons-grid">
+            <button id="share-btn">공유 링크</button>
+            <button id="backup-btn">백업(.json)</button>
+            <button id="restore-btn">파일 복원</button>
+            <button id="reset-btn">초기화</button>
+            <!-- Hidden File Input for Restore -->
+            <input type="file" id="file-input" style="display: none;" accept=".json" aria-label="백업 파일 선택">
+        </div>
+
+        <!-- Results Section -->
+        <div id="results-container" class="results-group" style="display: none;">
+            <h2>계산 결과</h2>
+            <div class="result-item"><span>최종 보유 수량:</span><span id="result-total-qty"></span></div>
+            <div class="result-item"><span>총 투자 금액:</span><span id="result-total-investment"></span></div>
+            <div class="result-item"><span>최종 평단가:</span><span id="result-final-avg-price"></span></div>
+            <div class="result-item"><span>총 평가 금액:</span><span id="result-total-evaluation"></span></div>
+            <div class="result-item"><span>평가 손익:</span><span id="result-pnl"></span></div>
+            <div class="result-item"><span>수익률:</span><span id="result-return-rate"></span></div>
+        </div>
+
+        <hr>
+
+        <!-- Shared Calculation Price -->
+        <div class="price-display">
+            <label for="calculation-price">얼마에 더 살까요? (추가 매수 희망가)</label>
+            <div class="input-wrapper" style="justify-content: center;">
+                <input type="text" id="calculation-price" class="comma-input" placeholder="현재가 또는 직접 입력"
+                    style="text-align:center; width: 100%;">
                 <span class="input-unit">KRW</span>
             </div>
-            <button id="whatif-calculate-btn">결과 미리보기</button>
         </div>
-        <p id="whatif-result" class="realtime-result"></p>
 
-        <!-- Visual Comparison Bars -->
-        <div id="whatif-visual-container" class="visual-comparison-container">
-            <!-- Current Average Bar -->
-            <div class="visual-bar-group">
-                <div class="visual-label">
-                    <span>현재 평단가</span>
-                    <span id="visual-current-price">0</span>
+        <!-- What-if Calculation -->
+        <div class="input-group">
+            <h2>이렇게 물을 타면 내 평단가는?</h2>
+            <div class="form-row">
+                <div class="input-wrapper" style="width:100%;">
+                    <input type="text" id="whatif-amount" class="comma-input" placeholder="추가 매수 금액" style="width:100%;"
+                        aria-label="추가 매수 금액">
+                    <span class="input-unit">KRW</span>
                 </div>
-                <div class="visual-track">
-                    <div id="bar-current" class="visual-bar bar-current"></div>
+                <button id="whatif-calculate-btn">결과 미리보기</button>
+            </div>
+            <p id="whatif-result" class="realtime-result"></p>
+
+            <!-- Visual Comparison Bars -->
+            <div id="whatif-visual-container" class="visual-comparison-container">
+                <!-- Current Average Bar -->
+                <div class="visual-bar-group">
+                    <div class="visual-label">
+                        <span>현재 평단가</span>
+                        <span id="visual-current-price">0</span>
+                    </div>
+                    <div class="visual-track">
+                        <div id="bar-current" class="visual-bar bar-current"></div>
+                    </div>
+                </div>
+
+                <!-- New Average Bar -->
+                <div class="visual-bar-group">
+                    <div class="visual-label">
+                        <span>예상 평단가</span>
+                        <span id="visual-new-price">0</span>
+                    </div>
+                    <div class="visual-track">
+                        <div id="bar-new" class="visual-bar bar-new"></div>
+                    </div>
                 </div>
             </div>
-
-            <!-- New Average Bar -->
-            <div class="visual-bar-group">
-                <div class="visual-label">
-                    <span>예상 평단가</span>
-                    <span id="visual-new-price">0</span>
-                </div>
-                <div class="visual-track">
-                    <div id="bar-new" class="visual-bar bar-new"></div>
-                </div>
-            </div>
         </div>
-    </div>
 
-    <!-- Target Average Price Calculation -->
-    <div class="input-group">
-        <h2>구조대(목표 평단)가 오려면?</h2>
-        <div class="form-row">
-            <div class="input-wrapper" style="width:100%;">
-                <input type="text" id="target-avg-price" class="comma-input" placeholder="목표 평단가" style="width:100%;"
-                    aria-label="목표 평단가">
-                <span class="input-unit">KRW</span>
+        <!-- Target Average Price Calculation -->
+        <div class="input-group">
+            <h2>구조대(목표 평단)가 오려면?</h2>
+            <div class="form-row">
+                <div class="input-wrapper" style="width:100%;">
+                    <input type="text" id="target-avg-price" class="comma-input" placeholder="목표 평단가"
+                        style="width:100%;" aria-label="목표 평단가">
+                    <span class="input-unit">KRW</span>
+                </div>
+                <button id="target-calculate-btn">필요 금액 계산</button>
             </div>
-            <button id="target-calculate-btn">필요 금액 계산</button>
+            <p id="target-result" class="realtime-result"></p>
         </div>
-        <p id="target-result" class="realtime-result"></p>
-    </div>
 
-    <p><a href="index.html" class="home-link">홈으로 돌아가기</a></p>
+        <p><a href="index.html" class="home-link">홈으로 돌아가기</a></p>
     </div>
 
     <!-- Template for new transaction rows -->
@@ -262,7 +262,7 @@
     </template>
 
     <script src="coin-selector.js"></script>
-    <script type="module" src="main.js"></script>
+    <script type="module" src="main.js?v=4"></script>
 </body>
 
 </html>

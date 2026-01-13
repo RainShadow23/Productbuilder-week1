@@ -30,8 +30,8 @@
     const coinDropdown = document.getElementById('coin-dropdown');
     const popularCoinsContainer = document.getElementById('popular-coins');
     const searchResultsContainer = document.getElementById('search-results');
-    const customCoinOption = document.getElementById('custom-coin-option');
-    const customCoinText = document.getElementById('custom-coin-text');
+    const customCoinOption = document.getElementById('custom-coin-add-option'); // Fixed ID
+    const customCoinText = document.getElementById('custom-coin-name'); // Fixed ID
     const selectedCoinDisplay = document.getElementById('selected-coin-display');
     const currentPriceLabel = document.getElementById('current-price-label');
     const priceSourceBadge = document.getElementById('price-source-badge');
@@ -52,8 +52,15 @@
      */
     async function fetchAllCoins() {
         try {
-            const response = await fetch('https://api.upbit.com/v1/market/all');
-            if (!response.ok) throw new Error('Failed to fetch coins');
+            // 1. Try Proxy
+            let response = await fetch('https://upbit-proxy.ooktone.workers.dev/v1/market/all');
+            if (!response.ok) {
+                // 2. Try Direct
+                console.warn('Proxy failed, trying direct Upbit API...');
+                response = await fetch('https://api.upbit.com/v1/market/all?isDetails=false');
+            }
+            if (!response.ok) throw new Error('All APIs failed');
+
             const data = await response.json();
 
             // KRW 마켓만 필터링
@@ -70,8 +77,20 @@
             console.log(`${allCoins.length}개의 코인을 불러왔습니다.`);
             return allCoins;
         } catch (error) {
-            console.error('코인 목록 로드 실패:', error);
-            return [];
+            console.error('코인 목록 로드 실패, 백업 목록을 사용합니다:', error);
+            // 3. Fallback
+            allCoins = [
+                { symbol: 'BTC', market: 'KRW-BTC', koreanName: '비트코인', englishName: 'Bitcoin', isCustom: false },
+                { symbol: 'ETH', market: 'KRW-ETH', koreanName: '이더리움', englishName: 'Ethereum', isCustom: false },
+                { symbol: 'XRP', market: 'KRW-XRP', koreanName: '리플', englishName: 'Ripple', isCustom: false },
+                { symbol: 'SOL', market: 'KRW-SOL', koreanName: '솔라나', englishName: 'Solana', isCustom: false },
+                { symbol: 'ADA', market: 'KRW-ADA', koreanName: '에이다', englishName: 'Cardano', isCustom: false },
+                { symbol: 'DOGE', market: 'KRW-DOGE', koreanName: '도지코인', englishName: 'Dogecoin', isCustom: false },
+                { symbol: 'AVAX', market: 'KRW-AVAX', koreanName: '아발란체', englishName: 'Avalanche', isCustom: false },
+                { symbol: 'DOT', market: 'KRW-DOT', koreanName: '폴카닷', englishName: 'Polkadot', isCustom: false },
+                { symbol: 'MATIC', market: 'KRW-MATIC', koreanName: '폴리곤', englishName: 'Polygon', isCustom: false }
+            ];
+            return allCoins;
         }
     }
 
@@ -119,10 +138,16 @@
      * 커스텀 코인 목록을 렌더링합니다
      */
     function renderCustomCoins() {
-        // 커스텀 코인 섹션 찾기 (첫 번째 섹션)
+        // 커스텀 코인 섹션 찾기
         const sections = coinDropdown.querySelectorAll('.coin-dropdown-section');
         const customSection = sections[0];
-        const customContainer = customSection.querySelectorAll('div')[1]; // 헤더 다음 div
+        // Use ID for safer selection
+        const customContainer = document.getElementById('custom-coins-container');
+
+        if (!customContainer) {
+            console.error('Custom coin container not found');
+            return;
+        }
 
         if (customCoins.length === 0) {
             customSection.style.display = 'none';

@@ -1,44 +1,63 @@
-/* Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap');
-/* Fallback if Pretendard not available on Google Fonts (it's not), use Noto Sans KR or similar */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+/* Google Fonts - 깔끔한 산세리프 폰트 */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap");
 
 :root {
-    --bg-color: #f5f7fa;
-    /* Light mode cleaner bg */
-    --container-bg: #ffffff;
-    --text-color: #333333;
-    --text-secondary: #666666;
-    --border-color: #e2e8f0;
-    --primary-color: #007aff;
-    /* iOS Blue */
-    --primary-hover: #0062cc;
-    --button-text: #ffffff;
-    --shadow-color: rgba(0, 0, 0, 0.08);
-    /* Softer shadow */
-    --font-family: 'Pretendard', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    /* 다크 모드를 기본으로 설정 - 전문적인 핀테크 스타일 */
+    --bg-color: #0a0a0b;
+    --container-bg: #111113;
+    --card-bg: #18181b;
+    --text-color: #fafafa;
+    /* 텍스트 색상 밝기 개선 - 가독성 향상 */
+    --text-secondary: #d4d4d8;
+    --text-muted: #a1a1aa;
+    --border-color: #27272a;
+    --border-hover: #3f3f46;
 
-    /* Stock Theme Colors */
-    --stock-profit: #e74c3c;
-    --stock-loss: #007bff;
+    /* 청록색 액센트 - 암호화폐 느낌 */
+    --primary-color: #14b8a6;
+    --primary_hover: #0d9488;
+    --primary-glow: rgba(20, 184, 166, 0.15);
+
+    /* 상태 색상 */
+    --profit-color: #22c55e;
+    --loss-color: #ef4444;
+    --warning-color: #f59e0b;
+
+    --button-text: #ffffff;
+    --shadow-color: rgba(0, 0, 0, 0.4);
+    --font-family: "Inter", "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 
     /* Spacing */
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 16px;
+    --radius-xl: 20px;
 }
 
-body.dark {
-    --bg-color: #1a1b1e;
-    /* Darker slate */
-    --container-bg: #25262b;
-    /* Card background */
-    --text-color: #e9ecef;
-    --text-secondary: #adb5bd;
-    --border-color: #373a40;
-    --primary-color: #339af0;
-    --primary-hover: #228be6;
-    --shadow-color: rgba(0, 0, 0, 0.3);
+/* 라이트 모드 (토글 시) */
+body.light,
+body.stock-theme.light {
+    --bg-color: #f4f4f5;
+    --container-bg: #ffffff;
+    --card-bg: #fafafa;
+    --text-color: #18181b;
+    /* 라이트 모드 텍스트 색상 개선 */
+    --text-secondary: #3f3f46;
+    --text-muted: #52525b;
+    --border-color: #e4e4e7;
+    --border-hover: #d4d4d8;
+    --primary-color: #0d9488;
+    --primary-hover: #0f766e;
+    --primary-glow: rgba(13, 148, 136, 0.1);
+    --shadow-color: rgba(0, 0, 0, 0.08);
+}
+
+/* Stock Theme Light Mode Override for Primary Color */
+body.stock-theme.light {
+    --primary-color: #ef4444;
+    --primary-hover: #dc2626;
+    --primary-glow: rgba(239, 68, 68, 0.1);
 }
 
 * {
@@ -49,81 +68,86 @@ body {
     font-family: var(--font-family);
     background-color: var(--bg-color);
     color: var(--text-color);
-    /* display: flex; REMOVED to fix layout breaking on long content */
-    /* flex-direction: column; */
-    /* justify-content: center; */
-    /* align-items: center; */
     display: block;
-    /* Restore standard block flow */
     min-height: 100vh;
     margin: 0;
     line-height: 1.6;
     transition: background-color 0.3s ease, color 0.3s ease;
     -webkit-font-smoothing: antialiased;
-    padding-bottom: 50px;
-    /* Space for scrolling */
+    padding: 0 16px 50px;
 }
 
-/* Ensure container centers itself */
-.container {
-    margin: 2rem auto;
-    /* Top/Bottom margin and center horizontally */
-    /* ... other existing styles ... */
-    transition: background-color 0.3s ease, color 0.3s ease;
-    -webkit-font-smoothing: antialiased;
-    /* Smoother fonts */
-}
-
-/* Theme Toggle */
+/* 테마 토글 버튼 리디자인 */
 #theme-toggle {
-    position: absolute;
-    top: 1.5rem;
-    right: 1.5rem;
-    padding: 0.6rem 1.2rem;
-    border-radius: 2rem;
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
     border: 1px solid var(--border-color);
-    background-color: var(--container-bg);
-    color: var(--text-color);
+    background-color: var(--card-bg);
+    color: var(--text-secondary);
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     font-weight: 500;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 4px var(--shadow-color);
+    z-index: 100;
+    backdrop-filter: blur(8px);
 }
 
 #theme-toggle:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 6px var(--shadow-color);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
 }
 
-/* Container Card */
+/* 컨테이너 카드 스타일 개선 */
 .container {
     background-color: var(--container-bg);
-    padding: 2.5rem;
-    border-radius: var(--radius-lg);
-    box-shadow: 0 10px 30px var(--shadow-color);
-    /* Premium deep shadow */
+    padding: 2rem;
+    border-radius: var(--radius-xl);
+    box-shadow: 0 4px 24px var(--shadow-color);
     text-align: center;
-    width: 90%;
-    max-width: 600px;
-    margin: 2rem 0;
-    /* Add margin for mobile scrolling */
+    width: 100%;
+    max-width: 540px;
+    margin: 3rem auto;
     border: 1px solid var(--border-color);
-    /* Subtle border definition */
 }
 
+/* container 바깥 요소들도 중앙 정렬 + 최대 너비 제한 */
+.input-group,
+.form-row,
+.results-group,
+.visual-comparison-container {
+    max-width: 540px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+/* 타이포그래피 개선 */
 h1 {
-    margin-bottom: 2rem;
+    margin: 0 0 0.5rem 0;
     font-weight: 700;
+    font-size: 1.5rem;
     letter-spacing: -0.02em;
     color: var(--text-color);
 }
 
+/* h2 레이블 가독성 개선 */
 h2 {
-    font-size: 1.1rem;
+    font-size: 0.8rem;
     font-weight: 600;
-    color: var(--text-color);
-    opacity: 0.9;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 1.5rem 0 0.75rem;
+    text-align: left;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
 a {
@@ -134,176 +158,161 @@ a {
 
 a:hover {
     color: var(--primary-hover);
-    text-decoration: underline;
 }
 
+/* hr도 중앙 정렬 + 최대 너비 */
 hr {
     border: 0;
     height: 1px;
     background: var(--border-color);
-    margin: 2rem 0;
+    margin: 1.5rem auto;
+    /* hr도 중앙 정렬 + 최대 너비 */
+    max-width: 480px;
 }
 
-/* --- Calculator Styles --- */
-.mode-selector {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 2rem;
-    padding: 0.5rem;
-    background: var(--bg-color);
-    border-radius: var(--radius-md);
-    display: inline-flex;
-    /* Fit content */
-    border: 1px solid var(--border-color);
-}
-
-#calc-mode-label {
-    margin-left: 0.8rem;
-    font-weight: 600;
-    font-size: 0.95rem;
-}
-
-/* Inputs & Forms */
-.input-group {
-    text-align: left;
-    margin-bottom: 1.5rem;
-    padding: 0;
-    /* Removing inner padding/border style for cleaner look */
-    border: none;
-    background: none;
-}
-
-/* --- Header & Layout --- */
+/* 헤더 컨테이너 개선 */
 .header-container {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
+    gap: 1rem;
     margin-bottom: 1.5rem;
-    width: 100%;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .header-title-group {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 0.75rem;
 }
 
 .header-icon {
-    font-size: 2rem;
+    font-size: 1.75rem;
 }
 
+.header-title-group h1 {
+    margin: 0;
+}
+
+/* 네비게이션 버튼 스타일 */
 .nav-button {
-    padding: 8px 16px;
-    border-radius: 20px;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    background-color: var(--card-bg);
+    color: var(--text-secondary);
+    font-size: 0.8rem;
     font-weight: 500;
     border: 1px solid var(--border-color);
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 0.5rem;
     transition: all 0.2s;
 }
 
 .nav-button:hover {
-    background-color: var(--border-color);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
     text-decoration: none;
-    color: var(--text-color);
 }
 
-/* --- Segmented Control (New specific Mode Selector) --- */
+/* 광고 배너 스타일 */
+.page-ad-banner {
+    width: 100%;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: var(--card-bg);
+    border-radius: var(--radius-md);
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    border: 1px dashed var(--border-color);
+}
+
+/* Segmented Control 리디자인 */
 .segmented-control {
     display: flex;
-    background-color: var(--bg-color);
+    background-color: var(--card-bg);
     padding: 4px;
-    border-radius: 8px;
-    /* Fixed radius */
+    border-radius: var(--radius-md);
     margin-bottom: 1.5rem;
     border: 1px solid var(--border-color);
     width: 100%;
-    max-width: 300px;
-    margin-left: auto;
-    margin-right: auto;
 }
 
 .segment-option {
     flex: 1;
     text-align: center;
-    padding: 8px 12px;
-    border-radius: 6px;
-    /* Inner radius */
+    padding: 0.6rem 0.75rem;
+    border-radius: var(--radius-sm);
     cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-muted);
     transition: all 0.2s;
     user-select: none;
 }
 
+.segment-option:hover {
+    color: var(--text-secondary);
+}
+
 .segment-option.active {
-    background-color: white;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-    color: var(--primary-color);
+    background-color: var(--primary-color);
+    color: var(--button-text);
+    box-shadow: 0 2px 8px var(--primary-glow);
 }
 
-body.dark .segment-option.active {
-    background-color: #3f4247;
-    color: white;
-}
-
-/* Ad Banner functional page */
-.page-ad-banner {
+/* 입력 필드 스타일 개선 */
+.input-group {
+    text-align: left;
+    margin-bottom: 1rem;
+    padding: 0;
+    border: none;
+    background: none;
     width: 100%;
-    margin-bottom: 2rem;
-    padding: 20px;
-    background: var(--bg-color);
-    border-radius: var(--radius-md);
-    text-align: center;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    border: 1px solid var(--border-color);
-}
-
-.input-group h2 {
-    margin-top: 0;
-    font-size: 1rem;
-    border-bottom: none;
-    padding-bottom: 0.5rem;
-    margin-bottom: 0.8rem;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    letter-spacing: 0.05em;
-    font-weight: 700;
+    /* Ensure full width */
 }
 
 .form-row {
     display: flex;
-    gap: 12px;
-    margin-bottom: 12px;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
     align-items: center;
+    flex-wrap: wrap;
+    /* Important: Allow wrapping on small screens */
 }
 
 input[type="text"],
 select {
     width: 100%;
-    padding: 12px 14px;
+    padding: 0.875rem 1rem;
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-sm);
-    background-color: var(--bg-color);
-    /* Slightly disconnected from card bg */
+    border-radius: var(--radius-md);
+    background-color: var(--card-bg);
     color: var(--text-color);
-    font-size: 1rem;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    font-size: 0.95rem;
+    font-family: var(--font-family);
+    transition: all 0.2s ease;
     outline: none;
+    min-width: 0;
+    /* Fix flex item overflow */
+}
+
+/* 입력 필드 플레이스홀더 색상 개선 */
+input[type="text"]::placeholder {
+    color: var(--text-muted);
+    opacity: 1;
+}
+
+input[type="text"]:hover {
+    border-color: var(--border-hover);
 }
 
 input[type="text"]:focus,
 select:focus {
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+    box-shadow: 0 0 0 3px var(--primary-glow);
 }
 
 .input-wrapper {
@@ -315,168 +324,695 @@ select:focus {
 
 .input-wrapper input {
     padding-right: 50px;
-    /* Space for unit */
 }
 
+/* 입력 단위 텍스트 가독성 개선 */
 .input-unit {
     position: absolute;
-    right: 14px;
+    right: 1rem;
     color: var(--text-secondary);
-    font-size: 0.9em;
+    font-size: 0.85rem;
     font-weight: 500;
     pointer-events: none;
 }
 
-/* Buttons */
-button {
-    font-family: var(--font-family);
-}
-
+/* CTA 버튼 스타일 */
 .cta-button {
     width: 100%;
-    padding: 14px;
-    font-size: 1.1rem;
+    padding: 1rem;
+    font-size: 1rem;
     font-weight: 600;
+    font-family: var(--font-family);
     border: none;
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+    background: var(--primary-color);
     color: var(--button-text);
     border-radius: var(--radius-md);
     cursor: pointer;
-    margin: 1.5rem 0;
-    transition: transform 0.1s, box-shadow 0.2s;
-    box-shadow: 0 4px 12px rgba(0, 122, 255, 0.2);
+    margin: 1rem 0;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 16px var(--primary-glow);
 }
 
 .cta-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 122, 255, 0.3);
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px var(--primary-glow);
 }
 
 .cta-button:active {
     transform: translateY(0);
 }
 
+/* 거래 내역 추가 버튼 */
+/* 거래 내역 추가 버튼 가독성 개선 */
 #add-transaction-btn {
     width: 100%;
-    padding: 12px;
-    border-radius: var(--radius-sm);
-    border: 1px dashed var(--border-color);
+    padding: 0.875rem;
+    border-radius: var(--radius-md);
+    border: 1px dashed var(--border-hover);
     background: transparent;
     color: var(--text-secondary);
     cursor: pointer;
     margin-top: 0.5rem;
     font-size: 0.9rem;
+    font-family: var(--font-family);
     transition: all 0.2s;
 }
 
 #add-transaction-btn:hover {
     border-color: var(--primary-color);
     color: var(--primary-color);
-    background-color: rgba(0, 122, 255, 0.05);
+    background-color: var(--primary-glow);
 }
 
+/* 삭제 버튼 */
 .remove-transaction-btn {
     padding: 0;
-    width: 36px;
-    height: 44px;
-    /* Match input height roughly */
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
     border: 1px solid var(--border-color);
-    background-color: white;
-    color: #ff3b30;
+    background-color: var(--card-bg);
+    color: var(--loss-color);
     border-radius: var(--radius-sm);
     cursor: pointer;
-    background-color: var(--bg-color);
-    font-weight: bold;
-}
-
-body.dark .remove-transaction-btn {
-    background-color: #343a40;
-    border-color: #495057;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s;
 }
 
 .remove-transaction-btn:hover {
-    background-color: #ff3b30;
+    background-color: var(--loss-color);
     color: white;
-    border-color: #ff3b30;
+    border-color: var(--loss-color);
 }
 
-/* Results Box */
+/* 결과 박스 스타일 개선 */
 .results-group {
     text-align: left;
-    background-color: var(--bg-color);
-    /* Distinguished block */
-    padding: 1.5rem;
-    border-radius: var(--radius-md);
-    margin-top: 2rem;
+    background-color: var(--card-bg);
+    padding: 1.25rem;
+    border-radius: var(--radius-lg);
+    margin-top: 1.5rem;
     border: 1px solid var(--border-color);
 }
 
 .results-group h2 {
-    border-bottom: 2px solid var(--border-color);
-    padding-bottom: 0.8rem;
-    margin-bottom: 1.2rem;
-    font-size: 1.1rem;
-    color: var(--text-color);
-}
-
-.result-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.8rem 0;
     border-bottom: 1px solid var(--border-color);
-    font-size: 1rem;
+    padding-bottom: 0.75rem;
+    margin: 0 0 1rem 0;
+    font-size: 0.85rem;
+    color: var(--text-color);
+    text-transform: none;
+    letter-spacing: normal;
+    font-weight: 600;
 }
 
-.result-item:last-child {
-    border-bottom: none;
-}
-
+/* 결과 항목 레이블 가독성 개선 */
 .result-item span:first-child {
     color: var(--text-secondary);
+    font-weight: 500;
 }
 
 .result-item span:last-child {
-    font-weight: 700;
+    font-weight: 600;
     color: var(--text-color);
-    font-size: 1.1em;
 }
 
-/* Real-time Results */
+/* 실시간 결과 표시 개선 */
 .realtime-result {
     text-align: center;
     margin: 1rem 0;
-    font-size: 1.1rem;
+    font-size: 1rem;
     padding: 1rem;
-    background: rgba(0, 122, 255, 0.05);
-    /* Subtle blue tint */
+    background: var(--primary-glow);
     border-radius: var(--radius-md);
-    min-height: 60px;
+    min-height: 50px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border: 1px solid rgba(0, 122, 255, 0.1);
+    border: 1px solid rgba(20, 184, 166, 0.2);
+    color: var(--text-color);
 }
 
-body.dark .realtime-result {
-    background: rgba(255, 255, 255, 0.03);
-    border-color: rgba(255, 255, 255, 0.05);
+.result-value {
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--primary-color);
 }
 
-/* Toggle Switch refinement */
+.dec-part {
+    font-size: 0.8em;
+    opacity: 0.7;
+}
+
+/* 손익 표시 */
+.pnl-rate {
+    font-weight: 600;
+    margin-left: 0.5rem;
+}
+
+.pnl-rate.profit {
+    color: var(--profit-color);
+}
+
+.pnl-rate.loss {
+    color: var(--loss-color);
+}
+
+/* 버튼 그리드 */
+/* 버튼 그리드 텍스트 가독성 개선 */
+.buttons-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* 버튼 그리드 텍스트 가독성 개선 */
+.buttons-grid button {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.8rem;
+    font-family: var(--font-family);
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+
+@media (max-width: 500px) {
+    .buttons-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* 코인/주식 선택기 스타일 */
+/* 코인 선택기 레이블 가독성 개선 */
+.coin-selector-container {
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+/* 코인 선택기 레이블 가독성 개선 */
+.coin-selector-container label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+}
+
+#coin-search {
+    padding: 0.875rem 1rem;
+    font-size: 0.95rem;
+    border: 1px solid var(--border-color);
+    background-color: var(--card-bg);
+}
+
+.coin-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    border-radius: var(--radius-md);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border-color);
+    margin-top: 0.5rem;
+    max-height: 300px;
+    overflow-y: auto;
+    background-color: var(--container-bg);
+    z-index: 50;
+}
+
+.coin-dropdown-header {
+    background-color: var(--card-bg);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.75rem 1rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.coin-item {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+.coin-item:last-child {
+    border-bottom: none;
+}
+
+.coin-item:hover,
+.coin-item.highlighted {
+    background-color: var(--primary-glow);
+}
+
+.coin-selector-wrapper {
+    position: relative;
+}
+
+/* 선택된 코인 표시 */
+.selected-coin-display {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--card-bg);
+    border-radius: 9999px;
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+    border: 1px solid var(--border-color);
+}
+
+.coin-symbol {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.coin-name {
+    color: var(--text-secondary);
+}
+
+.price-source-badge {
+    padding: 0.25rem 0.5rem;
+    background: var(--primary-glow);
+    color: var(--primary-color);
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.price-source-badge.manual {
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--warning-color);
+}
+
+/* 가격 표시 영역 */
+/* 가격 표시 레이블 가독성 개선 */
+.price-display {
+    margin-bottom: 1rem;
+    text-align: left;
+}
+
+/* 가격 표시 레이블 가독성 개선 */
+.price-display label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+}
+
+/* 시각적 비교 바 */
+.visual-comparison-container {
+    background-color: var(--card-bg);
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    margin-top: 1rem;
+}
+
+.visual-bar-group {
+    margin-bottom: 1rem;
+}
+
+.visual-bar-group:last-child {
+    margin-bottom: 0;
+}
+
+/* 시각적 비교 바 레이블 가독성 개선 */
+.visual-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.visual-label span:last-child {
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.visual-track {
+    background-color: var(--bg-color);
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.visual-bar {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.bar-current {
+    background: var(--text-muted);
+}
+
+.bar-new {
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-hover));
+}
+
+/* 홈 링크 스타일 */
+.home-link {
+    display: inline-block;
+    margin-top: 1rem;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.home-link:hover {
+    color: var(--primary-color);
+}
+
+/* 주식 테마 (빨간색 액센트) */
+body.stock-theme {
+    --primary-color: #ef4444;
+    --primary-hover: #dc2626;
+    --primary-glow: rgba(239, 68, 68, 0.15);
+}
+
+/* 가격 확인 섹션 */
+.price-checker-section {
+    margin: 1rem 0;
+}
+
+.price-checker-toggle {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 0.75rem 1rem;
+    font-weight: 500;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+}
+
+.price-checker-toggle:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.price-checker-content {
+    margin-top: 0.5rem;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.price-checker-iframe {
+    width: 100%;
+    height: 400px;
+    border: none;
+}
+
+.price-update-time {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+}
+
+/* 네이버 링크 버튼 (주식용) */
+.naver-link-btn {
+    background-color: #03c75a;
+    color: white;
+    border: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+.naver-link-btn:hover {
+    background-color: #02a94d;
+    color: white;
+}
+
+/* 트랜잭션 행 스타일 */
+.transaction-row {
+    align-items: center;
+}
+
+.transaction-row select {
+    flex: 0 0 100px;
+    padding: 0.75rem;
+    font-size: 0.85rem;
+}
+
+.transaction-row input {
+    flex: 1;
+}
+
+/* 반응형 조정 */
+@media (max-width: 500px) {
+    .container {
+        padding: 1.5rem;
+        margin: 1rem auto;
+    }
+
+    .header-container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    h1 {
+        font-size: 1.25rem;
+    }
+
+    .form-row {
+        flex-wrap: wrap;
+    }
+
+    .transaction-row select {
+        flex: 0 0 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .transaction-row input {
+        flex: 1;
+    }
+}
+
+/* 홈페이지 카드 스타일 */
+.ad-banner {
+    width: 100%;
+    height: 80px;
+    background-color: var(--card-bg);
+    border: 1px dashed var(--border-color);
+    border-radius: var(--radius-md);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+}
+
+.main-card-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.main-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem;
+    background-color: var(--card-bg);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+}
+
+.main-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--primary-color);
+    box-shadow: 0 8px 24px var(--shadow-color);
+}
+
+.card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+/* 홈페이지 카드 설명 텍스트 가독성 개선 */
+.card-desc {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-align: center;
+    line-height: 1.5;
+}
+
+/* 주식/코인 테마 하이라이트 */
+.stock-card:hover .card-title {
+    color: #ef4444;
+}
+
+.coin-card:hover .card-title {
+    color: var(--primary-color);
+}
+
+.sub-link {
+    display: block;
+    margin-top: 1.5rem;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.sub-link:hover {
+    color: var(--primary-color);
+}
+
+/* 푸터 가독성 개선 */
+.footer {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* 푸터 가독성 개선 */
+.footer a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    margin: 0 0.25rem;
+}
+
+.footer a:hover {
+    color: var(--primary-color);
+}
+
+@media (max-width: 500px) {
+    .main-card-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 인기 코인 그리드 */
+.popular-coins-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+    padding: 0.75rem;
+}
+
+.popular-coins-grid .coin-item {
+    padding: 0.5rem;
+    text-align: center;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* 코인 아이템 내부 스타일 */
+.coin-item-main {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.coin-item-symbol {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+/* 코인 아이템 이름 가독성 개선 */
+.coin-item-name {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.coin-item-market {
+    font-size: 0.7rem;
+    color: var(--warning-color);
+    background: rgba(245, 158, 11, 0.1);
+    padding: 0.125rem 0.375rem;
+    border-radius: 4px;
+}
+
+/* 커스텀 코인 추가 옵션 */
+.custom-add {
+    background: var(--primary-glow);
+    border: 1px dashed var(--primary-color) !important;
+}
+
+.hidden-dropdown {
+    display: none;
+}
+
+/* 토글 스위치 (레거시 지원) */
 .switch {
+    position: relative;
+    display: inline-block;
     width: 52px;
-    height: 30px;
+    height: 28px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--border-color);
+    transition: .3s;
+    border-radius: 28px;
 }
 
 .slider:before {
-    height: 22px;
-    width: 22px;
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
     left: 4px;
     bottom: 4px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
 }
 
 input:checked+.slider {
@@ -484,173 +1020,19 @@ input:checked+.slider {
 }
 
 input:checked+.slider:before {
-    transform: translateX(22px);
+    transform: translateX(24px);
 }
 
-/* Button Grid */
-.buttons-grid {
-    display: grid !important;
-    grid-template-columns: repeat(4, 1fr);
-    /* 4 columns on desktop */
-    gap: 8px;
-    margin-bottom: 2rem;
-}
-
-.buttons-grid button {
-    padding: 10px;
-    font-size: 0.85em;
-    background-color: var(--bg-color);
-    border: 1px solid var(--border-color);
-    color: var(--text-color);
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.buttons-grid button:hover {
-    background-color: var(--border-color);
-}
-
-@media (max-width: 500px) {
-    .buttons-grid {
-        grid-template-columns: repeat(2, 1fr);
-        /* 2x2 on mobile */
-    }
-}
-
-/* Coin/Stock Selector */
-.coin-selector-container {
-    margin-bottom: 2rem;
-    text-align: left;
-}
-
-#coin-search {
-    padding: 14px;
-    font-size: 1.1rem;
-    box-shadow: 0 2px 5px var(--shadow-color);
-    border: 1px solid var(--border-color);
-}
-
-.coin-dropdown {
+/* 모드 셀렉터 (레거시 지원) */
+.mode-selector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    padding: 0.5rem;
+    background: var(--card-bg);
     border-radius: var(--radius-md);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    display: inline-flex;
     border: 1px solid var(--border-color);
-    margin-top: 8px;
-    max-height: 350px;
-}
-
-.coin-dropdown-header {
-    background-color: var(--bg-color);
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 10px 14px;
-}
-
-.coin-item {
-    padding: 12px 14px;
-    border-bottom: 1px solid var(--bg-color);
-    /* Subtle divider */
-}
-
-.coin-item:hover,
-.coin-item.highlighted {
-    background-color: rgba(0, 122, 255, 0.08);
-}
-
-.selected-coin-display {
-    padding: 8px 16px;
-    background: var(--bg-color);
-    border-radius: 20px;
-    margin-top: 10px;
-    font-size: 0.95rem;
-    border: 1px solid var(--border-color);
-}
-
-.coin-symbol {
-    color: var(--primary-color);
-}
-
-/* Stock Theme Specifics */
-body.stock-theme {
-    --primary-color: #e74c3c;
-    /* Red */
-    --primary-hover: #c0392b;
-}
-
-body.stock-theme .cta-button {
-    background: linear-gradient(135deg, #e74c3c, #c0392b);
-    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.25);
-}
-
-body.stock-theme .cta-button:hover {
-    box-shadow: 0 6px 16px rgba(231, 76, 60, 0.35);
-}
-
-/* Visual Bars */
-.visual-comparison-container {
-    background-color: var(--bg-color);
-    padding: 15px;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--border-color);
-}
-
-.visual-track {
-    background-color: rgba(0, 0, 0, 0.05);
-    height: 10px;
-    /* Thinner for elegance */
-    border-radius: 10px;
-}
-
-.visual-bar {
-    border-radius: 10px;
-}
-
-body.dark .visual-track {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* Navigation List (Home) */
-.container ul {
-    list-style: none;
-    padding: 0;
-    margin: 2rem 0;
-}
-
-.container ul li {
-    margin-bottom: 1rem;
-}
-
-.container ul li a {
-    display: block;
-    padding: 1.5rem;
-    background: white;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    color: var(--text-color);
-    font-weight: 600;
-    font-size: 1.1rem;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 4px var(--shadow-color);
-}
-
-body.dark .container ul li a {
-    background: var(--bg-color);
-    /* Slightly lighter than card */
-}
-
-.container ul li a:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 12px var(--shadow-color);
-    border-color: var(--primary-color);
-    text-decoration: none;
-    color: var(--primary-color);
-}
-
-/* Price Checker Iframe */
-.price-checker-toggle {
-    background-color: var(--bg-color);
-    border: 1px solid var(--border-color);
-    padding: 12px;
-    font-weight: 600;
+    /* Corrected missing value */
 }
