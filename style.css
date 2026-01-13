@@ -23,7 +23,8 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     display: flex;
-    flex-direction: column; /* Allow button to be placed above */
+    flex-direction: column;
+    /* Allow button to be placed above */
     justify-content: center;
     align-items: center;
     min-height: 100vh;
@@ -51,7 +52,8 @@ body {
     box-shadow: 0 0 10px var(--shadow-color);
     text-align: center;
     width: 90%;
-    max-width: 600px; /* Max width for larger screens */
+    max-width: 600px;
+    /* Max width for larger screens */
 }
 
 h1 {
@@ -69,7 +71,8 @@ h1 {
     height: 50px;
     border-radius: 50%;
     background-color: #eee;
-    color: #333; /* Explicit color for number balls */
+    color: #333;
+    /* Explicit color for number balls */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -167,14 +170,16 @@ h1 {
     align-items: center;
 }
 
-.form-row input, .form-row select {
+.form-row input,
+.form-row select {
     flex: 1;
     padding: 8px;
     border: 1px solid var(--border-color);
     border-radius: 5px;
     background-color: var(--container-bg);
     color: var(--text-color);
-    min-width: 0; /* Prevents overflow on flex items */
+    min-width: 0;
+    /* Prevents overflow on flex items */
 }
 
 #add-transaction-btn {
@@ -233,9 +238,11 @@ h1 {
     padding: 0.5rem 0;
     border-bottom: 1px solid var(--border-color);
 }
+
 .result-item:last-child {
     border-bottom: none;
 }
+
 .result-item span:last-child {
     font-weight: bold;
 }
@@ -248,60 +255,115 @@ h1 {
 
 /* Toggle Switch CSS */
 .switch {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 34px;
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
 }
 
-.switch input { 
-  opacity: 0;
-  width: 0;
-  height: 0;
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
 }
 
 .slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  -webkit-transition: .4s;
-  transition: .4s;
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
 }
 
 .slider:before {
-  position: absolute;
-  content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
 }
 
-input:checked + .slider {
-  background-color: var(--button-bg);
+input:checked+.slider {
+    background-color: var(--button-bg);
 }
 
-input:focus + .slider {
-  box-shadow: 0 0 1px var(--button-bg);
+input:focus+.slider {
+    box-shadow: 0 0 1px var(--button-bg);
 }
 
-input:checked + .slider:before {
-  -webkit-transform: translateX(26px);
-  -ms-transform: translateX(26px);
-  transform: translateX(26px);
+input:checked+.slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
 }
 
 .slider.round {
-  border-radius: 34px;
+    border-radius: 34px;
 }
 
 .slider.round:before {
-  border-radius: 50%;
+    border-radius: 50%;
+}
+
+/* --- Button Grid for Utilities --- */
+.buttons-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.buttons-grid button {
+    width: 100%;
+    padding: 10px;
+    font-size: 0.9em;
+}
+
+/* --- Number Formatting Styles --- */
+/* 숫자 표시 시 정수 부분 강조 */
+.int-part {
+    font-size: 1.1em;
+    font-weight: 700;
+}
+
+.dec-part {
+    font-size: 0.9em;
+    color: var(--text-secondary);
+}
+
+/* 한국형 손익률 컬러: 수익=빨강, 손실=파랑 */
+.profit {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+.loss {
+    color: #007bff;
+    font-weight: 600;
+}
+
+/* What-if 평단가 변화 표시 */
+.improvement {
+    color: #28a745;
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+.warning {
+    color: #ff9800;
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+.neutral {
+    color: #6c757d;
+    font-weight: 600;
+    margin-left: 8px;
 }

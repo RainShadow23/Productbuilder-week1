@@ -73,12 +73,25 @@ A simple tool for generating and tracking lottery numbers.
 
 ## 5. Most Recent Change (Summary)
 
-- **Task**: Overhaul the UI and functionality of the helper calculators in `water_down_calculator.html`.
-- **Problem**: The calculators were static, required button clicks, and lacked key usability features requested by the user.
-- **Resolution**:
-  - Replaced the static calculation logic with a new, real-time JavaScript module that updates results instantly on every keypress in the relevant inputs.
-  - Implemented the requested Profit/Loss percentage feature with dynamic red/blue color-coding.
-  - Added automatic thousand-separator formatting for all numeric inputs.
-  - Implemented CSS and JS logic to format result numbers with smaller decimals for better readability.
-  - Updated all section titles and input labels to be more intuitive as per the user's request.
-  - The changes were implemented in a way that is isolated from the main, more complex calculator to ensure stability.
+- **Task**: What-if 계산기 UX 개선 및 구조대 표시 개선
+- **Changes Applied**:
+  1. **실시간 자동 계산**: What-if 계산에 디바운싱(500ms) 적용하여 입력 후 자동으로 결과 표시
+  2. **평단가 변화율 표시 개선**:
+     - 기존: `(-0.56%)` 파란색 → 손실처럼 느껴짐
+     - 개선: `✅ 0.56% 개선` 초록색 / `⚠️ 0.56% 상승` 주황색
+     - 이모지와 긍정적 표현으로 의미 전달 명확화
+  3. **구조대 결과 표시 개선**:
+     - 기존: 1줄 평범한 텍스트
+     - 개선: 2줄 + 이모지 (`🎯 목표 달성` / `📊 BTC 추가 매수 필요`)
+  4. **CSS 추가**: `.improvement`, `.warning`, `.neutral` 클래스
+
+- **Developer Context**: 사용자 피드백을 반영하여 UX를 개선했습니다. 마이너스 기호와 파란색이 "손실"로 오해되는 문제를 해결하고, 이모지로 시각적 임팩트를 강화했습니다.
+
+---
+
+**이전 작업 (백업/복원 기능):**
+
+- 데이터 버전 관리 (v1) 및 다중 코인 구조 (Portfolios)
+- 하위 호환성 지원 (자동 마이그레이션)
+- 백업/복원 UI 및 기능 (Blob API, FileReader API)
+- 별도 브라우저 환경에서 모든 기능 정상 작동 확인

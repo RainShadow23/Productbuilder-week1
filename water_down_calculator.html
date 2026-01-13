@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,9 +13,12 @@
             display: flex;
             align-items: center;
         }
+
         .input-wrapper input {
-            padding-right: 50px; /* Space for the unit */
+            padding-right: 50px;
+            /* Space for the unit */
         }
+
         .input-unit {
             position: absolute;
             right: 15px;
@@ -22,9 +26,10 @@
             font-size: 0.9em;
         }
 
-        .realtime-result { /* Renamed for clarity, though not real-time anymore */
-            text-align: center; 
-            margin-top: 15px; 
+        .realtime-result {
+            /* Renamed for clarity, though not real-time anymore */
+            text-align: center;
+            margin-top: 15px;
             font-size: 1.2em;
             min-height: 40px;
         }
@@ -43,15 +48,19 @@
             font-weight: bold;
             margin-left: 8px;
         }
+
         .pnl-rate.profit {
             color: red;
         }
+
         .pnl-rate.loss {
             color: blue;
         }
     </style>
 </head>
+
 <body>
+    <button id="theme-toggle">테마 변경</button>
     <div class="container">
         <h1>물타기 계산기</h1>
 
@@ -69,7 +78,7 @@
             <label for="current-price">비트코인 현재가 (KRW):</label>
             <input type="text" id="current-price" placeholder="로딩중...">
         </div>
-        
+
         <hr>
 
         <!-- Initial Holdings -->
@@ -78,7 +87,8 @@
             <div class="form-row">
                 <input type="text" id="initial-qty" class="comma-input" placeholder="보유 수량">
                 <div class="input-wrapper" style="flex:1;">
-                    <input type="text" id="initial-avg-price" class="comma-input" placeholder="보유 평단가" style="width:100%;">
+                    <input type="text" id="initial-avg-price" class="comma-input" placeholder="보유 평단가"
+                        style="width:100%;">
                     <span class="input-unit">KRW</span>
                 </div>
             </div>
@@ -98,8 +108,14 @@
         <!-- Action Buttons -->
         <div class="form-row">
             <button id="calculate-btn" class="cta-button">전체 결과 계산하기</button>
-            <button id="share-btn" style="flex: 0.5;">공유 링크 복사</button>
-            <button id="reset-btn" style="flex: 0.5;">초기화</button>
+        </div>
+        <div class="form-row buttons-grid">
+            <button id="share-btn">공유 링크</button>
+            <button id="backup-btn">백업(.json)</button>
+            <button id="restore-btn">파일 복원</button>
+            <button id="reset-btn">초기화</button>
+            <!-- Hidden File Input for Restore -->
+            <input type="file" id="file-input" style="display: none;" accept=".json">
         </div>
 
         <!-- Results Section -->
@@ -112,15 +128,16 @@
             <div class="result-item"><span>평가 손익:</span><span id="result-pnl"></span></div>
             <div class="result-item"><span>수익률:</span><span id="result-return-rate"></span></div>
         </div>
-        
+
         <hr>
 
         <!-- Shared Calculation Price -->
         <div class="price-display">
             <label for="calculation-price">얼마에 더 살까요? (추가 매수 희망가)</label>
             <div class="input-wrapper" style="justify-content: center;">
-                <input type="text" id="calculation-price" class="comma-input" placeholder="현재가 또는 직접 입력" style="text-align:center; width: 220px;">
-                 <span class="input-unit">KRW</span>
+                <input type="text" id="calculation-price" class="comma-input" placeholder="현재가 또는 직접 입력"
+                    style="text-align:center; width: 220px;">
+                <span class="input-unit">KRW</span>
             </div>
         </div>
 
@@ -129,7 +146,8 @@
             <h2>이렇게 물을 타면 내 평단가는?</h2>
             <div class="form-row">
                 <div class="input-wrapper" style="width:100%;">
-                    <input type="text" id="whatif-amount" class="comma-input" placeholder="추가 매수 금액" style="width:100%;">
+                    <input type="text" id="whatif-amount" class="comma-input" placeholder="추가 매수 금액"
+                        style="width:100%;">
                     <span class="input-unit">KRW</span>
                 </div>
                 <button id="whatif-calculate-btn">결과 미리보기</button>
@@ -142,7 +160,8 @@
             <h2>구조대(목표 평단)가 오려면?</h2>
             <div class="form-row">
                 <div class="input-wrapper" style="width:100%;">
-                    <input type="text" id="target-avg-price" class="comma-input" placeholder="목표 평단가" style="width:100%;">
+                    <input type="text" id="target-avg-price" class="comma-input" placeholder="목표 평단가"
+                        style="width:100%;">
                     <span class="input-unit">KRW</span>
                 </div>
                 <button id="target-calculate-btn">필요 금액 계산</button>
@@ -168,4 +187,5 @@
 
     <script src="main.js"></script>
 </body>
+
 </html>
