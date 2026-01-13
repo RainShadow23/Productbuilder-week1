@@ -67,17 +67,63 @@
         <!-- Calculation Mode Toggle -->
         <div class="mode-selector">
             <label class="switch">
-                <input type="checkbox" id="calc-mode-toggle">
+                <input type="checkbox" id="calc-mode-toggle" aria-label="계산 모드 전환">
                 <span class="slider round"></span>
             </label>
             <span id="calc-mode-label">거래소 기준</span>
         </div>
 
-        <!-- Current BTC Price -->
-        <div class="price-display">
-            <label for="current-price">비트코인 현재가 (KRW):</label>
-            <input type="text" id="current-price" placeholder="로딩중...">
+        <!-- Coin Selector -->
+        <div class="coin-selector-container">
+            <label for="coin-search">코인 선택:</label>
+            <div class="coin-selector-wrapper">
+                <input type="text" id="coin-search" placeholder="🔍 코인 검색 또는 심볼 입력..." autocomplete="off"
+                    aria-label="코인 검색">
+                <div id="coin-dropdown" class="coin-dropdown" style="display: none;">
+                    <div class="coin-dropdown-section" style="display: none;">
+                        <div class="coin-dropdown-header">💾 내가 추가한 코인</div>
+                        <div id="custom-coins-list"></div>
+                    </div>
+                    <div class="coin-dropdown-section">
+                        <div class="coin-dropdown-header">⭐ 인기 코인</div>
+                        <div id="popular-coins"></div>
+                    </div>
+                    <div class="coin-dropdown-section">
+                        <div class="coin-dropdown-header">🔍 검색 결과</div>
+                        <div id="search-results"></div>
+                    </div>
+                    <div id="custom-coin-option" class="coin-dropdown-section" style="display: none;">
+                        <div class="coin-dropdown-header">➕ 직접 추가</div>
+                        <div class="coin-item custom-add">
+                            <span id="custom-coin-text"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="selected-coin-display" class="selected-coin-display">
+                <span class="coin-symbol">BTC</span>
+                <span class="coin-name">비트코인</span>
+            </div>
         </div>
+
+        <!-- Current Price -->
+        <div class="price-display">
+            <label for="current-price"><span id="current-price-label">비트코인</span> 현재가 (KRW):</label>
+            <input type="text" id="current-price" placeholder="로딩중..." aria-label="현재 가격">
+            <span id="price-source-badge" class="price-source-badge">자동</span>
+            <div id="price-update-time" class="price-update-time" style="display: none;"></div>
+        </div>
+
+        <!-- Price Checker (for custom coins) -->
+        <div id="price-checker-section" class="price-checker-section" style="display: none;">
+            <button id="price-checker-toggle" class="price-checker-toggle">
+                <span id="price-checker-icon">▼</span> 가격 확인하기
+            </button>
+            <div id="price-checker-content" class="price-checker-content" style="display: none;">
+                <iframe id="price-checker-iframe" class="price-checker-iframe" frameborder="0"></iframe>
+            </div>
+        </div>
+
 
         <hr>
 
@@ -85,10 +131,10 @@
         <div class="input-group">
             <h2>기본 정보 (평단가 계산에 필요)</h2>
             <div class="form-row">
-                <input type="text" id="initial-qty" class="comma-input" placeholder="보유 수량">
+                <input type="text" id="initial-qty" class="comma-input" placeholder="보유 수량" aria-label="보유 수량">
                 <div class="input-wrapper" style="flex:1;">
                     <input type="text" id="initial-avg-price" class="comma-input" placeholder="보유 평단가"
-                        style="width:100%;">
+                        style="width:100%;" aria-label="보유 평단가">
                     <span class="input-unit">KRW</span>
                 </div>
             </div>
@@ -115,7 +161,7 @@
             <button id="restore-btn">파일 복원</button>
             <button id="reset-btn">초기화</button>
             <!-- Hidden File Input for Restore -->
-            <input type="file" id="file-input" style="display: none;" accept=".json">
+            <input type="file" id="file-input" style="display: none;" accept=".json" aria-label="백업 파일 선택">
         </div>
 
         <!-- Results Section -->
@@ -146,8 +192,8 @@
             <h2>이렇게 물을 타면 내 평단가는?</h2>
             <div class="form-row">
                 <div class="input-wrapper" style="width:100%;">
-                    <input type="text" id="whatif-amount" class="comma-input" placeholder="추가 매수 금액"
-                        style="width:100%;">
+                    <input type="text" id="whatif-amount" class="comma-input" placeholder="추가 매수 금액" style="width:100%;"
+                        aria-label="추가 매수 금액">
                     <span class="input-unit">KRW</span>
                 </div>
                 <button id="whatif-calculate-btn">결과 미리보기</button>
@@ -161,7 +207,7 @@
             <div class="form-row">
                 <div class="input-wrapper" style="width:100%;">
                     <input type="text" id="target-avg-price" class="comma-input" placeholder="목표 평단가"
-                        style="width:100%;">
+                        style="width:100%;" aria-label="목표 평단가">
                     <span class="input-unit">KRW</span>
                 </div>
                 <button id="target-calculate-btn">필요 금액 계산</button>
@@ -175,16 +221,17 @@
     <!-- Template for new transaction rows -->
     <template id="transaction-row-template">
         <div class="form-row transaction-row">
-            <select class="transaction-type">
+            <select class="transaction-type" aria-label="거래 유형">
                 <option value="buy" selected>추가 매수</option>
                 <option value="sell">매도</option>
             </select>
-            <input type="text" class="transaction-qty comma-input" placeholder="수량">
-            <input type="text" class="transaction-price comma-input" placeholder="가격">
-            <button class="remove-transaction-btn">X</button>
+            <input type="text" class="transaction-qty comma-input" placeholder="수량" aria-label="거래 수량">
+            <input type="text" class="transaction-price comma-input" placeholder="가격" aria-label="거래 가격">
+            <button class="remove-transaction-btn" aria-label="거래 내역 삭제">X</button>
         </div>
     </template>
 
+    <script src="coin-selector.js"></script>
     <script src="main.js"></script>
 </body>
 

@@ -101,17 +101,21 @@ window.addEventListener('load', () => {
         let calculationMode = 'exchange';
         let priceUpdateInterval;
 
+        // 전역 변수로 노출 (coin-selector.js에서 접근 가능)
+        window.currentCoin = 'BTC'; // 현재 선택된 코인
+        let currentCoin = window.currentCoin; // 로컬 참조
+
+        let allCoins = []; // Upbit API에서 가져온 전체 코인 목록
+        let customCoins = JSON.parse(localStorage.getItem('customCoins')) || []; // 사용자 추가 코인
+
         // --- Persistence (고도화된 버전 관리 및 다중 코인 구조) ---
         const CURRENT_DATA_VERSION = 1;
-        const DEFAULT_COIN = 'BTC';
 
         /**
          * 현재 상태를 localStorage에 저장합니다.
          * 새로운 데이터 구조: { version, lastUpdated, activeCoin, portfolios: { CODE: { ... } } }
          */
         function saveState() {
-            const currentCoin = DEFAULT_COIN; // 향후 확장을 위해 변수화
-
             // 기존에 저장된 전체 상태 로드
             let fullState = JSON.parse(localStorage.getItem('waterDownCalcState')) || {
                 version: CURRENT_DATA_VERSION,
@@ -121,9 +125,9 @@ window.addEventListener('load', () => {
             // 현재 화면의 데이터를 코인별 포트폴리오에 업데이트
             fullState.version = CURRENT_DATA_VERSION;
             fullState.lastUpdated = new Date().toISOString();
-            fullState.activeCoin = currentCoin;
+            fullState.activeCoin = window.currentCoin;
 
-            fullState.portfolios[currentCoin] = {
+            fullState.portfolios[window.currentCoin] = {
                 calcMode: calcModeToggle.checked,
                 initialQty: initialQtyInput.value,
                 initialAvgPrice: initialAvgPriceInput.value,
@@ -151,9 +155,9 @@ window.addEventListener('load', () => {
                 const oldData = stateToLoad;
                 stateToLoad = {
                     version: CURRENT_DATA_VERSION,
-                    activeCoin: DEFAULT_COIN,
+                    activeCoin: 'BTC',
                     portfolios: {
-                        [DEFAULT_COIN]: {
+                        'BTC': {
                             calcMode: oldData.calcMode || false,
                             initialQty: oldData.initialQty || '',
                             initialAvgPrice: oldData.initialAvgPrice || '',
@@ -165,9 +169,13 @@ window.addEventListener('load', () => {
                 localStorage.setItem('waterDownCalcState', JSON.stringify(stateToLoad));
             }
 
+            // 활성 코인 설정
+            if (stateToLoad.activeCoin) {
+                window.currentCoin = stateToLoad.activeCoin;
+            }
+
             // 현재 활성화된 코인의 데이터 추출
-            const currentCoin = DEFAULT_COIN;
-            const portfolio = stateToLoad.portfolios && stateToLoad.portfolios[currentCoin];
+            const portfolio = stateToLoad.portfolios && stateToLoad.portfolios[window.currentCoin];
 
             if (!portfolio) return;
 
@@ -212,9 +220,15 @@ window.addEventListener('load', () => {
         }
 
         // --- API Fetching ---
-        async function fetchBitcoinPrice() {
+        async function fetchCurrentCoinPrice() {
+            // 커스텀 코인인 경우 자동 가격 가져오기 안함
+            if (window.coinSelector && window.coinSelector.getCurrentCoin()?.isCustom) {
+                return;
+            }
+
             try {
-                const workerUrl = 'https://upbit-proxy.ooktone.workers.dev/v1/ticker?markets=KRW-BTC';
+                const market = `KRW-${window.currentCoin}`;
+                const workerUrl = `https://upbit-proxy.ooktone.workers.dev/v1/ticker?markets=${market}`;
                 const response = await fetch(workerUrl);
                 if (!response.ok) throw new Error(`API response not OK: ${response.status}`);
                 const data = await response.json();
@@ -229,7 +243,7 @@ window.addEventListener('load', () => {
                     throw new Error('API returned empty data.');
                 }
             } catch (error) {
-                console.error('Error fetching Bitcoin price:', error.message);
+                console.error(`${window.currentCoin} 가격 로드 실패:`, error.message);
                 // Set the value, not placeholder, to show the error
                 if (!currentPriceInput.value) {
                     currentPriceInput.value = '가격 로드 실패';
@@ -758,9 +772,9 @@ window.addEventListener('load', () => {
             loadState(stateToLoad);
 
             // 초기 가격 조회
-            fetchBitcoinPrice();
+            fetchCurrentCoinPrice();
             // 30초마다 자동 업데이트
-            priceUpdateInterval = setInterval(fetchBitcoinPrice, APP_CONFIG.PRICE_UPDATE_INTERVAL);
+            priceUpdateInterval = setInterval(fetchCurrentCoinPrice, APP_CONFIG.PRICE_UPDATE_INTERVAL);
         }
 
         // ============================================================

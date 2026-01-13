@@ -367,3 +367,227 @@ input:checked+.slider:before {
     font-weight: 600;
     margin-left: 8px;
 }
+
+/* --- Coin Selector Styles --- */
+.coin-selector-container {
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.coin-selector-container>label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.coin-selector-wrapper {
+    position: relative;
+}
+
+#coin-search {
+    width: 100%;
+    padding: 10px 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--container-bg);
+    color: var(--text-color);
+    font-size: 1em;
+    transition: border-color 0.3s;
+}
+
+#coin-search:focus {
+    outline: none;
+    border-color: var(--button-bg);
+}
+
+.coin-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 400px;
+    overflow-y: auto;
+    background-color: var(--container-bg);
+    border: 2px solid var(--border-color);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 6px var(--shadow-color);
+    z-index: 1000;
+    margin-top: -2px;
+}
+
+.coin-dropdown-section {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.coin-dropdown-section:last-child {
+    border-bottom: none;
+}
+
+.coin-dropdown-header {
+    padding: 8px 12px;
+    font-size: 0.85em;
+    font-weight: 600;
+    color: #888;
+    background-color: rgba(0, 0, 0, 0.03);
+    border-bottom: 1px solid var(--border-color);
+}
+
+body.dark .coin-dropdown-header {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.coin-item {
+    padding: 10px 12px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.2s;
+}
+
+.coin-item:hover {
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
+.coin-item.custom-add {
+    color: var(--button-bg);
+    font-weight: 600;
+}
+
+.coin-item.custom-add:hover {
+    background-color: rgba(0, 123, 255, 0.15);
+}
+
+.coin-item-main {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.coin-item-symbol {
+    font-weight: 700;
+    font-size: 1.05em;
+}
+
+.coin-item-name {
+    font-size: 0.9em;
+    color: #666;
+}
+
+body.dark .coin-item-name {
+    color: #aaa;
+}
+
+.coin-item-market {
+    font-size: 0.8em;
+    color: #999;
+    font-family: monospace;
+}
+
+.selected-coin-display {
+    margin-top: 0.5rem;
+    padding: 8px 12px;
+    background-color: rgba(0, 123, 255, 0.1);
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.coin-symbol {
+    font-weight: 700;
+    font-size: 1.1em;
+    color: var(--button-bg);
+}
+
+.coin-name {
+    font-size: 0.95em;
+    color: var(--text-color);
+}
+
+.price-source-badge {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 8px;
+    font-size: 0.75em;
+    font-weight: 600;
+    border-radius: 12px;
+    background-color: #28a745;
+    color: white;
+}
+
+.price-source-badge.manual {
+    background-color: #ff9800;
+}
+
+/* Empty state message */
+.coin-dropdown-empty {
+    padding: 20px;
+    text-align: center;
+    color: #999;
+    font-size: 0.9em;
+}
+
+/* Utility class for hiding dropdown sections */
+.hidden-dropdown {
+    display: none !important;
+}
+
+/* Price update timestamp */
+.price-update-time {
+    font-size: 0.8em;
+    color: #999;
+    margin-top: 4px;
+    font-style: italic;
+}
+
+body.dark .price-update-time {
+    color: #aaa;
+}
+
+/* Price checker section */
+.price-checker-section {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.price-checker-toggle {
+    width: 100%;
+    padding: 10px;
+    background-color: var(--container-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-color);
+    cursor: pointer;
+    font-size: 0.95em;
+    text-align: left;
+    transition: background-color 0.2s;
+}
+
+.price-checker-toggle:hover {
+    background-color: rgba(0, 123, 255, 0.05);
+}
+
+#price-checker-icon {
+    display: inline-block;
+    transition: transform 0.3s;
+    margin-right: 4px;
+}
+
+#price-checker-icon.expanded {
+    transform: rotate(-180deg);
+}
+
+.price-checker-content {
+    margin-top: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.price-checker-iframe {
+    width: 100%;
+    height: 400px;
+    border: none;
+}
