@@ -93,18 +93,19 @@
         <div class="coin-selector-container">
             <label for="coin-search" data-i18n="calc.coin.label">코인 선택:</label>
             <div class="coin-selector-wrapper">
-                <input type="text" id="coin-search" placeholder="코인명 또는 심볼 검색 (예: 비트코인, BTC)" autocomplete="off">
+                <input type="text" id="coin-search" data-i18n="calc.search.placeholder.coin"
+                    placeholder="코인명 또는 심볼 검색 (예: 비트코인, BTC)" autocomplete="off">
                 <div id="coin-dropdown" class="coin-dropdown" style="display: none;">
                     <div class="coin-dropdown-section">
-                        <div class="coin-dropdown-header">➕ 커스텀 코인</div>
+                        <div class="coin-dropdown-header" data-i18n="calc.coin.custom">➕ 커스텀 코인</div>
                         <div id="custom-coins-container"></div> <!-- Container for custom coins -->
                     </div>
                     <div class="coin-dropdown-section">
-                        <div class="coin-dropdown-header">🔥 인기 코인</div>
+                        <div class="coin-dropdown-header" data-i18n="calc.coin.popular">🔥 인기 코인</div>
                         <div id="popular-coins" class="popular-coins-grid"></div>
                     </div>
                     <div class="coin-dropdown-section hidden-dropdown">
-                        <div class="coin-dropdown-header">🔍 검색 결과</div>
+                        <div class="coin-dropdown-header" data-i18n="calc.search.results">🔍 검색 결과</div>
                         <div id="search-results"></div>
                     </div>
                     <div id="custom-coin-add-option" class="coin-item custom-add"
