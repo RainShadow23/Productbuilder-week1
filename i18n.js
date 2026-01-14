@@ -21,6 +21,10 @@ const translations = {
         'index.lottery.link': '🎱 재미로 보는 로또 번호 생성기',
 
         // Calculator Common
+        'calc.stock.title': '주식 물타기 계산기',
+        'calc.coin.title': '코인 물타기 계산기',
+        'calc.nav.to.coin': '코인 계산기 가기',
+        'calc.nav.to.stock': '주식 계산기 가기',
         'calc.mode.wallet': '내 지갑 기준',
         'calc.mode.exchange': '거래소 기준',
         'calc.coin.label': '코인 선택:',
@@ -110,6 +114,10 @@ const translations = {
         'index.lottery.link': '🎱 Lottery Number Generator',
 
         // Calculator Common
+        'calc.stock.title': 'Stock Calculator',
+        'calc.coin.title': 'Crypto Calculator',
+        'calc.nav.to.coin': 'Go to Crypto Calculator',
+        'calc.nav.to.stock': 'Go to Stock Calculator',
         'calc.mode.wallet': 'My Wallet',
         'calc.mode.exchange': 'Exchange',
         'calc.coin.label': 'Select Coin:',
