@@ -351,10 +351,10 @@
      */
     function setPriceMode(mode) {
         if (mode === 'auto') {
-            priceSourceBadge.textContent = '자동';
+            priceSourceBadge.textContent = i18n.t('msg.auto');
             priceSourceBadge.classList.remove('manual');
         } else {
-            priceSourceBadge.textContent = '수동';
+            priceSourceBadge.textContent = i18n.t('msg.manual');
             priceSourceBadge.classList.add('manual');
         }
     }

@@ -418,7 +418,7 @@ function calculateWhatif() {
 
     const currentAvg = totalBuyQty > 0 ? totalBuyCost / totalBuyQty : 0;
     if (currentAvg === 0) {
-        whatifResultDisplay.textContent = '보유 정보를 입력해주세요.';
+        whatifResultDisplay.textContent = i18n.t('msg.please.enter.holdings');
         return;
     }
 
@@ -430,7 +430,7 @@ function calculateWhatif() {
 
     const { newAvgPrice, changePercent, direction } = result;
     const changeText = direction === 'improvement' ? `✅ ${changePercent.toFixed(2)}% 개선` :
-        direction === 'warning' ? `⚠️ ${changePercent.toFixed(2)}% 상승` : '변화 없음';
+        direction === 'warning' ? `⚠️ ${changePercent.toFixed(2)}% ${i18n.t('msg.increase')}` : '변화 없음';
 
     whatifResultDisplay.innerHTML = `예상 평단가: <span class="result-value">${formatCurrencyForDisplay(newAvgPrice)} KRW</span> ${changeText}`;
 
@@ -457,7 +457,7 @@ function calculateTargetPrice() {
         targetResultDisplay.textContent = result.error;
     } else {
         const { requiredQty, requiredAmount } = result;
-        targetResultDisplay.innerHTML = `💰 필요 투자금: ${formatCurrencyForDisplay(requiredAmount)} KRW<br>📊 ${formatQuantityForDisplay(requiredQty)} 추가 매수`;
+        targetResultDisplay.innerHTML = `${i18n.t('target.result.investment')} ${formatCurrencyForDisplay(requiredAmount)} KRW<br>📊 ${formatQuantityForDisplay(requiredQty)} ${i18n.t('target.result.buy')}`;
     }
 }
 
