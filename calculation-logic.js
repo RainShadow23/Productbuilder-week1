@@ -143,8 +143,8 @@ export function calculateWhatIf(currentTotalQty, currentTotalCost, additionalAmo
 export function calculateTargetRequiredQty(currentTotalQty, currentTotalCost, targetPrice, calculationPrice) {
     const currentAvgPrice = (currentTotalQty > 0) ? currentTotalCost / currentTotalQty : 0;
 
-    if (currentAvgPrice === 0) {
-        return { requiredQty: 0, requiredAmount: 0, error: '보유 수량이 없습니다.' };
+    if (currentTotalQty === 0 || currentTotalCost === 0) {
+        return { requiredQty: 0, requiredAmount: 0, error: i18n.t('msg.no.quantity') };
     }
 
     if (currentAvgPrice <= calculationPrice) {
@@ -152,11 +152,11 @@ export function calculateTargetRequiredQty(currentTotalQty, currentTotalCost, ta
     }
 
     if (targetPrice >= currentAvgPrice) {
-        return { requiredQty: 0, requiredAmount: 0, error: '목표 평단가는 현재 평단가보다 낮아야 합니다.' };
+        return { requiredQty: 0, requiredAmount: 0, error: i18n.t('msg.target.too.high') };
     }
 
     if (targetPrice <= calculationPrice) {
-        return { requiredQty: 0, requiredAmount: 0, error: '목표 평단가는 계산 기준 가격보다 높아야 합니다.' };
+        return { requiredQty: 0, requiredAmount: 0, error: i18n.t('msg.target.below.calc') };
     }
 
     // 가중 평균 공식 역산

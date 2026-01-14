@@ -429,10 +429,10 @@ function calculateWhatif() {
     }
 
     const { newAvgPrice, changePercent, direction } = result;
-    const changeText = direction === 'improvement' ? `✅ ${changePercent.toFixed(2)}% 개선` :
+    const changeText = direction === 'improvement' ? `✅ ${changePercent.toFixed(2)}% ${i18n.t('msg.improvement')}` :
         direction === 'warning' ? `⚠️ ${changePercent.toFixed(2)}% ${i18n.t('msg.increase')}` : '변화 없음';
 
-    whatifResultDisplay.innerHTML = `예상 평단가: <span class="result-value">${formatCurrencyForDisplay(newAvgPrice)} KRW</span> ${changeText}`;
+    whatifResultDisplay.innerHTML = `${i18n.t('msg.expected.avg')} <span class="result-value">${formatCurrencyForDisplay(newAvgPrice)} KRW</span> ${changeText}`;
 
     if (visualContainer && barCurrent && barNew) {
         visualContainer.style.display = 'block';

@@ -84,10 +84,14 @@ const translations = {
         'msg.manual': '수동',
         'msg.increase': '상승',
         'msg.decrease': '하락',
+        'msg.improvement': '개선',
         'msg.no.holdings': '보유 정보를 입력해주세요.',
         'msg.no.quantity': '보유 수량이 없습니다.',
         'msg.cannot.lower': '현재 평단가가 계산 기준 가격보다 낮아 평단가를 더 낮출 수 없습니다.',
         'msg.please.enter.holdings': '보유 정보를 입력해주세요.',
+        'msg.expected.avg': '예상 평단가:',
+        'msg.target.too.high': '목표 평단가는 현재 평단가보다 낮아야 합니다.',
+        'msg.target.below.calc': '목표 평단가는 계산 기준 가격보다 높아야 합니다.',
 
         // Lottery
         'lottery.title': '로또 번호 생성기',
@@ -189,10 +193,14 @@ const translations = {
         'msg.manual': 'Manual',
         'msg.increase': 'Increase',
         'msg.decrease': 'Decrease',
+        'msg.improvement': 'Improved',
         'msg.no.holdings': 'Please enter your holdings information.',
         'msg.no.quantity': 'No quantity held.',
         'msg.cannot.lower': 'Current average is already below calculation price. Cannot lower further.',
         'msg.please.enter.holdings': 'Please enter your holdings information.',
+        'msg.expected.avg': 'Expected Avg:',
+        'msg.target.too.high': 'Target average must be lower than current average.',
+        'msg.target.below.calc': 'Target average must be higher than calculation price.',
 
         // Lottery
         'lottery.title': 'Lottery Number Generator',
