@@ -383,10 +383,10 @@ function calculate() {
     const returnRate = (finalCost > 0) ? (pnl / finalCost) * 100 : 0;
 
     if (resultSpans.totalQty) resultSpans.totalQty.innerHTML = formatQuantityForDisplay(finalQty);
-    if (resultSpans.totalInvestment) resultSpans.totalInvestment.innerHTML = `${formatCurrencyForDisplay(finalCost)} KRW`;
-    if (resultSpans.finalAvgPrice) resultSpans.finalAvgPrice.innerHTML = `${formatCurrencyForDisplay(finalAvgPrice)} KRW`;
-    if (resultSpans.totalEvaluation) resultSpans.totalEvaluation.innerHTML = `${formatCurrencyForDisplay(totalEvaluation)} KRW`;
-    if (resultSpans.pnl) resultSpans.pnl.innerHTML = `${formatCurrencyForDisplay(pnl)} KRW`;
+    if (resultSpans.totalInvestment) resultSpans.totalInvestment.innerHTML = `${formatCurrencyForDisplay(finalCost)} ${getCurrencySymbol()}`;
+    if (resultSpans.finalAvgPrice) resultSpans.finalAvgPrice.innerHTML = `${formatCurrencyForDisplay(finalAvgPrice)} ${getCurrencySymbol()}`;
+    if (resultSpans.totalEvaluation) resultSpans.totalEvaluation.innerHTML = `${formatCurrencyForDisplay(totalEvaluation)} ${getCurrencySymbol()}`;
+    if (resultSpans.pnl) resultSpans.pnl.innerHTML = `${formatCurrencyForDisplay(pnl)} ${getCurrencySymbol()}`;
     if (resultSpans.returnRate) resultSpans.returnRate.textContent = returnRate.toFixed(2) + ' %';
 
     if (resultsContainer) resultsContainer.style.display = 'block';
@@ -441,7 +441,7 @@ function calculateWhatif() {
     const changeText = direction === 'improvement' ? `✅ ${changePercent.toFixed(2)}% ${i18n.t('msg.improvement')}` :
         direction === 'warning' ? `⚠️ ${changePercent.toFixed(2)}% ${i18n.t('msg.increase')}` : '변화 없음';
 
-    whatifResultDisplay.innerHTML = `${i18n.t('msg.expected.avg')} <span class="result-value">${formatCurrencyForDisplay(newAvgPrice)} KRW</span> ${changeText}`;
+    whatifResultDisplay.innerHTML = `${i18n.t('msg.expected.avg')} <span class="result-value">${formatCurrencyForDisplay(newAvgPrice)} ${getCurrencySymbol()}</span> ${changeText}`;
 
     if (visualContainer && barCurrent && barNew) {
         visualContainer.style.display = 'block';
@@ -466,7 +466,7 @@ function calculateTargetPrice() {
         targetResultDisplay.textContent = result.error;
     } else {
         const { requiredQty, requiredAmount } = result;
-        targetResultDisplay.innerHTML = `${i18n.t('target.result.investment')} ${formatCurrencyForDisplay(requiredAmount)} KRW<br>📊 ${formatQuantityForDisplay(requiredQty)} ${i18n.t('target.result.buy')}`;
+        targetResultDisplay.innerHTML = `${i18n.t('target.result.investment')} ${formatCurrencyForDisplay(requiredAmount)} ${getCurrencySymbol()}<br>📊 ${formatQuantityForDisplay(requiredQty)} ${i18n.t('target.result.buy')}`;
     }
 }
 
@@ -491,6 +491,10 @@ function getPreCalculationState() {
 // Utils
 const formatNumberWithCommas = (num) => String(num).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 const formatCurrencyForDisplay = (num) => formatNumberWithCommas(Math.round(num));
+const getCurrencySymbol = () => {
+    const currency = localStorage.getItem('currency') || 'krw';
+    return currency === 'krw' ? 'KRW' : 'USD';
+};
 const formatQuantityForDisplay = (num) => {
     // 1.5000 0000 format
     if (!num) return '0';

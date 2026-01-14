@@ -91,9 +91,24 @@
     }
 
     /**
-     * 특정 코인의 현재 가격을 가져옵니다
+     * 특정 코인의 현재 가격을 가져옵니다 (통화에 따라 API 선택)
      */
     async function fetchCoinPrice(symbol) {
+        const currency = localStorage.getItem('currency') || 'krw';
+
+        if (currency === 'usd') {
+            // Binance API for USD (USDT)
+            return await fetchBinancePrice(symbol);
+        } else {
+            // Upbit API for KRW
+            return await fetchUpbitPrice(symbol);
+        }
+    }
+
+    /**
+     * Upbit API로 KRW 가격 가져오기
+     */
+    async function fetchUpbitPrice(symbol) {
         try {
             const market = `KRW-${symbol}`;
             const workerUrl = `https://upbit-proxy.ooktone.workers.dev/v1/ticker?markets=${market}`;
@@ -106,7 +121,28 @@
             }
             throw new Error('No price data');
         } catch (error) {
-            console.error(`${symbol} 가격 로드 실패:`, error);
+            console.error(`${symbol} KRW 가격 로드 실패:`, error);
+            return null;
+        }
+    }
+
+    /**
+     * Binance API로 USD (USDT) 가격 가져오기
+     */
+    async function fetchBinancePrice(symbol) {
+        try {
+            const pair = `${symbol}USDT`;
+            const url = `https://api.binance.com/api/v3/ticker/price?symbol=${pair}`;
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`Binance API error: ${response.status}`);
+            const data = await response.json();
+
+            if (data && data.price) {
+                return parseFloat(data.price);
+            }
+            throw new Error('No price data');
+        } catch (error) {
+            console.error(`${symbol} USD 가격 로드 실패:`, error);
             return null;
         }
     }
