@@ -178,19 +178,24 @@
         <!-- Results Section -->
         <div id="results-container" class="results-group" style="display: none;">
             <h2 data-i18n="result.title">계산 결과</h2>
-            <div class="result-item"><span>최종 보유 수량:</span><span id="result-total-qty"></span></div>
-            <div class="result-item"><span>총 투자 금액:</span><span id="result-total-investment"></span></div>
-            <div class="result-item"><span>최종 평단가:</span><span id="result-final-avg-price"></span></div>
-            <div class="result-item"><span>총 평가 금액:</span><span id="result-total-evaluation"></span></div>
-            <div class="result-item"><span>평가 손익:</span><span id="result-pnl"></span></div>
-            <div class="result-item"><span>수익률:</span><span id="result-return-rate"></span></div>
+            <div class="result-item"><span data-i18n="result.total.qty">최종 보유 수량:</span><span
+                    id="result-total-qty"></span></div>
+            <div class="result-item"><span data-i18n="result.total.investment">총 투자 금액:</span><span
+                    id="result-total-investment"></span></div>
+            <div class="result-item"><span data-i18n="result.final.avg">최종 평단가:</span><span
+                    id="result-final-avg-price"></span></div>
+            <div class="result-item"><span data-i18n="result.total.eval">총 평가 금액:</span><span
+                    id="result-total-evaluation"></span></div>
+            <div class="result-item"><span data-i18n="result.pnl">평가 손익:</span><span id="result-pnl"></span></div>
+            <div class="result-item"><span data-i18n="result.return">수익률:</span><span id="result-return-rate"></span>
+            </div>
         </div>
 
         <hr>
 
         <!-- Shared Calculation Price -->
         <div class="price-display">
-            <label for="calculation-price">얼마에 더 살까요? (추가 매수 희망가)</label>
+            <label for="calculation-price" data-i18n="whatif.price.label">얼마에 더 살까요? (추가 매수 희망가)</label>
             <div class="input-wrapper" style="justify-content: center;">
                 <input type="text" id="calculation-price" class="comma-input" placeholder="현재가 또는 직접 입력"
                     style="text-align:center; width: 220px;">
@@ -200,7 +205,7 @@
 
         <!-- What-if Calculation -->
         <div class="input-group">
-            <h2>이렇게 물을 타면 내 평단가는?</h2>
+            <h2 data-i18n="whatif.title">이렇게 물을 타면 내 평단가는?</h2>
             <div class="form-row">
                 <div class="input-wrapper" style="width:100%;">
                     <input type="text" id="whatif-amount" class="comma-input" placeholder="추가 매수 금액" style="width:100%;"
@@ -216,7 +221,7 @@
                 <!-- Current Average Bar -->
                 <div class="visual-bar-group">
                     <div class="visual-label">
-                        <span>현재 평단가</span>
+                        <span data-i18n="whatif.current">현재 평단가</span>
                         <span id="visual-current-price">0</span>
                     </div>
                     <div class="visual-track">
@@ -227,7 +232,7 @@
                 <!-- New Average Bar -->
                 <div class="visual-bar-group">
                     <div class="visual-label">
-                        <span>예상 평단가</span>
+                        <span data-i18n="whatif.new">예상 평단가</span>
                         <span id="visual-new-price">0</span>
                     </div>
                     <div class="visual-track">
@@ -239,7 +244,7 @@
 
         <!-- Target Average Price Calculation -->
         <div class="input-group">
-            <h2>구조대(목표 평단)가 오려면?</h2>
+            <h2 data-i18n="target.title">구조대(목표 평단)가 오려면?</h2>
             <div class="form-row">
                 <div class="input-wrapper" style="width:100%;">
                     <input type="text" id="target-avg-price" class="comma-input" placeholder="목표 평단가"
