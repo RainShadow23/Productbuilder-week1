@@ -118,7 +118,7 @@ const translations = {
 
     en: {
         // Common
-        'theme.toggle': 'Toggle Theme',
+        'theme.toggle': 'Theme',
         'home.link': 'Back to Home',
         'footer.manual': '📖 User Manual',
         'footer.contact': '📧 Contact/Bug Report',
