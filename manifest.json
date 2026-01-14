@@ -1,0 +1,29 @@
+{
+    "name": "물타기 계산기",
+    "short_name": "물타기",
+    "description": "주식과 코인 물타기 계산을 도와주는 스마트 계산기",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#121212",
+    "theme_color": "#4A90E2",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "favicon.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "categories": [
+        "finance",
+        "utilities"
+    ],
+    "lang": "ko-KR",
+    "dir": "ltr"
+}
