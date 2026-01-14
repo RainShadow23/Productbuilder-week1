@@ -565,6 +565,9 @@ function handleShare() {
 
 function handleReset() {
     if (confirm('현재 코인의 입력 데이터를 초기화하시겠습니까?')) {
+        // Prevent auto-save trigger on reload (beforeunload)
+        isDataLoaded = false;
+
         // Only reset current coin's data
         let fullState = JSON.parse(localStorage.getItem(STORAGE_KEY)) || { portfolios: {} };
         if (fullState.portfolios && fullState.portfolios[window.currentCoin]) {
