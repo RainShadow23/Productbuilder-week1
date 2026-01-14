@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="style.css">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5425588296330309"
         crossorigin="anonymous"></script>
+    <script src="i18n.js"></script>
     <style>
         .manual-section {
             text-align: left;
@@ -32,11 +33,11 @@
     </style>
 </head>
 
-<body>
-    <button id="theme-toggle">테마 변경</button>
+<body data-i18n-title="manual.title">
+    <button id="theme-toggle" data-i18n="theme.toggle">테마 변경</button>
     <div class="container" style="max-width: 800px;">
-        <h1>📖 사용 설명서</h1>
-        <p>현명한 투자 전략을 위한 물타기 계산기 사용법입니다.</p>
+        <h1 data-i18n="manual.title">📖 사용 설명서</h1>
+        <p data-i18n="manual.subtitle">현명한 투자 전략을 위한 물타기 계산기 사용법입니다.</p>
 
         <div class="manual-section">
             <h3>📉 주식 물타기 계산기</h3>
@@ -74,7 +75,7 @@
             </p>
         </div>
 
-        <p><a href="index.html" class="home-link">🏠 홈으로 돌아가기</a></p>
+        <p><a href="index.html" class="home-link" data-i18n="home.link">🏠 홈으로 돌아가기</a></p>
     </div>
     <script type="module" src="main.js"></script>
 </body>

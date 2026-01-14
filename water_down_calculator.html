@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="style.css">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5425588296330309"
         crossorigin="anonymous"></script>
+    <script src="i18n.js"></script>
     <style>
         /* --- Styles for UI Improvements --- */
         .input-wrapper {
@@ -62,7 +63,7 @@
 </head>
 
 <body>
-    <button id="theme-toggle">테마 변경</button>
+    <button id="theme-toggle" data-i18n="theme.toggle">테마 변경</button>
     <div class="container">
         <!-- New Header -->
         <div class="header-container">
@@ -84,13 +85,13 @@
         <input type="checkbox" id="calc-mode-checkbox" style="display:none;">
 
         <div class="segmented-control">
-            <div class="segment-option" data-value="wallet">내 지갑 기준</div>
-            <div class="segment-option" data-value="exchange">거래소 기준</div>
+            <div class="segment-option" data-value="wallet" data-i18n="calc.mode.wallet">내 지갑 기준</div>
+            <div class="segment-option" data-value="exchange" data-i18n="calc.mode.exchange">거래소 기준</div>
         </div>
 
         <!-- Coin Selector -->
         <div class="coin-selector-container">
-            <label for="coin-search">코인 선택:</label>
+            <label for="coin-search" data-i18n="calc.coin.label">코인 선택:</label>
             <div class="coin-selector-wrapper">
                 <input type="text" id="coin-search" placeholder="코인명 또는 심볼 검색 (예: 비트코인, BTC)" autocomplete="off">
                 <div id="coin-dropdown" class="coin-dropdown" style="display: none;">
@@ -163,20 +164,20 @@
 
         <!-- Action Buttons -->
         <div style="margin-bottom: 0.75rem;">
-            <button id="calculate-btn" class="cta-button">전체 결과 계산하기</button>
+            <button id="calculate-btn" class="cta-button" data-i18n="calc.calculate">전체 결과 계산하기</button>
         </div>
         <div class="form-row buttons-grid">
-            <button type="button" id="share-btn">공유 링크</button>
-            <button type="button" id="backup-btn">백업(.json)</button>
-            <button type="button" id="restore-btn">파일 복원</button>
-            <button type="button" id="reset-btn">초기화</button>
+            <button type="button" id="share-btn" data-i18n="calc.share">공유 링크</button>
+            <button type="button" id="backup-btn" data-i18n="calc.backup">백업(.json)</button>
+            <button type="button" id="restore-btn" data-i18n="calc.restore">파일 복원</button>
+            <button type="button" id="reset-btn" data-i18n="calc.reset">초기화</button>
             <!-- Hidden File Input for Restore -->
             <input type="file" id="file-input" style="display: none;" accept=".json" aria-label="백업 파일 선택">
         </div>
 
         <!-- Results Section -->
         <div id="results-container" class="results-group" style="display: none;">
-            <h2>계산 결과</h2>
+            <h2 data-i18n="result.title">계산 결과</h2>
             <div class="result-item"><span>최종 보유 수량:</span><span id="result-total-qty"></span></div>
             <div class="result-item"><span>총 투자 금액:</span><span id="result-total-investment"></span></div>
             <div class="result-item"><span>최종 평단가:</span><span id="result-final-avg-price"></span></div>
