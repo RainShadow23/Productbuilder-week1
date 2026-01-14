@@ -239,6 +239,7 @@ const i18n = {
     init() {
         this.applyTranslations();
         this.addLanguageToggle();
+        this.addCurrencyToggle();
     },
 
     // Switch language
@@ -309,6 +310,33 @@ const i18n = {
             const newLang = this.currentLang === 'ko' ? 'en' : 'ko';
             this.setLanguage(newLang);
             toggle.textContent = newLang === 'ko' ? 'EN' : '한';
+        });
+
+        document.body.appendChild(toggle);
+    },
+
+    // Add currency toggle button
+    addCurrencyToggle() {
+        // Check if toggle already exists
+        if (document.getElementById('currency-toggle')) return;
+
+        const currentCurrency = localStorage.getItem('currency') || 'krw';
+
+        const toggle = document.createElement('button');
+        toggle.id = 'currency-toggle';
+        toggle.textContent = currentCurrency === 'krw' ? '₩' : '$';
+        toggle.setAttribute('aria-label', 'Toggle Currency');
+
+        toggle.addEventListener('click', () => {
+            const newCurrency = currentCurrency === 'krw' ? 'usd' : 'krw';
+            localStorage.setItem('currency', newCurrency);
+            toggle.textContent = newCurrency === 'krw' ? '₩' : '$';
+
+            // Trigger currency change event
+            window.dispatchEvent(new CustomEvent('currencyChanged', { detail: { currency: newCurrency } }));
+
+            // Reload page to apply changes
+            location.reload();
         });
 
         document.body.appendChild(toggle);
