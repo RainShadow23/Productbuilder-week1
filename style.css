@@ -96,7 +96,7 @@ body {
     /* Safari support */
     backdrop-filter: blur(8px);
 }
-}
+
 
 #theme-toggle:hover {
     border-color: var(--primary-color);
