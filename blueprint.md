@@ -197,3 +197,13 @@ A simple tool for generating and tracking lottery numbers.
   5. **백업/복원/공유 기능 복구**:
      - `.json` 파일 내보내기/가져오기 기능 정상화.
      - 현재 상태를 URL로 공유하는 기능 복구.
+
+## 10. Latest Fixes (UI Polish & Standardization)
+
+- **Task**: UI 시인성 개선 및 푸터 표준화 (2026년 업데이트)
+- **Changes Applied**:
+  1. **UI 시인성 개선**:
+     - 로또 번호 생성기 버튼: 다크모드에서도 잘 보이도록 텍스트 색상을 강제 지정(#333).
+  2. **푸터 표준화 (Footer Standardization)**:
+     - **연도 업데이트**: 저작권 연도를 2024년에서 **2026년**으로 일괄 변경.
+     - **네비게이션 통일**: 모든 서브 페이지(코인/주식/로또) 하단에 '사용 설명서', '문의/버그 제보' 링크 추가.
