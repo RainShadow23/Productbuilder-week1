@@ -92,7 +92,10 @@ body {
     font-weight: 500;
     transition: all 0.2s ease;
     z-index: 100;
+    -webkit-backdrop-filter: blur(8px);
+    /* Safari support */
     backdrop-filter: blur(8px);
+}
 }
 
 #theme-toggle:hover {
@@ -296,6 +299,8 @@ hr {
     font-weight: 500;
     color: var(--text-muted);
     transition: all 0.2s;
+    -webkit-user-select: none;
+    /* Safari support */
     user-select: none;
 }
 
