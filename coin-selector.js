@@ -38,10 +38,6 @@
     const currentPriceInput = document.getElementById('current-price');
     const priceUpdateTime = document.getElementById('price-update-time');
     const priceCheckerSection = document.getElementById('price-checker-section');
-    const priceCheckerToggle = document.getElementById('price-checker-toggle');
-    const priceCheckerIcon = document.getElementById('price-checker-icon');
-    const priceCheckerContent = document.getElementById('price-checker-content');
-    const priceCheckerIframe = document.getElementById('price-checker-iframe');
 
     // ============================================================
     // API 함수
@@ -312,8 +308,6 @@
 
             // 가격 확인 섹션 표시
             priceCheckerSection.style.display = 'block';
-            priceCheckerContent.style.display = 'none';
-            priceCheckerIcon.classList.remove('expanded');
 
             // 타임스탬프 업데이트
             updatePriceTimestamp();
@@ -614,23 +608,8 @@
     }
 
     /**
-     * 가격 확인 섹션 토글
+     * 가격 확인 토글 로직 제거 (이제 링크로 대체됨)
      */
-    function togglePriceChecker() {
-        const isExpanded = priceCheckerContent.style.display === 'block';
-
-        if (isExpanded) {
-            priceCheckerContent.style.display = 'none';
-            priceCheckerIcon.classList.remove('expanded');
-        } else {
-            priceCheckerContent.style.display = 'block';
-            priceCheckerIcon.classList.add('expanded');
-
-            // iframe URL 설정 (CoinGecko 검색)
-            const coinSymbol = currentSelectedCoin?.symbol || '';
-            priceCheckerIframe.src = `https://www.coingecko.com/en/search_redirect?id=${coinSymbol.toLowerCase()}&type=coin`;
-        }
-    }
 
     // 가격 입력 이벤트 리스너 (커스텀 코인 가격 저장)
     currentPriceInput.addEventListener('change', () => {
@@ -642,10 +621,7 @@
         }
     });
 
-    // 가격 확인 토글 버튼 이벤트
-    if (priceCheckerToggle) {
-        priceCheckerToggle.addEventListener('click', togglePriceChecker);
-    }
+    // 가격 확인 토글 버튼 이벤트 리스너 제거 (링크는 직접 href로 동작)
 
     // 주기적으로 시간 업데이트 (1분마다)
     setInterval(updatePriceTimestamp, 60000);

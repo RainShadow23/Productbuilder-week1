@@ -209,3 +209,16 @@ A simple tool for generating and tracking lottery numbers.
      - **네비게이션 통일**: 모든 서브 페이지(코인/주식/로또) 하단에 '사용 설명서', '문의/버그 제보' 링크 추가.
   3. **문서(Documentation) 정비**:
      - `walkthrough.md`: 사용자 요청에 따라 이전 기능 복구 관련 시나리오를 제거하고, UI 개선 사항 검증에만 집중하도록 문서 재작성.
+
+## 11. Latest Fixes (Functionality Restoration & UX)
+
+- **Task**: 기능 복구 및 사용자 경험(UX) 개선
+- **Changes Applied**:
+  1. **입력 필드 순서 복구 (Input Revert)**:
+     - 사용자의 익숙함을 고려하여 거래 내역의 [수량] - [가격] 순서를 원래대로 복구.
+  2. **백업 파일명 구분 (Filename Distinction)**:
+     - 주식용(`stock_calc_backup_`)과 코인용(`coin_calc_backup_`) 백업 파일명을 분리하여 데이터 혼동 방지.
+  3. **커스텀 코인 추가 기능 복구**:
+     - 코인이 하나도 없을 때 "새 코인 추가" 버튼이 숨겨지는 버그 수정 (검색 결과 없을 때 무조건 표시되도록 변경).
+  4. **시세 확인 기능 개선**:
+     - 불안정한 CoinGecko iframe 및 검색 링크 대신, **CoinGecko**와 **빗썸** 메인 페이지로 이동하는 정적 링크 버튼(🦎, 👍) 적용.

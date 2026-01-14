@@ -580,7 +580,8 @@ function exportData() {
     const dataStr = localStorage.getItem(STORAGE_KEY);
     const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
 
-    const exportFileDefaultName = `waterdown_backup_${new Date().toISOString().slice(0, 10)}.json`;
+    const prefix = isStockMode ? 'stock_calc_backup_' : 'coin_calc_backup_';
+    const exportFileDefaultName = `${prefix}${new Date().toISOString().slice(0, 10)}.json`;
 
     const linkElement = document.createElement('a');
     linkElement.setAttribute('href', dataUri);
