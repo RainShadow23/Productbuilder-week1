@@ -207,3 +207,5 @@ A simple tool for generating and tracking lottery numbers.
   2. **푸터 표준화 (Footer Standardization)**:
      - **연도 업데이트**: 저작권 연도를 2024년에서 **2026년**으로 일괄 변경.
      - **네비게이션 통일**: 모든 서브 페이지(코인/주식/로또) 하단에 '사용 설명서', '문의/버그 제보' 링크 추가.
+  3. **문서(Documentation) 정비**:
+     - `walkthrough.md`: 사용자 요청에 따라 이전 기능 복구 관련 시나리오를 제거하고, UI 개선 사항 검증에만 집중하도록 문서 재작성.
