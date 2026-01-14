@@ -213,11 +213,13 @@
     <template id="transaction-row-template">
         <div class="form-row transaction-row">
             <select class="transaction-type" aria-label="거래 유형">
-                <option value="buy" selected>추가 매수</option>
-                <option value="sell">매도</option>
+                <option value="buy" selected data-i18n="calc.transaction.buy">추가 매수</option>
+                <option value="sell" data-i18n="calc.transaction.sell">매도</option>
             </select>
-            <input type="text" class="transaction-qty comma-input" placeholder="수량" aria-label="거래 수량">
-            <input type="text" class="transaction-price comma-input" placeholder="가격" aria-label="거래 가격">
+            <input type="text" class="transaction-qty comma-input" data-i18n="calc.transaction.qty.placeholder"
+                placeholder="수량" aria-label="거래 수량">
+            <input type="text" class="transaction-price comma-input" data-i18n="calc.transaction.price.placeholder"
+                placeholder="가격" aria-label="거래 가격">
             <button class="remove-transaction-btn" aria-label="거래 내역 삭제">X</button>
         </div>
     </template>
