@@ -327,7 +327,16 @@ function addTransactionRow(tx = null) {
         newRow.querySelector('.transaction-price').value = tx.price;
     }
     const removeBtn = newRow.querySelector('.remove-transaction-btn');
+
+    // Append first so we can apply translations to the actual DOM element
     transactionList.appendChild(newRow);
+
+    // Apply translations to the newly added row
+    const addedRow = transactionList.lastElementChild;
+    if (addedRow && typeof i18n !== 'undefined' && i18n.applyTranslationsToElement) {
+        i18n.applyTranslationsToElement(addedRow);
+    }
+
     if (removeBtn) {
         removeBtn.addEventListener('click', (e) => {
             e.target.closest('.transaction-row').remove();

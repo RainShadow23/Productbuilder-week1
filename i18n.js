@@ -271,6 +271,25 @@ const i18n = {
         }
     },
 
+    // Apply translations to a specific element and its children
+    applyTranslationsToElement(element) {
+        if (!element) return;
+
+        element.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            const translation = this.t(key);
+
+            // Check if element is an input placeholder
+            if (el.tagName === 'INPUT' && el.hasAttribute('placeholder')) {
+                el.placeholder = translation;
+            } else if (el.tagName === 'OPTION') {
+                el.textContent = translation;
+            } else {
+                el.innerHTML = translation;
+            }
+        });
+    },
+
     // Add language toggle button
     addLanguageToggle() {
         // Check if toggle already exists
