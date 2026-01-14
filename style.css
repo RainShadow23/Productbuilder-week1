@@ -1085,25 +1085,124 @@ input:checked+.slider:before {
 .lotto-numbers {
     display: flex;
     justify-content: center;
-    gap: 0.5rem;
+    gap: 0.75rem;
     margin: 2rem 0;
     flex-wrap: wrap;
 }
 
 .number {
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
-    background: var(--card-bg);
-    border: 2px solid var(--primary-color);
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
-    color: var(--text-color);
-    font-size: 1.1rem;
-    box-shadow: 0 4px 8px var(--shadow-color);
+    color: white;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 12px var(--shadow-color);
+    transition: all 0.3s ease;
 }
+
+.number.pop {
+    animation: popIn 0.3s ease;
+}
+
+@keyframes popIn {
+    0% {
+        transform: scale(0);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Lottery Number Colors */
+.number.yellow,
+.history-number.yellow {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    border: 2px solid #f59e0b;
+}
+
+.number.blue,
+.history-number.blue {
+    background: linear-gradient(135deg, #60a5fa, #3b82f6);
+    border: 2px solid #3b82f6;
+}
+
+.number.red,
+.history-number.red {
+    background: linear-gradient(135deg, #f87171, #ef4444);
+    border: 2px solid #ef4444;
+}
+
+.number.gray,
+.history-number.gray {
+    background: linear-gradient(135deg, #9ca3af, #6b7280);
+    border: 2px solid #6b7280;
+}
+
+.number.green,
+.history-number.green {
+    background: linear-gradient(135deg, #34d399, #10b981);
+    border: 2px solid #10b981;
+}
+
+/* History Styles */
+.history {
+    margin-top: 2rem;
+    text-align: left;
+}
+
+.history h2 {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    color: var(--text-secondary);
+    text-align: left;
+    padding-left: 0;
+}
+
+.history-item {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.history-numbers {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.history-number {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: white;
+    font-size: 0.9rem;
+}
+
+.history-time {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: center;
+}
+
 /* Secondary Button Style for Inline Placement */
 .cta-button.secondary {
     width: auto;
