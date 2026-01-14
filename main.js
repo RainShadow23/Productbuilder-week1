@@ -584,12 +584,17 @@ function exportData() {
     const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
 
     const prefix = isStockMode ? 'stock_calc_backup_' : 'coin_calc_backup_';
-    const exportFileDefaultName = `${prefix}${new Date().toISOString().slice(0, 10)}.json`;
+    const timestamp = new Date().toISOString().slice(0, 10);
+    const exportFileDefaultName = `${prefix}${timestamp}.json`;
 
     const linkElement = document.createElement('a');
     linkElement.setAttribute('href', dataUri);
     linkElement.setAttribute('download', exportFileDefaultName);
+
+    // Critical Fix: Append to body to ensure download attribute is respected
+    document.body.appendChild(linkElement);
     linkElement.click();
+    document.body.removeChild(linkElement);
 }
 
 function importData(file) {
@@ -598,14 +603,30 @@ function importData(file) {
         try {
             const obj = JSON.parse(event.target.result);
             if (obj && obj.portfolios) {
+                // Determine which coin to show after restore
+                // specific preference to the one in the backup, or the current one if valid
+                const coinToLoad = obj.activeCoin || window.currentCoin;
+
+                // prevent auto-save from overwriting the restored data during the reload process
+                isDataLoaded = false;
+                if (priceUpdateInterval) clearInterval(priceUpdateInterval);
+
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
-                alert('데이터가 성공적으로 복원되었습니다.');
+
+                // Force active coin update in storage to ensure reload picks it up
+                // (Though obj.activeCoin should handle it, we safeguard)
+                // Actually, if we just reload, initialize() will read STORAGE_KEY.
+                // We just need to make sure we don't accidentally save *current* dirty state over it before reload.
+                // The 'isDataLoaded = false' above helps.
+
+                alert('데이터가 성공적으로 복원되었습니다. 페이지를 새로고침합니다.');
                 location.reload();
             } else {
-                alert('올바르지 않은 백업 파일입니다.');
+                alert('올바르지 않은 백업 파일입니다. (데이터 형식이 일치하지 않음)');
             }
         } catch (e) {
-            alert('파일을 읽는 중 오류가 발생했습니다.');
+            console.error(e);
+            alert('파일을 읽는 중 오류가 발생했습니다: ' + e.message);
         }
     };
     reader.readAsText(file);
