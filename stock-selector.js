@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderSearchResults(results) {
         searchResultsDiv.innerHTML = '';
         if (results.length === 0) {
-            searchResultsDiv.innerHTML = '<div class="coin-item">검색 결과가 없습니다</div>';
+            searchResultsDiv.innerHTML = `<div class="coin-item">${i18n.t('calc.search.no.results')}</div>`;
         } else {
             results.forEach(stock => {
                 const div = document.createElement('div');

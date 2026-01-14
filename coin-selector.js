@@ -199,11 +199,11 @@
         const allResults = [...customResults, ...upbitResults];
 
         if (allResults.length === 0) {
-            searchResultsContainer.innerHTML = '<div class="coin-dropdown-empty">검색 결과가 없습니다</div>';
+            searchResultsContainer.innerHTML = `<div class="coin-dropdown-empty">${i18n.t('calc.search.no.results')}</div>`;
 
             // 커스텀 코인 추가 옵션 표시
             if (searchTerm.length >= 2) {
-                customCoinText.textContent = `"${searchTerm}" 직접 추가하기`;
+                customCoinText.textContent = `"${searchTerm}" ${i18n.t('calc.search.add.custom')}`;
                 customCoinOption.style.display = 'block';
             } else {
                 customCoinOption.style.display = 'none';
