@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="style.css?v=3">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5425588296330309"
         crossorigin="anonymous"></script>
+    <script src="i18n.js"></script>
     <style>
         /* Home Specific Styles */
         .ad-banner {
@@ -125,13 +126,13 @@
     </style>
 </head>
 
-<body>
-    <button id="theme-toggle">테마 변경</button>
+<body data-i18n-title="index.title">
+    <button id="theme-toggle" data-i18n="theme.toggle">테마 변경</button>
     <div class="container">
         <!-- Text Header -->
         <div style="margin-bottom: 1rem;">
-            <h1 style="margin-bottom: 0.5rem;">📊 물타기 도우미</h1>
-            <p style="color: var(--text-secondary);">전략적인 추가 매수로 위기를 기회로 바꾸세요.</p>
+            <h1 style="margin-bottom: 0.5rem;">📊 <span data-i18n="index.title">물타기 도우미</span></h1>
+            <p style="color: var(--text-secondary);" data-i18n="index.subtitle">전략적인 추가 매수로 위기를 기회로 바꾸세요.</p>
         </div>
 
 
@@ -141,8 +142,8 @@
             <!-- Stock Calculator -->
             <a href="stock.html" class="main-card stock-card">
                 <span class="card-icon">📉</span>
-                <span class="card-title">주식 물타기</span>
-                <span class="card-desc">네이버 증권 연동<br>국내 주식 맞춤형</span>
+                <span class="card-title" data-i18n="index.stock.title">주식 물타기</span>
+                <span class="card-desc" data-i18n="index.stock.desc">네이버 증권 연동<br>국내 주식 맞춤형</span>
             </a>
 
             <!-- Coin Calculator -->
@@ -150,16 +151,18 @@
                 <span class="card-icon">
                     <img src="images/Bitcoin.png" alt="Bitcoin" style="width: 1em; height: 1em;">
                 </span>
-                <span class="card-title">코인 물타기</span>
-                <span class="card-desc">업비트 시세 자동 연동<br>실시간 계산</span>
+                <span class="card-title" data-i18n="index.coin.title">코인 물타기</span>
+                <span class="card-desc" data-i18n="index.coin.desc">업비트 시세 자동 연동<br>실시간 계산</span>
             </a>
         </div>
 
         <!-- Side Content -->
         <div style="margin-top: 1rem; padding: 1rem; background-color: var(--bg-color); border-radius: 12px;">
-            <p style="margin: 0; font-size: 0.9rem; font-weight: 600;">잠깐! 머리 좀 식히고 가세요 ☕</p>
+            <p style="margin: 0; font-size: 0.9rem; font-weight: 600;" data-i18n="index.break.title">잠깐! 머리 좀 식히고 가세요 ☕
+            </p>
             <a href="lottery.html"
-                style="display: inline-block; margin-top: 10px; padding: 8px 16px; background: white; border-radius: 20px; font-size: 0.9rem; border: 1px solid var(--border-color); color: #333;">
+                style="display: inline-block; margin-top: 10px; padding: 8px 16px; background: white; border-radius: 20px; font-size: 0.9rem; border: 1px solid var(--border-color); color: #333;"
+                data-i18n="index.lottery.link">
                 🎱 재미로 보는 로또 번호 생성기
             </a>
         </div>
@@ -167,11 +170,13 @@
         <!-- Footer -->
         <div class="footer">
             <div>
-                <a href="manual.html" style="color: #888; text-decoration: none; margin: 0 5px;">📖 사용 설명서</a> |
-                <a href="mailto:ooktone23@gmail.com" style="color: #888; text-decoration: none; margin: 0 5px;">📧 문의/버그
+                <a href="manual.html" style="color: #888; text-decoration: none; margin: 0 5px;"
+                    data-i18n="footer.manual">📖 사용 설명서</a> |
+                <a href="mailto:ooktone23@gmail.com" style="color: #888; text-decoration: none; margin: 0 5px;"
+                    data-i18n="footer.contact">📧 문의/버그
                     제보</a>
             </div>
-            <div style="margin-top: 5px; font-size: 0.8rem;">
+            <div style="margin-top: 5px; font-size: 0.8rem;" data-i18n="footer.copyright">
                 © 2026 Water Down Helper. All rights reserved.
             </div>
         </div>

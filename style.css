@@ -100,6 +100,32 @@ body {
     color: var(--primary-color);
 }
 
+/* 언어 토글 버튼 */
+#lang-toggle {
+    position: fixed;
+    top: 1rem;
+    right: 8rem;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    border: 1px solid var(--border-color);
+    background-color: var(--card-bg);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+    min-width: 45px;
+    text-align: center;
+}
+
+#lang-toggle:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+
 /* 컨테이너 카드 스타일 개선 */
 .container {
     background-color: var(--container-bg);
