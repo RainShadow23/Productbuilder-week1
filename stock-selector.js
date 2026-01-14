@@ -15,10 +15,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentPriceLabel = document.getElementById('current-price-label');
 
     // --- State ---
-    if (typeof stockList === 'undefined') {
-        console.error('stockList is undefined. stock-data.js might not be loaded.');
+    // Use external data from stock-data.js, fallback to empty array if not loaded
+    const stocks = (typeof window.KOREA_STOCK_DATA !== 'undefined') ? window.KOREA_STOCK_DATA : [];
+
+    if (stocks.length === 0) {
+        console.error('KOREA_STOCK_DATA is empty or undefined. stock-data.js might not be loaded.');
     }
-    const stocks = (typeof stockList !== 'undefined') ? stockList : [];
+
     let selectedStock = stocks.find(s => s.name === '삼성전자') || stocks[0] || { name: '삼성전자', code: '005930' }; // Default
 
     // --- Initialization ---
