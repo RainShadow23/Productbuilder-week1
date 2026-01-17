@@ -237,3 +237,14 @@ A simple tool for generating and tracking lottery numbers.
     - `lottery.html`
     - `manual.html`
     - `contact.html`
+
+## 13. 4단계: SEO 및 GEO 최적화 (진행 중)
+
+**목표**: 검색 엔진(구글, 네이버) 및 AI 생성형 엔진(ChatGPT, Gemini, Clover X)에서의 노출을 극대화합니다.
+
+**구현 전략**:
+
+1. **메타 & OG 태그**: 표준 SEO 태그 및 소셜 공유를 위한 오픈 그래프 태그 적용.
+2. **구조화 데이터 (JSON-LD)**: `WebApplication` 및 `FAQPage` 스키마를 구현하여 AI가 도구의 기능과 콘텐츠를 이해하도록 지원.
+3. **크롤링 접근성**: `robots.txt` 및 `sitemap.xml` 추가.
+4. **콘텐츠 최적화**: `manual.html`을 AI 친화적인 Q&A 형식으로 구조화.
