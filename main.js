@@ -345,6 +345,179 @@ function addTransactionRow(tx = null) {
     }
 }
 
+// Language switcher
+const languageToggle = document.getElementById('language-toggle');
+if (languageToggle) {
+    languageToggle.addEventListener('click', () => {
+        currentLanguage = currentLanguage === 'ko' ? 'en' : 'ko';
+        languageToggle.textContent = currentLanguage === 'ko' ? 'EN' : 'KO';
+        updateLanguage();
+    });
+}
+
+// ============ SNS Share Functionality ============
+/**
+ * Share content using Web Share API (mobile) or show share modal (PC)
+ * @param {Object} options - Share options
+ * @param {string} options.title - Share title
+ * @param {string} options.text - Share text/description
+ * @param {string} options.url - URL to share (defaults to current page)
+ */
+async function shareContent(options = {}) {
+    const shareData = {
+        title: options.title || '물타기 도우미 - 투자 계산의 모든 것',
+        text: options.text || '주식과 코인 평단가 계산을 간편하게! 물타기 계산기를 써보세요 📊',
+        url: options.url || window.location.href
+    };
+
+    // Check if Web Share API is supported (mobile browsers)
+    if (navigator.share) {
+        try {
+            await navigator.share(shareData);
+            console.log('Content shared successfully');
+        } catch (err) {
+            // User cancelled or error occurred
+            if (err.name !== 'AbortError') {
+                console.error('Error sharing:', err);
+                showShareModal(shareData); // Fallback to modal
+            }
+        }
+    } else {
+        // Desktop or unsupported browser - show custom share modal
+        showShareModal(shareData);
+    }
+}
+
+/**
+ * Show custom share modal for desktop/PC users
+ */
+function showShareModal(shareData) {
+    // Create modal if it doesn't exist
+    let modal = document.getElementById('share-modal');
+    if (!modal) {
+        modal = createShareModal();
+        document.body.appendChild(modal);
+    }
+
+    // Update modal content
+    const urlDisplay = modal.querySelector('.share-url-display');
+    if (urlDisplay) {
+        urlDisplay.value = shareData.url;
+    }
+
+    // Show modal
+    modal.style.display = 'flex';
+}
+
+/**
+ * Create share modal element
+ */
+function createShareModal() {
+    const modal = document.createElement('div');
+    modal.id = 'share-modal';
+    modal.className = 'share-modal';
+    modal.innerHTML = `
+        <div class="share-modal-content">
+            <div class="share-modal-header">
+                <h3>공유하기</h3>
+                <button class="share-modal-close" onclick="closeShareModal()">&times;</button>
+            </div>
+            <div class="share-modal-body">
+                <div class="share-url-group">
+                    <input type="text" class="share-url-display" readonly value="${window.location.href}">
+                    <button class="btn-copy-link" onclick="copyShareLink()">
+                        <span class="copy-icon">📋</span>
+                        <span class="copy-text">복사</span>
+                    </button>
+                </div>
+                <div class="share-buttons-grid">
+                    <button class="share-btn share-btn-twitter" onclick="shareToTwitter()">
+                        <span class="share-icon">✖️</span>
+                        <span>X (트위터)</span>
+                    </button>
+                    <button class="share-btn share-btn-facebook" onclick="shareToFacebook()">
+                        <span class="share-icon">📘</span>
+                        <span>페이스북</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Close modal when clicking outside
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeShareModal();
+        }
+    });
+
+    return modal;
+}
+
+/**
+ * Close share modal
+ */
+function closeShareModal() {
+    const modal = document.getElementById('share-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+/**
+ * Copy share link to clipboard
+ */
+async function copyShareLink() {
+    const urlInput = document.querySelector('.share-url-display');
+    const copyBtn = document.querySelector('.btn-copy-link');
+    const copyText = copyBtn.querySelector('.copy-text');
+
+    try {
+        await navigator.clipboard.writeText(urlInput.value);
+
+        // Visual feedback
+        copyText.textContent = '복사됨!';
+        copyBtn.style.background = 'var(--success-color, #10b981)';
+
+        setTimeout(() => {
+            copyText.textContent = '복사';
+            copyBtn.style.background = '';
+        }, 2000);
+    } catch (err) {
+        console.error('Failed to copy:', err);
+        // Fallback: select text
+        urlInput.select();
+        document.execCommand('copy');
+        copyText.textContent = '복사됨!';
+    }
+}
+
+/**
+ * Share to Twitter/X
+ */
+function shareToTwitter() {
+    const text = encodeURIComponent('주식과 코인 평단가 계산을 간편하게! 물타기 계산기를 써보세요 📊');
+    const url = encodeURIComponent(window.location.href);
+    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank', 'width=550,height=420');
+}
+
+/**
+ * Share to Facebook
+ */
+function shareToFacebook() {
+    const url = encodeURIComponent(window.location.href);
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'width=550,height=420');
+}
+
+// Make functions globally accessible
+window.shareContent = shareContent;
+window.closeShareModal = closeShareModal;
+window.copyShareLink = copyShareLink;
+window.shareToTwitter = shareToTwitter;
+window.shareToFacebook = shareToFacebook;
+// ============ End of Share Functionality ============
+
+
 function updateMode() {
     if (calcModeCheckbox && calcModeCheckbox.checked) {
         calculationMode = 'wallet';

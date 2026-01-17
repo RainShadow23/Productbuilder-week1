@@ -248,3 +248,13 @@ A simple tool for generating and tracking lottery numbers.
 2. **구조화 데이터 (JSON-LD)**: `WebApplication` 및 `FAQPage` 스키마를 구현하여 AI가 도구의 기능과 콘텐츠를 이해하도록 지원.
 3. **크롤링 접근성**: `robots.txt` 및 `sitemap.xml` 추가.
 4. **콘텐츠 최적화**: `manual.html`을 AI 친화적인 Q&A 형식으로 구조화.
+
+## 14. 5단계: 사용자 유입 및 유지 (진행 예정)
+
+**목표**: 방문자를 늘리고(Acquisition) 재방문을 유도(Retention)하는 장치를 마련합니다.
+
+**구현 전략**:
+
+1. **SNS 공유 (Viral)**: Web Share API를 활용하여 모바일 친화적인 공유 기능 구현.
+2. **피드백 루프 (QA)**: 무료이면서 디자인이 우수한 피드백 위젯(Tally.so 등)을 연동하여 사용자의 목소리를 수집.
+3. **앱 경험 제공 (PWA)**: 홈 화면 추가 유도를 통해 앱처럼 사용할 수 있도록 장려.
