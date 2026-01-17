@@ -222,3 +222,18 @@ A simple tool for generating and tracking lottery numbers.
      - 코인이 하나도 없을 때 "새 코인 추가" 버튼이 숨겨지는 버그 수정 (검색 결과 없을 때 무조건 표시되도록 변경).
   4. **시세 확인 기능 개선**:
      - 불안정한 CoinGecko iframe 및 검색 링크 대신, **CoinGecko**와 **빗썸** 메인 페이지로 이동하는 정적 링크 버튼(🦎, 👍) 적용.
+
+## 12. Phase 3: Analytics Integration (In Progress)
+
+**Objective**: Integrate Google Analytics 4 (GA4) to track user engagement and site usage across all pages.
+
+**Implementation Strategy (Planned)**:
+
+1. **Global Tag Injection**: Inject the provided `googletagmanager` script into the `<head>` of all user-facing HTML files.
+2. **Target Files**:
+    - `index.html`
+    - `water_down_calculator.html`
+    - `stock.html`
+    - `lottery.html`
+    - `manual.html`
+    - `contact.html`
