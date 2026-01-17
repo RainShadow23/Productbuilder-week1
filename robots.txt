@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://water-down-helper.web.app/sitemap.xml
+Sitemap: https://productbuilder-week1-9z2.pages.dev/sitemap.xml
