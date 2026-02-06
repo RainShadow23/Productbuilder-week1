@@ -138,6 +138,7 @@ body {
     font-weight: 600;
     transition: all 0.2s ease;
     z-index: 100;
+    -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
     min-width: 45px;
     text-align: center;

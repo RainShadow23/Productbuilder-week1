@@ -271,3 +271,6 @@ A simple tool for generating and tracking lottery numbers.
       - 다국어 지원:
         - KO: "🧩 힐링 타일 (같은 그림 찾기)"
         - EN: "🧩 Healing Tiles (Mahjong Solitaire)"
+  3. **Lint / 호환성 수정**:
+      - `style.css`: Safari 호환성을 위해 `-webkit-backdrop-filter` 추가.
+      - `index.html`: 외부 링크 보안 강화를 위해 `rel="noopener noreferrer"` 추가.
