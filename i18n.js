@@ -19,6 +19,7 @@ const translations = {
         'index.coin.desc': '업비트 시세 자동 연동<br>실시간 계산',
         'index.break.title': '잠깐! 머리 좀 식히고 가세요 ☕',
         'index.lottery.link': '🎱 재미로 보는 로또 번호 생성기',
+        'index.healing.link': '🧩 힐링 타일 (같은 그림 찾기)',
 
         // Calculator Common
         'calc.stock.title': '주식 물타기 계산기',
@@ -133,6 +134,7 @@ const translations = {
         'index.coin.desc': 'Upbit Price Auto Sync<br>Real-time Calculation',
         'index.break.title': 'Take a break ☕',
         'index.lottery.link': '🎱 Lottery Number Generator',
+        'index.healing.link': '🧩 Healing Tiles (Mahjong Solitaire)',
 
         // Calculator Common
         'calc.stock.title': 'Stock Calculator',

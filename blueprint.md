@@ -258,3 +258,16 @@ A simple tool for generating and tracking lottery numbers.
 1. **SNS 공유 (Viral)**: Web Share API를 활용하여 모바일 친화적인 공유 기능 구현.
 2. **피드백 루프 (QA)**: 무료이면서 디자인이 우수한 피드백 위젯(Tally.so 등)을 연동하여 사용자의 목소리를 수집.
 3. **앱 경험 제공 (PWA)**: 홈 화면 추가 유도를 통해 앱처럼 사용할 수 있도록 장려.
+
+## 15. Latest Fixes (SEO & Cross-Promotion)
+
+- **Task**: SEO 최적화 및 패밀리 사이트 링크 추가
+- **Changes Applied**:
+  1. **SEO Canonical 수정**:
+      - `index.html`의 Canonical URL을 `/index.html`에서 `/`(루트)로 변경하여 Google Search Console의 "리디렉션이 포함된 페이지" 이슈 해결.
+      - `sitemap.xml`에서도 `index.html` 경로를 루트로 통일.
+  2. **교차 홍보 (Cross-Promotion)**:
+      - 홈 화면 사이드바에 **"힐링 타일 (Healing Tiles)"** 게임 링크 추가.
+      - 다국어 지원:
+        - KO: "🧩 힐링 타일 (같은 그림 찾기)"
+        - EN: "🧩 Healing Tiles (Mahjong Solitaire)"
